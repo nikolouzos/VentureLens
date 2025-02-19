@@ -1,4 +1,5 @@
 import ProjectDescription
+import ProjectDescriptionHelpers
 
 let bundleIdentifier = "com.genoch.IdeaForge.Dependencies"
 
@@ -10,6 +11,10 @@ let project = Project(
             destinations: .iOS,
             product: .framework,
             bundleId: bundleIdentifier,
+            infoPlist: .extendingDefault(with: [
+                "SUPABASE_URL": Plist.Value(stringLiteral: supabaseUrl()),
+                "SUPABASE_KEY": Plist.Value(stringLiteral: supabaseKey())
+            ]),
             sources: ["Sources/**"],
             dependencies: [
                 .project(target: "Networking", path: "../Networking"),
