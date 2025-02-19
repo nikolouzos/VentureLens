@@ -1,0 +1,42 @@
+# macOS system files
+.DS_Store
+
+# IDE-specific directories
+.vscode/
+
+# Environment configuration files
+.env
+.env.local
+.env.development.local
+.env.test.local
+
+# Cursor rules
+.cursorrules
+
+# Xcode project files
+*.xcworkspace
+*.xcodeproj
+
+# Tuist generated files
+# Tuist typically generates files in the 'Derived' directory, which should be ignored
+Derived/
+
+# Build artifacts
+build/
+Build/
+*.app
+*.app.dSYM
+*.framework
+*.framework.dSYM
+*.xctest
+*.xctest.dSYM
+
+# Swift Package Manager
+# Exclude build artifacts and Package.resolved
+.build/
+Package.resolved
+
+# CocoaPods
+# Exclude Pods directory and generated workspace
+Pods/
+Podfile.lock
