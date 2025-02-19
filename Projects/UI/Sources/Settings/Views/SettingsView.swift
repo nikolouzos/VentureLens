@@ -1,0 +1,111 @@
+import SwiftUI
+
+public struct SettingsView: View {
+    @StateObject private var viewModel: SettingsViewModel
+    @State private var showingLogoutAlert = false
+    @State private var showingDeleteAccountAlert = false
+
+    public init(
+        viewModel: SettingsViewModel,
+        showingLogoutAlert: Bool = false,
+        showingDeleteAccountAlert: Bool = false
+    ) {
+        _viewModel = .init(wrappedValue: viewModel)
+        self.showingLogoutAlert = showingLogoutAlert
+        self.showingDeleteAccountAlert = showingDeleteAccountAlert
+    }
+
+    public var body: some View {
+        NavigationView {
+            Form {
+                NavigationLink(
+                    destination: ProfileView(
+                        viewModel: ProfileViewModel(
+                            authentication: viewModel.authentication
+                        )
+                    )
+                ) {
+                    Label("Profile", systemImage: "person")
+                }
+                Section(header: Text("Notifications")) {
+                    Toggle(isOn: $viewModel.pushNotificationsEnabled) {
+                        Label("Notifications", systemImage: "app.badge")
+                    }
+                }
+
+                Section {
+                    Toggle(isOn: $viewModel.dataSharing) {
+                        Label("Data Sharing", systemImage: "document.badge.arrow.up")
+                    }
+                } header: {
+                    Text("Privacy")
+                } footer: {
+                    Text("We use this data for improving our app experience. For more details, please check our Privacy Policy.")
+                        .multilineTextAlignment(.center)
+                        .padding(.top, .md)
+                }
+
+                Section {
+                    Link("Terms of Service", destination: URL(string: "https://example.com/terms")!)
+                    Link("Privacy Policy", destination: URL(string: "https://example.com/privacy")!)
+                }
+
+                Section {
+                    Button("Logout") {
+                        showingLogoutAlert = true
+                    }
+                    .foregroundColor(.red)
+                    .disabled(viewModel.isLoading)
+                    .alert(isPresented: $showingLogoutAlert) {
+                        Alert(
+                            title: Text("Logout"),
+                            message: Text("Are you sure you want to logout?"),
+                            primaryButton: .destructive(Text("Logout")) {
+                                viewModel.logout()
+                            },
+                            secondaryButton: .cancel()
+                        )
+                    }
+
+                    Button("Delete Account") {
+                        showingDeleteAccountAlert = true
+                    }
+                    .foregroundColor(.red)
+                    .disabled(viewModel.isLoading)
+                    .alert(isPresented: $showingDeleteAccountAlert) {
+                        Alert(
+                            title: Text("Delete Account"),
+                            message: Text("Are you sure you want to delete your account? This action cannot be undone."),
+                            primaryButton: .destructive(Text("Delete")) {
+                                viewModel.deleteAccount()
+                            },
+                            secondaryButton: .cancel()
+                        )
+                    }
+                }
+            }
+            .navigationTitle("Settings")
+        }
+        .alert(isPresented: $viewModel.hasError) {
+            Alert(
+                title: Text("Error"),
+                message: Text(viewModel.error?.localizedDescription ?? ""),
+                dismissButton: .default(Text("OK"))
+            )
+        }
+    }
+}
+
+#if DEBUG
+    import Core
+    import Networking
+
+    #Preview {
+        SettingsView(
+            viewModel: SettingsViewModel(
+                authentication: AuthenticationMock(),
+                coordinator: NavigationCoordinator()
+            )
+        )
+    }
+#endif
