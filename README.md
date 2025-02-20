@@ -27,6 +27,8 @@ IdeaForge is a sophisticated iOS application that empowers entrepreneurs and bus
 ## Dependencies
 
 - **Supabase** - Backend as a Service for authentication and data storage
+- **SwiftFormat** - Code formatting
+- **Tuist** - Project generation and dependency management
 
 ## Requirements
 
