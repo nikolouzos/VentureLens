@@ -101,14 +101,32 @@ IdeaForge/
 
 ## Architecture
 
-IdeaForge follows the MVVM-C (Model-View-ViewModel-Coordinator) architecture pattern for clear separation of concerns and maintainable code:
+IdeaForge follows the MVVM-C (Model-View-ViewModel-Coordinator) architecture pattern with a modular approach using Tuist for dependency management:
 
-- **Models**: Core data structures and business logic
-- **Views**: SwiftUI views for the user interface
-- **ViewModels**: Business logic and state management
-- **Coordinators**: Navigation and flow control
-- **Services**: API integration and data processing
-- **Repositories**: Data access and caching layer
+- **Models**: Core data structures like `Idea`, `User`, and `Report` in the Networking module that define the domain entities
+- **Views**: SwiftUI views organized by feature (Authentication, Ideas, Profile) in the UI module
+- **ViewModels**: Business logic and state management (e.g., `AuthViewModel`, `IdeaListViewModel`) handling data flow and user interactions
+- **Coordinators**: Navigation control through `NavigationCoordinator` managing view state transitions
+- **Protocols**: Interface definitions (`Authentication`, `APIClientProtocol`) enabling loose coupling
+- **Adapters**: Concrete implementations (e.g., `SupabaseAuthClientAdapter`) bridging external services
+- **Dependencies**: Centralized dependency management through the Dependencies module
+
+### Module Structure
+
+- **App**: Main application target and entry point
+- **AppResources**: Shared resources (colors, assets, localization)
+- **Core**: Fundamental utilities and extensions
+- **Dependencies**: External service integrations and dependency management
+- **Networking**: API client, models, and network protocols
+- **UI**: Feature-specific views and view models
+
+### Key Design Patterns
+
+- Dependency Injection through protocol-based interfaces
+- Protocol-oriented programming for flexible implementations
+- Combine for reactive state management
+- Async/await for concurrent operations
+- Environment-based configuration management
 
 ## Development
 
@@ -129,18 +147,6 @@ This script will:
 - `./scripts/load_env_and_generate.sh` - Generates Xcode project with environment variables
 - `./scripts/swiftformat.sh` - Formats code according to project standards
 - `make test` - Runs all tests
-
-## Testing
-
-Run the tests using Xcode's Test Navigator (⌘+6) or using the command line:
-
-```bash
-# Run all tests
-make test
-
-# Run specific test target
-xcodebuild test -scheme IdeaForge -destination 'platform=iOS Simulator,name=iPhone 15 Pro'
-```
 
 ## Contributing
 
