@@ -1,7 +1,9 @@
+import Core
 import Networking
 import SwiftUI
 
 struct IdeaDetailView: View {
+    @Environment(\.dismiss) var dismiss
     let idea: Idea
     @State private var isBookmarked: Bool
 
@@ -13,36 +15,55 @@ struct IdeaDetailView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacingSize: .lg) {
-                Text(idea.title)
-                    .font(.title)
-                    .fontWeight(.bold)
-                monetaryAnalysisView
-
-                Text(idea.summary)
-                    .font(.body)
-                    .foregroundColor(Color.accentColor)
-
-                analysisView
-
-                if let competitors = idea.report?.competitors {
-                    CompetitorAnalysisView(competitors: competitors)
+                ZStack(alignment: .top) {
+                    CardProse(idea: idea)
+                    
+                    HStack {
+                        Circle()
+                            .fill(Color.gray.opacity(0.5))
+                            .overlay {
+                                Image(systemName: "xmark")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .padding(.all, 10)
+                            }
+                            .frame(widthSize: .xl, heightSize: .xl)
+                            .onTapGesture { dismiss() }
+                        
+                        Spacer()
+                        
+                        Button(action: toggleBookmark) {
+                            Image(systemName: isBookmarked ? "bookmark.fill" : "bookmark")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(widthSize: .lg)
+                        }
+                    }
+                    .padding(.all, .lg)
                 }
+                .ignoresSafeArea(edges: [.top])
+                
+                VStack(alignment: .leading, spacingSize: .lg) {
+                    monetaryAnalysisView
 
-                HStack {
-                    Spacer()
-                    Text("Created: \(idea.createdAt, style: .date)")
-                        .font(.caption)
+                    Text(idea.summary)
+                        .font(.body)
                         .foregroundColor(Color.accentColor)
+
+                    analysisView
+
+                    if let competitors = idea.report?.competitors {
+                        CompetitorAnalysisView(competitors: competitors)
+                    }
+
+                    HStack {
+                        Spacer()
+                        Text("Created: \(idea.createdAt, style: .date)")
+                            .font(.caption)
+                            .foregroundColor(Color.accentColor)
+                    }
                 }
-            }
-            .padding(.all, .lg)
-        }
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: toggleBookmark) {
-                    Image(systemName: isBookmarked ? "bookmark.fill" : "bookmark")
-                }
+                .padding(.all, .lg)
             }
         }
     }
@@ -76,27 +97,33 @@ struct IdeaDetailView: View {
     }
 
     private var analysisView: some View {
-        Group {
-            if let fullDetails = idea.fullDetails {
-                Text(fullDetails)
-                    .font(.body)
-            } else {
-                purchaseButton
-            }
-        }
+//            if let fullDetails = idea.fullDetails {
+//                Text(fullDetails)
+//                    .font(.body)
+//            } else {
+                purchaseBanner
+//            }
     }
 
-    private var purchaseButton: some View {
-        Button(action: {
-            // Implement purchase action
-        }) {
-            Text("Purchase Full Details")
-                .fontWeight(.semibold)
-                .foregroundColor(.white)
-                .padding()
-                .background(Color.blue)
-                .cornerRadius(10)
+    private var purchaseBanner: some View {
+        // TODO: Make this look nice
+        VStack(alignment: .center, spacingSize: .lg) {
+            Text("This idea contains premium content. Purchase to unlock full access.")
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity)
+            Button("Purchase Now", systemImage: "creditcard.fill") {
+                print("Purchase action")
+            }
+            .buttonStyle(.borderedProminent)
         }
+        .font(.headline)
+        .padding(.all, .lg)
+        .background(
+            Color.themeSecondary
+                .clipShape(
+                    RoundedRectangle(cornerSize: .md)
+                )
+        )
     }
 
     private func toggleBookmark() {
@@ -121,6 +148,8 @@ struct CompetitorAnalysisView: View {
         }
     }
 }
+
+import AppResources
 
 #Preview {
     NavigationView {

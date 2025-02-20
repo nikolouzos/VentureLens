@@ -9,11 +9,17 @@ public extension View {
     }
 
     @inlinable nonisolated func frame(
-        widthSize: Size,
-        heightSize: Size,
+        widthSize: Size? = nil,
+        heightSize: Size? = nil,
         alignment _: Alignment = .center
     ) -> some View {
-        frame(width: widthSize.rawValue, height: heightSize.rawValue)
+        if let widthSize, let heightSize {
+            return frame(width: widthSize.rawValue, height: heightSize.rawValue)
+        } else if let widthSize {
+            return frame(width: widthSize.rawValue)
+        } else {
+            return frame(height: heightSize?.rawValue)
+        }
     }
 }
 

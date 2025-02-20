@@ -105,6 +105,6 @@ public struct AuthView: View {
                 coordinator: NavigationCoordinator()
             )
         )
-        .tint(Color.accentColor)
+        .tint(AppResourcesAsset.Colors.accentColor.swiftUIColor)
     }
 #endif

@@ -127,7 +127,6 @@ private struct PinDigitField: View {
         focusedField.wrappedValue = maxDigits - 1
     }
 
-    @MainActor
     private func updatePin(_ newDigit: String) {
         let cleanDigit = newDigit.filter(\.isNumber)
 
@@ -135,9 +134,11 @@ private struct PinDigitField: View {
             handlePaste(newDigit)
             return
         }
-
-        pin[index] = Int(cleanDigit)
-        focusedField.wrappedValue = firstAvailableField()
+        
+        Task { @MainActor in
+            pin[index] = Int(cleanDigit)
+            focusedField.wrappedValue = firstAvailableField()
+        }
     }
 }
 

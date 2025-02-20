@@ -1,6 +1,9 @@
 import CoreFoundation
 
 public enum Size: CGFloat, CaseIterable {
+    /// 0 points
+    case zero = 0
+    
     /// 4 points
     case xs = 4
 

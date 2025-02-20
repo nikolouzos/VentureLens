@@ -14,6 +14,17 @@ public class SupabaseFunctionsAdapter: APIClientProtocol {
         accessToken: String
     ) async throws -> DataType {
         switch function {
+        case .ideasFilters:
+            return try await supabaseFunctions.invoke(
+                "ideas-filters",
+                options: FunctionInvokeOptions(
+                    method: .get,
+                    headers: [
+                        "Content-Type": "application/json",
+                        "Authorization": "Bearer \(accessToken)",
+                    ]
+                )
+            )
         case let .ideasList(ideasListRequest):
             return try await supabaseFunctions.invoke(
                 "ideas-list",

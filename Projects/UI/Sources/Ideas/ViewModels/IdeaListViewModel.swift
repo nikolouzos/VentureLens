@@ -2,93 +2,116 @@ import Combine
 import Foundation
 import Networking
 
-public class IdeaListViewModel: ObservableObject {
+@MainActor
+public final class IdeaListViewModel: ObservableObject {
+    @Published private(set) var ideas: [Idea] = []
+    @Published private(set) var isLoading = false
+    @Published var showError = false
+    @Published private(set) var ideasFilters: IdeasFiltersResponse?
+    @Published private(set) var currentRequest: IdeasListRequest
+    
+    private(set) var errorMessage = ""
+    private(set) var canLoadMore = true
+    
     private let apiClient: APIClientProtocol
     private let authentication: Authentication
-
-    @Published var ideas: [Idea] = []
-    @Published var isInitialLoading = false
-    @Published var isLoadingMore = false
-    @Published var showError = false
-    @Published var errorMessage = ""
-
-    private var currentPage = 1
-    private let pageSize = 10
-    private var totalPages = 1
-
-    var isLoading: Bool {
-        isInitialLoading || isLoadingMore
-    }
-
-    var canLoadMore: Bool {
-        currentPage < totalPages
-    }
-
+    
     public init(
         apiClient: APIClientProtocol,
         authentication: Authentication
     ) {
         self.apiClient = apiClient
         self.authentication = authentication
+        self.currentRequest = IdeasListRequest()
     }
-
+    
     func fetchIdeas() async {
-        guard ideas.isEmpty else { return }
-        await setIsLoading(isInitialLoad: true)
-        await loadIdeas()
-        await setIsLoading(isInitialLoad: false)
-    }
-
-    @MainActor
-    func refreshIdeas() async {
-        ideas = []
-        currentPage = 1
-        totalPages = 1
-
-        setIsLoading(isInitialLoad: true)
-        await loadIdeas()
-        setIsLoading(isInitialLoad: false)
-    }
-
-    func loadMoreIdeas() async {
-        guard !isLoadingMore && canLoadMore else { return }
-
-        await setIsLoading(isInitialLoad: false)
-        await loadIdeas()
-        await setIsLoading(isInitialLoad: false)
-    }
-
-    @MainActor
-    private func setIsLoading(isInitialLoad: Bool) {
-        isLoadingMore = isInitialLoading == isInitialLoad &&
-            !isInitialLoad &&
-            !isLoadingMore
-        isInitialLoading = isInitialLoad
-    }
-
-    @MainActor
-    private func loadIdeas() async {
-        guard let accessToken = await authentication.accessToken else {
-            return
+        Task {
+            await fetchFilters()
         }
-
+        Task {
+            await loadIdeas(resetResults: true)
+        }
+    }
+    
+    func loadMoreIdeas() async {
+        await loadIdeas(resetResults: false)
+    }
+    
+    func applyFilters(
+        query: String?,
+        category: String?,
+        createdBefore: String?,
+        createdAfter: String?
+    ) async {
+        currentRequest = IdeasListRequest(
+            page: 1,
+            pageSize: currentRequest.pageSize,
+            query: query,
+            category: category,
+            createdBefore: createdBefore,
+            createdAfter: createdAfter
+        )
+        await loadIdeas(resetResults: true)
+    }
+    
+    private func fetchFilters() async {
+        guard !isLoading else { return }
+        
         do {
-            let response: IdeasListResponse = try await apiClient.fetch(
-                .ideasList(
-                    IdeasListRequest(
-                        page: currentPage,
-                        pageSize: pageSize
-                    )
-                ),
+            guard let accessToken = await authentication.accessToken else { return }
+            
+            let filters: IdeasFiltersResponse = try await apiClient.fetch(
+                .ideasFilters,
                 accessToken: accessToken
             )
-
-            ideas.append(contentsOf: response.ideas)
-            currentPage = response.currentPage
-            totalPages = response.totalPages
+            
+            ideasFilters = filters
         } catch {
             showError = true
             errorMessage = error.localizedDescription
         }
+    }
+    
+    private func loadIdeas(resetResults: Bool) async {
+        guard !isLoading else { return }
+        
+        isLoading = true
+        
+        do {
+            let request = IdeasListRequest(
+                page: resetResults ? 1 : currentRequest.page + 1,
+                pageSize: currentRequest.pageSize,
+                query: currentRequest.query,
+                category: currentRequest.category,
+                createdBefore: currentRequest.createdBefore,
+                createdAfter: currentRequest.createdAfter
+            )
+            
+            guard let accessToken = await authentication.accessToken else {
+                isLoading = false
+                return
+            }
+            
+            let response: IdeasListResponse = try await apiClient.fetch(
+                .ideasList(request),
+                accessToken: accessToken
+            )
+            
+            if resetResults {
+                ideas = response.ideas
+            } else {
+                ideas.append(contentsOf: response.ideas)
+            }
+            
+            canLoadMore = response.ideas.count >= currentRequest.pageSize
+            currentRequest = request
+            
+        } catch {
+            showError = true
+            errorMessage = error.localizedDescription
+        }
+        
+        isLoading = false
     }
 }

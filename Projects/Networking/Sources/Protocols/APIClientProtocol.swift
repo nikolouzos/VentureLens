@@ -24,6 +24,15 @@ public protocol APIClientProtocol {
                     currentPage: 1,
                     totalPages: 1
                 ) as! DataType
+                
+            case .ideasFilters:
+                return IdeasFiltersResponse(
+                    minDate: Date(timeIntervalSince1970: 1739909000),
+                    maxDate: Date(),
+                    categories: [
+                        "Pet Care"
+                    ]
+                ) as! DataType
             }
         }
     }
