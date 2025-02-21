@@ -1,6 +1,6 @@
-# IdeaForge
+# VentureLens
 
-IdeaForge is a sophisticated iOS application that empowers entrepreneurs and business analysts by providing comprehensive business intelligence and market insights. It aggregates and analyzes data from various sources (including ProductHunt, market databases, and financial reports) to generate detailed business ideas, complete with financial projections, market analysis, and strategic recommendations.
+VentureLens is a sophisticated iOS application that empowers entrepreneurs and business analysts by providing comprehensive business intelligence and market insights. It aggregates and analyzes data from various sources (including ProductHunt, market databases, and financial reports) to generate detailed business ideas, complete with financial projections, market analysis, and strategic recommendations.
 
 ## Features
 
@@ -62,8 +62,8 @@ Edit `.env` with your configuration values:
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/IdeaForge.git
-cd IdeaForge
+git clone https://github.com/yourusername/VentureLens.git
+cd VentureLens
 ```
 
 2. Generate Xcode project:
@@ -73,13 +73,13 @@ cd IdeaForge
 
 3. Open the generated Xcode project:
 ```bash
-open IdeaForge.xcworkspace
+open VentureLens.xcworkspace
 ```
 
 ## Project Structure
 
 ```
-IdeaForge/
+VentureLens/
 ├── Projects/
 │   ├── App/
 │   ├── AppResources/
@@ -101,7 +101,7 @@ IdeaForge/
 
 ## Architecture
 
-IdeaForge follows the MVVM-C (Model-View-ViewModel-Coordinator) architecture pattern with a modular approach using Tuist for dependency management:
+VentureLens follows the MVVM-C (Model-View-ViewModel-Coordinator) architecture pattern with a modular approach using Tuist for dependency management:
 
 - **Models**: Core data structures like `Idea`, `User`, and `Report` in the Networking module that define the domain entities
 - **Views**: SwiftUI views organized by feature (Authentication, Ideas, Profile) in the UI module
@@ -169,7 +169,7 @@ This project is licensed under the Elastic License v2.0 (ELv2). The ELv2 allows 
 Key points of the ELv2:
 - ✅ Use and modify the code for internal purposes
 - ✅ Distribute the code as part of your non-competing applications
-- ❌ Use the code to create a product that competes with IdeaForge
-- ❌ Provide IdeaForge as a managed service to third parties
+- ❌ Use the code to create a product that competes with VentureLens
+- ❌ Provide VentureLens as a managed service to third parties
 
 For more information about the Elastic License v2.0, visit [Elastic License FAQ](https://www.elastic.co/licensing/elastic-license).

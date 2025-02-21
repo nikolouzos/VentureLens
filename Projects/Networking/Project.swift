@@ -1,6 +1,6 @@
 import ProjectDescription
 
-let bundleIdentifier = "com.genoch.IdeaForge.Networking"
+let bundleIdentifier = "com.genoch.VentureLens.Networking"
 
 let project = Project(
     name: "Networking",

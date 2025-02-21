@@ -1,7 +1,7 @@
 import ProjectDescription
 import ProjectDescriptionHelpers
 
-let bundleIdentifier = "com.genoch.IdeaForge.Dependencies"
+let bundleIdentifier = "com.genoch.VentureLens.Dependencies"
 
 let project = Project(
     name: "Dependencies",

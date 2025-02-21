@@ -30,7 +30,7 @@ public struct AuthView: View {
                         ),
                         .init(
                             image: Image(systemName: "line.3.horizontal.decrease.circle.fill"),
-                            description: "Tailor IdeaForge to your interests. Set investment tiers, specific industries and more."
+                            description: "Tailor VentureLens to your interests. Set investment tiers, specific industries and more."
                         ),
                     ])
                 }
@@ -74,7 +74,7 @@ public struct AuthView: View {
                 }
             }
             .padding(.all, .lg)
-            .navigationTitle("Welcome to IdeaForge!")
+            .navigationTitle("Welcome to VentureLens!")
             .alert(
                 "Error",
                 isPresented: $viewModel.hasError,

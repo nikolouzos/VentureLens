@@ -1,6 +1,6 @@
 import ProjectDescription
 
-let bundleIdentifier = "com.genoch.IdeaForge"
+let bundleIdentifier = "com.genoch.VentureLens"
 
 let swiftFormatScript: TargetScript = .pre(
     path: .relativeToRoot("Scripts/swiftformat.sh"),

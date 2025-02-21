@@ -11,7 +11,7 @@ import PackageDescription
 #endif
 
 let package = Package(
-    name: "IdeaForge",
+    name: "VentureLens",
     dependencies: [
         .package(
             url: "https://github.com/supabase/supabase-swift.git",

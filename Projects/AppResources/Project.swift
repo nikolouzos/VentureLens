@@ -1,6 +1,6 @@
 import ProjectDescription
 
-let bundleIdentifier = "com.genoch.IdeaForge.Resources"
+let bundleIdentifier = "com.genoch.VentureLens.Resources"
 
 let project = Project(
     name: "AppResources",

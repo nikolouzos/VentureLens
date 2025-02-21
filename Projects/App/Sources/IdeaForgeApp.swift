@@ -2,7 +2,7 @@ import AppResources
 import SwiftUI
 
 @main
-struct IdeaForgeApp: App {
+struct VentureLensApp: App {
     var body: some Scene {
         WindowGroup {
             AppView()

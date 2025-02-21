@@ -1,7 +1,7 @@
 import ProjectDescription
 
 let workspace = Workspace(
-    name: "IdeaForge",
+    name: "VentureLens",
     projects: [
         "Projects/**",
     ],
