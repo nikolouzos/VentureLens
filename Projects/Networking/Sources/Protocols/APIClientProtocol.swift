@@ -20,6 +20,8 @@ public protocol APIClientProtocol {
                 return IdeasListResponse(
                     ideas: [
                         Idea.mock,
+                        Idea.mock,
+                        Idea.mock,
                     ],
                     currentPage: 1,
                     totalPages: 1

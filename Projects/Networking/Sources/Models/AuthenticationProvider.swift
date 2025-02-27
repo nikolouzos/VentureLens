@@ -1,8 +1,15 @@
 import Foundation
+import SwiftData
 
-public struct OAuthSignupData {
-    let email: String
-    let name: String
+@Model
+public class OAuthSignupData {
+    var email: String?
+    var name: String?
+    
+    public init(email: String, name: String) {
+        self.email = email
+        self.name = name
+    }
 }
 
 public enum AuthenticationProvider {

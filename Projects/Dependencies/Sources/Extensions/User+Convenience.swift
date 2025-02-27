@@ -1,13 +1,18 @@
 import Networking
 import Supabase
 
+struct UserProfileResponse: Decodable {
+    let uid: String
+    let subscription: SubscriptionType
+}
+
 extension Networking.User {
-    init(from supabaseUser: Supabase.User) {
+    init(user: Supabase.User, profile: UserProfileResponse) {
         self.init(
-            id: supabaseUser.id,
-            email: supabaseUser.email,
-            name: supabaseUser.userMetadata["name"]?.stringValue,
-            subscription: supabaseUser.userMetadata["subscription"]?.stringValue
+            id: user.id,
+            email: user.email,
+            name: user.userMetadata["name"]?.stringValue,
+            subscription: profile.subscription
         )
     }
 }

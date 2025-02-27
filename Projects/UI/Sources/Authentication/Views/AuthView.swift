@@ -4,8 +4,7 @@ import SwiftUI
 
 public struct AuthView: View {
     @StateObject private var viewModel: AuthViewModel
-    @State private var startSignupFlow: Bool = false
-    @State private var keyboardIsShowing = false
+    @State private var keyboardIsHidden = true
 
     public init(viewModel: AuthViewModel) {
         _viewModel = .init(wrappedValue: viewModel)
@@ -14,26 +13,24 @@ public struct AuthView: View {
     public var body: some View {
         NavigationView {
             VStack(spacingSize: .lg) {
-                if !keyboardIsShowing {
-                    StepTutorialView(steps: [
-                        .init(
-                            image: Image(systemName: "eraser.fill"),
-                            description: "Start your day with unique AI-curated business opportunities"
-                        ),
-                        .init(
-                            image: Image(systemName: "text.document"),
-                            description: "Explore in-depth opportunity reports for every idea."
-                        ),
-                        .init(
-                            image: Image(systemName: "text.below.photo"),
-                            description: "Validate ideas with financial snapshots and competitor benchmarks"
-                        ),
-                        .init(
-                            image: Image(systemName: "line.3.horizontal.decrease.circle.fill"),
-                            description: "Tailor VentureLens to your interests. Set investment tiers, specific industries and more."
-                        ),
-                    ])
+                AppearTransitionView(
+                    transition: .opacity.combined(
+                        with: .move(edge: .bottom)
+                    ),
+                    duration: 0.5,
+                    delay: 0.5
+                ) {
+                    (
+                        Text("Welcome to ") +
+                        Text("VentureLens")
+                            .fontWeight(.bold)
+                            .foregroundStyle(Color.tint)
+                    )
+                    .font(.largeTitle)
+                    .multilineTextAlignment(.center)
                 }
+                
+                onboardingTutorialView
                 Spacer()
 
                 GroupBox {
@@ -43,22 +40,18 @@ public struct AuthView: View {
                 }
 
                 VStack(alignment: .center, spacingSize: .lg) {
-                    Button {
-                        Task {
-                            await viewModel.login()
-                        }
-                    } label: {
-                        Text(
-                            "Sign in with OTP"
-                        )
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 44)
-                    }
+                    Text("Sign in with OTP")
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 44)
                     .background(
                         RoundedRectangle(cornerSize: .sm)
                             .foregroundStyle(Color.themeSecondary)
                     )
-                    .disabled(viewModel.isLoading)
+                    .onTapGesture {
+                        Task {
+                            await viewModel.login()
+                        }
+                    }
 
                     Text("or")
                         .font(.caption)
@@ -70,11 +63,10 @@ public struct AuthView: View {
                         onCompletion: viewModel.signInWithAppleOnCompletion
                     )
                     .frame(height: 44)
-                    .disabled(viewModel.isLoading)
                 }
             }
+            .disabled(viewModel.isLoading)
             .padding(.all, .lg)
-            .navigationTitle("Welcome to VentureLens!")
             .alert(
                 "Error",
                 isPresented: $viewModel.hasError,
@@ -85,11 +77,39 @@ public struct AuthView: View {
                 Text(error.localizedDescription)
             }
             .onKeyboardEvent(.willShow) {
-                keyboardIsShowing = true
+                keyboardIsHidden = false
             }
             .onKeyboardEvent(.willHide) {
-                keyboardIsShowing = false
+                keyboardIsHidden = true
             }
+        }
+    }
+    
+    private var onboardingTutorialView: some View {
+        AppearTransitionView(
+            if: $keyboardIsHidden,
+            transition: .opacity.combined(with: .scale),
+            duration: 0.5,
+            delay: 0.5
+        ) {
+            StepTutorialView(steps: [
+                .init(
+                    image: Image(systemName: "eraser.fill"),
+                    description: "Start your day with unique AI-curated business opportunities"
+                ),
+                .init(
+                    image: Image(systemName: "text.document"),
+                    description: "Explore in-depth opportunity reports for every idea."
+                ),
+                .init(
+                    image: Image(systemName: "text.below.photo"),
+                    description: "Validate ideas with financial snapshots and competitor benchmarks"
+                ),
+                .init(
+                    image: Image(systemName: "line.3.horizontal.decrease.circle.fill"),
+                    description: "Tailor VentureLens to your interests. Set investment tiers, specific industries and more."
+                ),
+            ])
         }
     }
 }
@@ -101,7 +121,7 @@ public struct AuthView: View {
     #Preview {
         AuthView(
             viewModel: AuthViewModel(
-                authentication: AuthenticationMock(),
+                authentication: MockAuthentication(),
                 coordinator: NavigationCoordinator()
             )
         )

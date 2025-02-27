@@ -1,6 +1,6 @@
 import Foundation
 
-public struct IdeasListResponse: Codable {
+public struct IdeasListResponse: Decodable {
     public let ideas: [Idea]
     public let currentPage: Int
     public let totalPages: Int

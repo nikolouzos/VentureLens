@@ -16,15 +16,18 @@ public protocol Authentication: AnyObject {
     /// - Parameter token: The 6-digit OTP the user has received on their email address
     func verifyOTP(email: String, token: String) async throws
 
-    /// Logs the ``currentUser`` out
-    func logout() async throws
-
     /// Forcefully refreshes the authentication token if it exists
     func refreshToken() async throws
 
     /// Updates user data
     /// Parameter userAttributes: The user attributes you would like to update
     func update(_ userAttributes: UserAttributes) async throws
+    
+    /// Logs the ``currentUser`` out
+    func logout() async throws
+    
+    /// Deletes the ``currentUser`` account
+    func deleteAccount() async throws
 }
 
 #if DEBUG
@@ -32,7 +35,7 @@ public protocol Authentication: AnyObject {
         case mock
     }
 
-    public class AuthenticationMock: Authentication {
+    public class MockAuthentication: Authentication {
         public var currentUser: User?
         public var accessToken: String?
 
@@ -50,11 +53,6 @@ public protocol Authentication: AnyObject {
         }
 
         public func verifyOTP(email _: String, token _: String) {}
-
-        public func logout() async throws {
-            try await Task.sleep(for: .seconds(1.5))
-            currentUser = nil
-        }
 
         public func refreshToken() async throws {
             if currentUser != nil {
@@ -74,5 +72,12 @@ public protocol Authentication: AnyObject {
                 subscription: user.subscription
             )
         }
+        
+        public func logout() async throws {
+            try await Task.sleep(for: .seconds(1.5))
+            currentUser = nil
+        }
+        
+        public func deleteAccount() async throws { }
     }
 #endif

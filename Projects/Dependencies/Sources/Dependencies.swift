@@ -3,32 +3,41 @@ import Networking
 import Supabase
 
 public class Dependencies {
-    @usableFromInline static let supabaseClient = SupabaseClient(
-        supabaseURL: URL(string: EnvironmentVariables.get(key: .supabaseUrl))!,
-        supabaseKey: EnvironmentVariables.get(key: .supabaseKey)
-    )
     public let authentication: Authentication
     public let apiClient: APIClientProtocol
+    
+    public convenience init() {
+        let supabaseClient = SupabaseClient(
+            supabaseURL: URL(string: EnvironmentVariables.get(key: .supabaseUrl))!,
+            supabaseKey: EnvironmentVariables.get(key: .supabaseKey)
+        )
+        
+        self.init(
+            authentication: ConcreteAuthentication(
+                authClient: SupabaseAuthAdapter(
+                    supabaseClient: supabaseClient
+                )
+            ),
+            apiClient: SupabaseFunctionsAdapter(
+                supabaseFunctions: supabaseClient.functions
+            )
+        )
+    }
 
     public init(
-        authentication: Authentication = ConcreteAuthentication(
-            authClient: SupabaseAuthClientAdapter(
-                supabaseAuthClient: Dependencies.supabaseClient.auth
-            )
-        ),
-        apiClient: APIClientProtocol? = nil
+        authentication: Authentication,
+        apiClient: APIClientProtocol
     ) {
         self.authentication = authentication
-        self.apiClient = apiClient ?? SupabaseFunctionsAdapter(
-            supabaseFunctions: Dependencies.supabaseClient.functions
-        )
+        self.apiClient = apiClient
     }
 }
 
 #if DEBUG
     public extension Dependencies {
         static let mock = Dependencies(
-            authentication: AuthenticationMock()
+            authentication: MockAuthentication(),
+            apiClient: MockAPIClient()
         )
     }
 #endif

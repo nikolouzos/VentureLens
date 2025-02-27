@@ -54,10 +54,6 @@ public class ConcreteAuthentication: Authentication {
         try await authClient.verifyOTP(email: email, token: token)
     }
 
-    public func logout() async throws {
-        try await authClient.signOut()
-    }
-
     public func refreshToken() async throws {
         try await authClient.refreshSession()
     }
@@ -65,12 +61,20 @@ public class ConcreteAuthentication: Authentication {
     public func update(_ userAttributes: UserAttributes) async throws {
         try await authClient.update(userAttributes: userAttributes)
     }
+    
+    public func logout() async throws {
+        try await authClient.logout()
+    }
+    
+    public func deleteAccount() async throws {
+        try await authClient.deleteAccount()
+    }
 
     private func updateUserAfterSignup(
         user: User,
         signupData: OAuthSignupData?
     ) async throws {
-        guard let signupData = signupData, user.email == nil else {
+        guard let signupData = signupData, user.email == nil || user.email == "" else {
             return
         }
 

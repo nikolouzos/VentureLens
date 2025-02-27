@@ -34,7 +34,6 @@ public class OTPViewModel: FailableViewModel, ObservableObject {
                     coordinator.reset()
                 }
             } catch {
-                print(error)
                 await MainActor.run {
                     self.error = error
                 }

@@ -9,9 +9,11 @@ public protocol AuthClientProtocol {
 
     func verifyOTP(email: String, token: String) async throws
 
-    func signOut() async throws
+    func logout() async throws
 
     func refreshSession() async throws
 
     func update(userAttributes: UserAttributes) async throws
+    
+    func deleteAccount() async throws
 }

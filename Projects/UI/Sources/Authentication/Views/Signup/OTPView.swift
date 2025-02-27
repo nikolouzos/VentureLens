@@ -33,7 +33,7 @@ public struct OTPView: View {
     #Preview {
         OTPView(
             viewModel: OTPViewModel(
-                authentication: AuthenticationMock(),
+                authentication: MockAuthentication(),
                 coordinator: NavigationCoordinator<AuthenticationViewState>(),
                 signupEmail: "example@email.com"
             )
