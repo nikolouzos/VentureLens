@@ -7,6 +7,18 @@ let swiftFormatScript: TargetScript = .pre(
     name: "Run SwiftFormat"
 )
 
+let appEntitlements = Entitlements.dictionary([
+    "com.apple.developer.applesignin": [
+        "Default"
+    ],
+    "com.apple.developer.icloud-container-identifiers": [
+        "iCloud.\(bundleIdentifier).UserData"
+    ],
+    "com.apple.developer.icloud-services": [
+        "CloudKit"
+    ]
+])
+
 let project = Project(
     name: "App",
     settings: .settings(configurations: [
@@ -19,8 +31,14 @@ let project = Project(
             destinations: .iOS,
             product: .app,
             bundleId: bundleIdentifier,
+            infoPlist: .extendingDefault(with: [
+                "UIBackgroundModes": [
+                    "remote-notification"
+                ]
+            ]),
             sources: ["Sources/**"],
             resources: ["Resources/**"],
+            entitlements: appEntitlements,
             scripts: [
                 swiftFormatScript,
             ],
