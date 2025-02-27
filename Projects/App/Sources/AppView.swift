@@ -1,13 +1,17 @@
+import AppResources
 import Core
 import Dependencies
+import Networking
 import SwiftUI
 import UI
 
 struct AppView: View {
     @Environment(\.logger) var logger
+    @State private var hasFinishedLaunching: Bool = false
     @StateObject var authCoordinator = NavigationCoordinator<AuthenticationViewState>()
 
-    let dependencies: Dependencies
+    private let launchAnimationDuration = 1.0
+    private let dependencies: Dependencies
 
     init(dependencies: Dependencies = Dependencies()) {
         self.dependencies = dependencies
@@ -17,8 +21,11 @@ struct AppView: View {
         Group {
             switch authCoordinator.currentRoute {
             case nil:
-                Text("Launch View")
-                    .task(scaffold)
+                SplashView(
+                    hasFinishedLaunching: $hasFinishedLaunching,
+                    animationDuration: launchAnimationDuration
+                )
+                .task(scaffold)
 
             case .loggedOut:
                 AuthView(
@@ -47,23 +54,26 @@ struct AppView: View {
                 Text("signup")
             }
         }
+        .navigationViewStyle(.stack)
     }
 
     @Sendable
     private func scaffold() async {
-        await checkAuthState()
-    }
-
-    private func checkAuthState() async {
-        guard let user = await dependencies.authentication.currentUser else {
-            authCoordinator.navigate(to: .loggedOut)
-            return
-        }
-
-        if user.name == nil {
-            authCoordinator.navigate(to: .signup)
-        } else {
-            authCoordinator.navigate(to: .loggedIn)
+        let user = await dependencies.authentication.currentUser
+        
+        let commands: [Command] = [
+            LaunchAnimationCommand(
+                hasFinishedLaunching: $hasFinishedLaunching,
+                animationDuration: launchAnimationDuration
+            ),
+            NavigationCommand(
+                user: user,
+                coordinator: authCoordinator
+            )
+        ]
+        
+        for command in commands {
+            try? await command.execute()
         }
     }
 }

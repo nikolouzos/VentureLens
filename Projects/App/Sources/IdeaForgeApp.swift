@@ -6,13 +6,7 @@ struct VentureLensApp: App {
     var body: some Scene {
         WindowGroup {
             AppView()
-                .tint(
-                    AppResourcesAsset.Colors.accentColor.swiftUIColor
-                )
+                .tint(Color.tint)
         }
     }
-}
-
-#Preview {
-    AppView()
 }
