@@ -1,11 +1,19 @@
 import AppResources
+import Core
+import Networking
 import SwiftUI
 
 public struct IdeaListView: View {
+    fileprivate enum FeedState: String, CaseIterable {
+        case live = "Feed"
+        case bookmarks = "Bookmarked"
+    }
+    
     @Namespace var ideaNamespace
     @StateObject private var viewModel: IdeaListViewModel
     @State private var presentingIdea: Idea?
     @State private var showingFilters = false
+    @State private var feedState: FeedState = .live
     
     public init(viewModel: IdeaListViewModel) {
         _viewModel = .init(wrappedValue: viewModel)
@@ -13,70 +21,112 @@ public struct IdeaListView: View {
     
     public var body: some View {
         NavigationView {
-            ideaList
-                .toolbar {
-                    toolbarItems
+            ScrollView {
+                feedPicker
+                
+                switch feedState {
+                case .live:
+                    liveFeed
+                    
+                case .bookmarks:
+                    Text("Bookmarks")
                 }
-                .alert(isPresented: $viewModel.showError) {
-                    Alert(
-                        title: Text("Error"),
-                        message: Text(viewModel.errorMessage),
-                        dismissButton: .default(Text("OK"))
-                    )
-                }
-                .sheet(isPresented: $showingFilters) {
-                    IdeaFiltersView(
-                        viewModel: IdeaFiltersViewModel(
-                            currentRequest: viewModel.currentRequest,
-                            filters: viewModel.ideasFilters!
-                        ) { query, category, createdBefore, createdAfter in
-                            Task {
-                                await viewModel.applyFilters(
-                                    query: query,
-                                    category: category,
-                                    createdBefore: createdBefore,
-                                    createdAfter: createdAfter
-                                )
-                            }
-                        }
-                    )
-                    .presentationDetents([.medium, .large])
-                }
+            }
+            .toolbar {
+                toolbarItems
+            }
         }
         .task {
             await viewModel.fetchIdeas()
         }
     }
     
-    private var ideaList: some View {
-        ScrollView {
-            LazyVStack(spacingSize: .lg) {
-                ForEach(viewModel.ideas) { idea in
-                    IdeaCardView(idea: idea)
-                        .matchedTransitionSource(id: idea.id, in: ideaNamespace)
-                        .onTapGesture {
-                            presentingIdea = idea
-                        }
+    private var feedPicker: some View {
+        Menu {
+            Picker(selection: $feedState) {
+                ForEach(FeedState.allCases, id: \.rawValue) { value in
+                    Text(value.rawValue)
+                        .tag(value)
                 }
+            } label: {
+                Text(feedState.rawValue)
+            }
+        } label: {
+            HStack {
+                Text(feedState.rawValue)
+                    .font(.largeTitle)
                 
-                if viewModel.isLoading {
-                    ProgressView()
-                        .padding()
-                }
-                
-                if !viewModel.isLoading && viewModel.canLoadMore {
-                    Button("Load More") {
+                Image(systemName: "chevron.down")
+                    .font(.title3)
+                    .offset(y: 2)
+            }
+            .fontWeight(.bold)
+            .foregroundStyle(Color.systemLabel)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, .lg)
+    }
+    
+    private var liveFeed: some View {
+        ideaList
+            .alert(isPresented: $viewModel.showError) {
+                Alert(
+                    title: Text("Error"),
+                    message: Text(viewModel.errorMessage),
+                    dismissButton: .default(Text("OK"))
+                )
+            }
+            .sheet(isPresented: $showingFilters) {
+                IdeaFiltersView(
+                    viewModel: IdeaFiltersViewModel(
+                        currentRequest: viewModel.currentRequest,
+                        filters: viewModel.ideasFilters!
+                    ) { query, category, createdBefore, createdAfter in
                         Task {
-                            await viewModel.loadMoreIdeas()
+                            await viewModel.applyFilters(
+                                query: query,
+                                category: category,
+                                createdBefore: createdBefore,
+                                createdAfter: createdAfter
+                            )
                         }
                     }
+                )
+                .presentationDetents([.medium, .large])
+            }
+    }
+    
+    private var ideaList: some View {
+        LazyVStack(spacingSize: .lg) {
+            ForEach(viewModel.ideas) { idea in
+                IdeaCardView(idea: idea)
+                    .onTapGesture {
+                        presentingIdea = idea
+                    }
+                    .matchedTransitionSource(id: idea.id, in: ideaNamespace)
+            }
+            
+            if viewModel.isLoading {
+                ProgressView()
                     .padding()
+            }
+            
+            if !viewModel.isLoading && viewModel.canLoadMore {
+                Button("Load More") {
+                    Task {
+                        await viewModel.loadMoreIdeas()
+                    }
                 }
+                .padding()
             }
         }
         .sheet(item: $presentingIdea, onDismiss: { presentingIdea = nil }) { idea in
             NavigationStack {
-                IdeaDetailView(idea: idea)
+                IdeaDetailView(
+                    viewModel: IdeaDetailsViewModel(
+                        idea: idea
+                    )
+                )
                     .navigationTransition(
                         .zoom(sourceID: idea.id, in: ideaNamespace)
                     )
@@ -87,23 +137,12 @@ public struct IdeaListView: View {
     @ToolbarContentBuilder
     private var toolbarItems: some ToolbarContent {
         ToolbarItem(placement: .principal) {
-            AppResourcesAsset.Assets.puzzleBulb.swiftUIImage
+            AppResourcesAsset.Assets.logo.swiftUIImage
                 .resizable()
                 .frame(widthSize: .xl, heightSize: .xl)
-                .foregroundStyle(
-                    LinearGradient(
-                        colors: [
-                            Color.themeSecondary,
-                            Color.themeSecondary,
-                            Color.accentColor,
-                        ],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
         }
         
-        if viewModel.ideasFilters != nil {
+        if feedState == .live && viewModel.ideasFilters != nil {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
                     showingFilters = true
@@ -122,7 +161,9 @@ import Networking
     IdeaListView(
         viewModel: IdeaListViewModel(
             apiClient: MockAPIClient(),
-            authentication: AuthenticationMock()
+            authentication: MockAuthentication(
+                accessToken: "mock"
+            )
         )
     )
     .tint(AppResourcesAsset.Colors.accentColor.swiftUIColor)
