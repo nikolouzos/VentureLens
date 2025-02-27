@@ -20,21 +20,19 @@ public struct SettingsView: View {
             Form {
                 NavigationLink(
                     destination: ProfileView(
-                        viewModel: ProfileViewModel(
-                            authentication: viewModel.authentication
-                        )
+                        viewModel: ProfileViewModel(settingsViewModel: viewModel)
                     )
                 ) {
                     Label("Profile", systemImage: "person")
                 }
                 Section(header: Text("Notifications")) {
-                    Toggle(isOn: $viewModel.pushNotificationsEnabled) {
+                    Toggle(isOn: viewModel.pushNotificationsToggle) {
                         Label("Notifications", systemImage: "app.badge")
                     }
                 }
 
                 Section {
-                    Toggle(isOn: $viewModel.dataSharing) {
+                    Toggle(isOn: $viewModel.dataSharingToggle) {
                         Label("Data Sharing", systemImage: "document.badge.arrow.up")
                     }
                 } header: {
@@ -54,8 +52,7 @@ public struct SettingsView: View {
                     Button("Logout") {
                         showingLogoutAlert = true
                     }
-                    .foregroundColor(.red)
-                    .disabled(viewModel.isLoading)
+                    .foregroundStyle(Color.red)
                     .alert(isPresented: $showingLogoutAlert) {
                         Alert(
                             title: Text("Logout"),
@@ -70,8 +67,7 @@ public struct SettingsView: View {
                     Button("Delete Account") {
                         showingDeleteAccountAlert = true
                     }
-                    .foregroundColor(.red)
-                    .disabled(viewModel.isLoading)
+                    .foregroundStyle(Color.red)
                     .alert(isPresented: $showingDeleteAccountAlert) {
                         Alert(
                             title: Text("Delete Account"),
@@ -85,6 +81,10 @@ public struct SettingsView: View {
                 }
             }
             .navigationTitle("Settings")
+        }
+        .disabled(viewModel.isLoading)
+        .task {
+            await viewModel.getSettings()
         }
         .alert(isPresented: $viewModel.hasError) {
             Alert(
@@ -103,7 +103,7 @@ public struct SettingsView: View {
     #Preview {
         SettingsView(
             viewModel: SettingsViewModel(
-                authentication: AuthenticationMock(),
+                authentication: MockAuthentication(),
                 coordinator: NavigationCoordinator()
             )
         )

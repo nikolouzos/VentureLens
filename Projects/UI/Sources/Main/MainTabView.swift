@@ -38,3 +38,12 @@ public struct MainTabView: View {
         }
     }
 }
+
+#if DEBUG
+#Preview {
+    MainTabView(
+        dependencies: Dependencies(),
+        authCoordinator: NavigationCoordinator()
+    )
+}
+#endif
