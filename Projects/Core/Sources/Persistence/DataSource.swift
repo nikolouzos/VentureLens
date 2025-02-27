@@ -2,14 +2,19 @@ import Foundation
 import SwiftData
 
 @ModelActor
-actor DataSource<Model: PersistentModel>: Sendable {
-    init?() {
-        try? self.init(modelContainer: ModelContainer(for: Model.self))
+public actor DataSource<Model: PersistentModel>: Sendable {
+    public init?(configurations: any DataStoreConfiguration...) {
+        try? self.init(
+            modelContainer: ModelContainer(
+                for: Schema([Model.self]),
+                configurations: configurations
+            )
+        )
     }
 
-    func fetch(
+    public func fetch(
         descriptor: FetchDescriptor<Model> = FetchDescriptor()
-    ) async throws -> [Model] {
+    ) throws -> [Model] {
         if modelContext.hasChanges {
             modelContext.processPendingChanges()
         }
@@ -22,9 +27,13 @@ actor DataSource<Model: PersistentModel>: Sendable {
 
         return []
     }
+    
+    public func fetchSingle(_ id: Model.ID) throws -> Model? {
+        return try fetch().first { $0.id == id }
+    }
 
     @discardableResult
-    func append(_ models: Model...) -> Bool {
+    public func append(_ models: Model...) -> Bool {
         do {
             try modelContext.transaction {
                 for model in models {
@@ -42,21 +51,26 @@ actor DataSource<Model: PersistentModel>: Sendable {
         return true
     }
 
-    func delete(_ id: PersistentIdentifier) -> Bool {
-        let model = modelContext.model(for: id)
+    public func delete(_ id: Model.ID) -> Bool {
+        guard let model = try? fetchSingle(id) else {
+            return false
+        }
+        
         modelContext.delete(model)
-
-        return true
+        do {
+            try modelContext.save()
+            return true
+        } catch {
+            return false
+        }
     }
 
-    func delete(_ ids: [PersistentIdentifier]) -> Bool {
+    public func delete(_ ids: [Model.ID]) -> Bool {
         do {
             var didDeleteAll = false
 
             try modelContext.transaction {
-                didDeleteAll = !ids
-                    .map { delete($0) }
-                    .contains(false)
+                didDeleteAll = !ids.map { delete($0) }.contains(false)
 
                 if modelContext.hasChanges {
                     try modelContext.save()
