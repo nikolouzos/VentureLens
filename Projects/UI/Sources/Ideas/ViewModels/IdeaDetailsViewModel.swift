@@ -1,18 +1,17 @@
-import Foundation
 import Core
+import Foundation
 import Networking
-import SwiftUICore
 import SwiftData
-import CloudKit
+import SwiftUICore
 
 class IdeaDetailsViewModel: ObservableObject {
     let idea: Idea
     private let bookmarkDataSource: DataSource<Bookmark>?
-    
+
     @Published private(set) var isLoading: Bool = false
     @Published private(set) var selectedTab: DetailTab = .overview
     @Published private(set) var isBookmarked: Bool = false
-    
+
     init(
         idea: Idea,
         bookmarkDataSource: DataSource<Bookmark>? = .init(
@@ -25,18 +24,18 @@ class IdeaDetailsViewModel: ObservableObject {
         self.idea = idea
         self.bookmarkDataSource = bookmarkDataSource
     }
-    
+
     func updateSelectedTab(_ tab: DetailTab) {
         selectedTab = tab
     }
-    
+
     @MainActor
     func updateBookmark() async {
         isLoading = true
-        isBookmarked = await (try? bookmarkDataSource?.fetchSingle(idea.id)) != nil
+        isBookmarked = await(try? bookmarkDataSource?.fetchSingle(idea.id)) != nil
         isLoading = false
     }
-    
+
     @MainActor
     func toggleBookmark() async {
         isLoading = true
@@ -44,7 +43,7 @@ class IdeaDetailsViewModel: ObservableObject {
             isLoading = false
             return
         }
-        
+
         if isBookmarked {
             // Remove the bookmark
             if await bookmarkDataSource.delete(idea.id) {
@@ -53,24 +52,12 @@ class IdeaDetailsViewModel: ObservableObject {
             isLoading = false
             return
         }
-        
+
         // Add new bookmark
         if await bookmarkDataSource.append(Bookmark(id: idea.id)) {
             isBookmarked = true
         }
         isLoading = false
-    }
-}
-
-// MARK: - Bookmark SwiftData Object
-
-@Model
-class Bookmark {
-    var id: UUID?
-    var createdAt: Date = Date()
-    
-    init(id: UUID?) {
-        self.id = id
     }
 }
 
@@ -84,7 +71,7 @@ enum DetailTab: String, CaseIterable {
     case techStack
     case ethics
     case validation
-    
+
     var title: String {
         switch self {
         case .overview: return "Overview"
