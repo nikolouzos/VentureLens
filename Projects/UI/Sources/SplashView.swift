@@ -29,7 +29,7 @@ public struct SplashView: View {
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .scaleEffect(
-                        hasFinishedLaunching ? 4.0 : 1.0,
+                        hasFinishedLaunching ? 5 : 1.0,
                         anchor: .init(x: 0.45, y: 0.3)
                     )
                     .animation(.easeIn(duration: animationDuration), value: hasFinishedLaunching)

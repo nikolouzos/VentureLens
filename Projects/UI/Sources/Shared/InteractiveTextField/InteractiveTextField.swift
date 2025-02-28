@@ -10,6 +10,7 @@ struct InteractiveTextField: UIViewRepresentable {
     var textAlignment: NSTextAlignment = .left
     var onDelete: (() -> Void)?
     var onPaste: ((String) -> Void)?
+    var isEnabled: Bool = true
 
     func makeUIView(context: Context) -> InteractionDetectingTextField {
         let textField = InteractionDetectingTextField()
@@ -18,6 +19,7 @@ struct InteractiveTextField: UIViewRepresentable {
         textField.textContentType = textContentType
         textField.font = .preferredFont(for: font, weight: fontWeight)
         textField.textAlignment = textAlignment
+        textField.isEnabled = isEnabled
 
         // When deleteBackward is called, if the text is empty then notify.
         textField.onDeleteBackward = {
@@ -33,6 +35,7 @@ struct InteractiveTextField: UIViewRepresentable {
 
     func updateUIView(_ uiView: InteractionDetectingTextField, context _: Context) {
         uiView.text = text
+        uiView.isEnabled = isEnabled
     }
 
     func makeCoordinator() -> Coordinator {
@@ -67,7 +70,8 @@ extension InteractiveTextField {
             fontWeight: weight,
             textAlignment: textAlignment,
             onDelete: onDelete,
-            onPaste: onPaste
+            onPaste: onPaste,
+            isEnabled: isEnabled
         )
     }
 
@@ -80,7 +84,8 @@ extension InteractiveTextField {
             fontWeight: fontWeight,
             textAlignment: alignment,
             onDelete: onDelete,
-            onPaste: onPaste
+            onPaste: onPaste,
+            isEnabled: isEnabled
         )
     }
 
@@ -93,7 +98,8 @@ extension InteractiveTextField {
             fontWeight: fontWeight,
             textAlignment: textAlignment,
             onDelete: action,
-            onPaste: onPaste
+            onPaste: onPaste,
+            isEnabled: isEnabled
         )
     }
 
@@ -106,7 +112,8 @@ extension InteractiveTextField {
             fontWeight: fontWeight,
             textAlignment: textAlignment,
             onDelete: onDelete,
-            onPaste: action
+            onPaste: action,
+            isEnabled: isEnabled
         )
     }
 }

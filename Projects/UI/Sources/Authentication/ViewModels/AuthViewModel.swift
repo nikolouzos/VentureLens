@@ -38,13 +38,14 @@ public class AuthViewModel: FailableViewModel, ObservableObject {
     func signInWithAppleOnCompletion(result: Result<ASAuthorization, any Error>) {
         do {
             let authorization = try result.throwable()
-            
+
             guard let credential = authorization.credential as? ASAuthorizationAppleIDCredential,
                   let identityTokenData = credential.identityToken,
-                  let identityToken = String(data: identityTokenData, encoding: .utf8) else {
+                  let identityToken = String(data: identityTokenData, encoding: .utf8)
+            else {
                 return
             }
-            
+
             Task {
                 let signupData = await constructSignupData(from: credential)
                 await signInWithApple(identityToken: identityToken, signupData: signupData)
@@ -72,17 +73,18 @@ public class AuthViewModel: FailableViewModel, ObservableObject {
             self.error = error
         }
     }
-    
+
     private func constructSignupData(
         from credential: ASAuthorizationAppleIDCredential
     ) async -> OAuthSignupData? {
         if let email = credential.email,
-           let fullName = credential.fullName {
+           let fullName = credential.fullName
+        {
             let signupData = OAuthSignupData(email: email, name: fullName.formatted())
             await signupDataSource?.append(signupData)
             return signupData
         }
-        
+
         return try? await signupDataSource?.fetch().first
     }
 

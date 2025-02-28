@@ -9,6 +9,9 @@ public class OTPViewModel: FailableViewModel, ObservableObject {
     @Published var otp: String = ""
     @Published public var isLoading: Bool = false
     @Published public var error: Error?
+    @Published public var resendCooldown: Int = 60
+    private var resendTimer: Timer?
+    private var verificationTask: Task<Void, Never>?
 
     public init(
         authentication: Authentication,
@@ -18,28 +21,69 @@ public class OTPViewModel: FailableViewModel, ObservableObject {
         self.authentication = authentication
         self.coordinator = coordinator
         self.signupEmail = signupEmail
+        startResendCooldown()
     }
 
     @MainActor
     public func verifyOTP(_ otp: String) {
-        guard otp.count == 6 else {
-            return
+        guard otp.count == 6, !isLoading else { return }
+        isLoading = true
+
+        // Cancel any existing verification task
+        verificationTask?.cancel()
+
+        verificationTask = Task { @MainActor in
+            do {
+                try await authentication.verifyOTP(email: signupEmail, token: otp)
+                if !Task.isCancelled {
+                    coordinator.reset()
+                }
+            } catch {
+                if !Task.isCancelled {
+                    self.error = error
+                    self.isLoading = false
+                }
+            }
         }
+    }
+
+    @MainActor
+    public func resendCode() {
+        guard resendCooldown == 0, !isLoading else { return }
         isLoading = true
 
         Task {
             do {
-                try await authentication.verifyOTP(email: signupEmail, token: otp)
-                await MainActor.run {
-                    coordinator.reset()
-                }
+                try await authentication.authenticate(with: .otp(email: signupEmail))
+                startResendCooldown()
             } catch {
-                await MainActor.run {
-                    self.error = error
+                self.error = error
+            }
+            isLoading = false
+        }
+    }
+
+    private func startResendCooldown() {
+        resendCooldown = 60
+        resendTimer?.invalidate()
+        resendTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] timer in
+            guard let self = self else {
+                timer.invalidate()
+                return
+            }
+
+            DispatchQueue.main.async {
+                if self.resendCooldown > 0 {
+                    self.resendCooldown -= 1
+                } else {
+                    timer.invalidate()
                 }
             }
         }
+    }
 
-        isLoading = false
+    deinit {
+        verificationTask?.cancel()
+        resendTimer?.invalidate()
     }
 }
