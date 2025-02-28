@@ -11,5 +11,8 @@ let workspace = Workspace(
         "xcconfigs/**",
         "Workspace.swift",
         "Tuist.swift",
-    ]
+    ],
+    generationOptions: .options(
+        lastXcodeUpgradeCheck: Version(16, 0, 0)
+    )
 )
