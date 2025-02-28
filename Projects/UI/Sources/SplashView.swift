@@ -4,7 +4,7 @@ import SwiftUI
 public struct SplashView: View {
     @Binding private var hasFinishedLaunching: Bool
     let animationDuration: Double
-    
+
     public init(
         hasFinishedLaunching: Binding<Bool>,
         animationDuration: Double
@@ -12,7 +12,7 @@ public struct SplashView: View {
         _hasFinishedLaunching = hasFinishedLaunching
         self.animationDuration = animationDuration
     }
-    
+
     public var body: some View {
         VStack(alignment: .center, spacingSize: .xl) {
             Text("VentureLens")
@@ -20,7 +20,7 @@ public struct SplashView: View {
                 .fontWeight(.bold)
                 .foregroundStyle(Color.tint)
                 .multilineTextAlignment(.center)
-            
+
             AppearTransitionView(
                 transition: .opacity,
                 duration: 0.5
@@ -28,29 +28,35 @@ public struct SplashView: View {
                 AppResourcesAsset.Assets.logo.swiftUIImage
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .scaleEffect(hasFinishedLaunching ? 6.0 : 1.0, anchor: .center)
+                    .scaleEffect(
+                        hasFinishedLaunching ? 4.0 : 1.0,
+                        anchor: .init(x: 0.45, y: 0.3)
+                    )
                     .animation(.easeIn(duration: animationDuration), value: hasFinishedLaunching)
                     .zIndex(1)
             }
-            
+
             if !hasFinishedLaunching {
                 ProgressView()
                     .transaction { $0.animation = .none }
             }
         }
+        .onDisappear {
+            hasFinishedLaunching = false
+        }
     }
 }
 
 #if DEBUG
-#Preview {
-    @Previewable @State var hasFinishedLaunching: Bool = false
-    return SplashView(
-        hasFinishedLaunching: $hasFinishedLaunching,
-        animationDuration: 0.5
-    )
-    .task {
-        try? await Task.sleep(for: .seconds(1))
-        hasFinishedLaunching = true
+    #Preview {
+        @Previewable @State var hasFinishedLaunching = false
+        return SplashView(
+            hasFinishedLaunching: $hasFinishedLaunching,
+            animationDuration: 0.5
+        )
+        .task {
+            try? await Task.sleep(for: .seconds(1))
+            hasFinishedLaunching = true
+        }
     }
-}
 #endif

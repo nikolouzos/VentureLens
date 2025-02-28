@@ -1,4 +1,3 @@
-import AppResources
 import Core
 import Dependencies
 import Networking
@@ -10,7 +9,7 @@ struct AppView: View {
     @State private var hasFinishedLaunching: Bool = false
     @StateObject var authCoordinator = NavigationCoordinator<AuthenticationViewState>()
 
-    private let launchAnimationDuration = 1.0
+    private let launchAnimationDuration = 0.5
     private let dependencies: Dependencies
 
     init(dependencies: Dependencies = Dependencies()) {
@@ -51,7 +50,12 @@ struct AppView: View {
                 )
 
             case .signup:
-                Text("signup")
+                SignupView(
+                    viewModel: SignupViewModel(
+                        authentication: dependencies.authentication,
+                        coordinator: authCoordinator
+                    )
+                )
             }
         }
         .navigationViewStyle(.stack)
@@ -60,7 +64,7 @@ struct AppView: View {
     @Sendable
     private func scaffold() async {
         let user = await dependencies.authentication.currentUser
-        
+
         let commands: [Command] = [
             LaunchAnimationCommand(
                 hasFinishedLaunching: $hasFinishedLaunching,
@@ -69,9 +73,9 @@ struct AppView: View {
             NavigationCommand(
                 user: user,
                 coordinator: authCoordinator
-            )
+            ),
         ]
-        
+
         for command in commands {
             try? await command.execute()
         }

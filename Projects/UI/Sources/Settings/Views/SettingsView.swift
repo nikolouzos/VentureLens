@@ -22,6 +22,7 @@ public struct SettingsView: View {
                     destination: ProfileView(
                         viewModel: ProfileViewModel(settingsViewModel: viewModel)
                     )
+                    .navigationViewStyle(.stack)
                 ) {
                     Label("Profile", systemImage: "person")
                 }
@@ -107,5 +108,6 @@ public struct SettingsView: View {
                 coordinator: NavigationCoordinator()
             )
         )
+        .navigationViewStyle(.stack)
     }
 #endif

@@ -1,3 +1,4 @@
+import AppResources
 import Core
 import SwiftUI
 
@@ -65,7 +66,8 @@ private struct PinDigitField: View {
         Binding(
             get: {
                 guard let digit = pin[index] else { return "" }
-                return String(digit)
+                // Ensure we only return a single digit
+                return String(String(digit).prefix(1))
             },
             set: updatePin
         )
@@ -84,7 +86,10 @@ private struct PinDigitField: View {
         .frame(width: 48, height: 48)
         .background(
             RoundedRectangle(cornerRadius: 8)
-                .stroke(Color.gray, lineWidth: 1)
+                .stroke(
+                    focusedField.wrappedValue == index ? Color.tint : Color.gray,
+                    lineWidth: 1
+                )
                 .fill(
                     isDisabled
                         ? Color.gray.opacity(0.1)
@@ -119,22 +124,55 @@ private struct PinDigitField: View {
 
     @MainActor
     private func handlePaste(_ newPin: String) {
-        guard newPin.count == maxDigits, newPin.allSatisfy({ $0.isNumber }) else {
+        // Clean the input to ensure we only have digits
+        let cleanPin = newPin.filter(\.isNumber)
+
+        // Ensure we have exactly maxDigits digits
+        guard cleanPin.count == maxDigits, cleanPin.allSatisfy(\.isNumber) else {
+            // If we don't have exactly maxDigits, but we have at least one digit,
+            // we can still use what we have (up to maxDigits)
+            if !cleanPin.isEmpty {
+                let truncatedPin = String(cleanPin.prefix(maxDigits))
+                let paddedPin = truncatedPin.padding(toLength: maxDigits, withPad: " ", startingAt: 0)
+
+                // Update pin array with available digits
+                for (i, char) in paddedPin.enumerated() where i < maxDigits {
+                    if char.isNumber {
+                        pin[i] = Int(String(char))
+                    }
+                }
+
+                // Focus the next empty field or the last field
+                focusedField.wrappedValue = firstAvailableField()
+            }
             return
         }
 
-        pin = newPin.map { Int(String($0)) }
+        // Update all fields with the pasted digits
+        pin = cleanPin.map { Int(String($0)) }
+
+        // Focus the last field
         focusedField.wrappedValue = maxDigits - 1
     }
 
     private func updatePin(_ newDigit: String) {
         let cleanDigit = newDigit.filter(\.isNumber)
 
+        // Handle system paste operations (from keyboard suggestions)
+        // If the newDigit is longer than 1 and contains only numbers, treat it as a paste operation
+        if cleanDigit.count > 1 && cleanDigit.allSatisfy(\.isNumber) {
+            handlePaste(cleanDigit)
+            return
+        }
+
+        // Handle normal single digit input
         guard cleanDigit.count == 1, cleanDigit != digitBinding.wrappedValue else {
+            // If it's not a single digit and not a valid paste, try handling as paste anyway
+            // This catches edge cases from different input methods
             handlePaste(newDigit)
             return
         }
-        
+
         Task { @MainActor in
             pin[index] = Int(cleanDigit)
             focusedField.wrappedValue = firstAvailableField()
