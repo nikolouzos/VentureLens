@@ -1,15 +1,15 @@
 import ProjectDescription
-
-let bundleIdentifier = "com.genoch.VentureLens.Networking"
+import ProjectDescriptionHelpers
 
 let project = Project(
     name: "Networking",
     targets: [
         .target(
             name: "Networking",
-            destinations: .iOS,
+            destinations: destinations,
             product: .framework,
-            bundleId: bundleIdentifier,
+            bundleId: sharedBundleId + ".Networking",
+            deploymentTargets: deploymentTargets,
             sources: ["Sources/**"],
             dependencies: [
                 .project(target: "Core", path: "../Core"),

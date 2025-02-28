@@ -1,15 +1,15 @@
 import ProjectDescription
-
-let bundleIdentifier = "com.genoch.VentureLens.Core"
+import ProjectDescriptionHelpers
 
 let project = Project(
     name: "Core",
     targets: [
         .target(
             name: "Core",
-            destinations: .iOS,
+            destinations: destinations,
             product: .framework,
-            bundleId: bundleIdentifier,
+            bundleId: sharedBundleId + ".Core",
+            deploymentTargets: deploymentTargets,
             sources: ["Sources/**"]
         ),
     ],

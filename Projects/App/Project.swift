@@ -1,6 +1,5 @@
 import ProjectDescription
-
-let bundleIdentifier = "com.genoch.VentureLens"
+import ProjectDescriptionHelpers
 
 let swiftFormatScript: TargetScript = .pre(
     path: .relativeToRoot("Scripts/swiftformat.sh"),
@@ -12,7 +11,7 @@ let appEntitlements = Entitlements.dictionary([
         "Default"
     ],
     "com.apple.developer.icloud-container-identifiers": [
-        "iCloud.\(bundleIdentifier).UserData"
+        "iCloud.\(sharedBundleId).UserData"
     ],
     "com.apple.developer.icloud-services": [
         "CloudKit"
@@ -28,9 +27,10 @@ let project = Project(
     targets: [
         .target(
             name: "App",
-            destinations: .iOS,
+            destinations: destinations,
             product: .app,
-            bundleId: bundleIdentifier,
+            bundleId: sharedBundleId,
+            deploymentTargets: deploymentTargets,
             infoPlist: .extendingDefault(with: [
                 "UIBackgroundModes": [
                     "remote-notification"
@@ -51,9 +51,9 @@ let project = Project(
         ),
         .target(
             name: "AppTests",
-            destinations: .iOS,
+            destinations: [.iPhone, .iPad],
             product: .unitTests,
-            bundleId: bundleIdentifier + "Tests",
+            bundleId: sharedBundleId + "Tests",
             sources: ["Tests/**"],
             dependencies: [
                 .target(name: "App"),

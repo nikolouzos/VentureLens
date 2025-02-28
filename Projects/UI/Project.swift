@@ -1,15 +1,15 @@
 import ProjectDescription
-
-let bundleIdentifier = "com.genoch.VentureLens.UI"
+import ProjectDescriptionHelpers
 
 let project = Project(
     name: "UI",
     targets: [
         .target(
             name: "UI",
-            destinations: .iOS,
+            destinations: destinations,
             product: .framework,
-            bundleId: bundleIdentifier,
+            bundleId: sharedBundleId + ".UI",
+            deploymentTargets: deploymentTargets,
             sources: ["Sources/**"],
             dependencies: [
                 .project(target: "AppResources", path: "../AppResources"),
