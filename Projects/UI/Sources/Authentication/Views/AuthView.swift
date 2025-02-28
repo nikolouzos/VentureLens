@@ -22,14 +22,14 @@ public struct AuthView: View {
                 ) {
                     (
                         Text("Welcome to ") +
-                        Text("VentureLens")
+                            Text("VentureLens")
                             .fontWeight(.bold)
                             .foregroundStyle(Color.tint)
                     )
                     .font(.largeTitle)
                     .multilineTextAlignment(.center)
                 }
-                
+
                 onboardingTutorialView
                 Spacer()
 
@@ -41,17 +41,17 @@ public struct AuthView: View {
 
                 VStack(alignment: .center, spacingSize: .lg) {
                     Text("Sign in with OTP")
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 44)
-                    .background(
-                        RoundedRectangle(cornerSize: .sm)
-                            .foregroundStyle(Color.themeSecondary)
-                    )
-                    .onTapGesture {
-                        Task {
-                            await viewModel.login()
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 44)
+                        .background(
+                            RoundedRectangle(cornerSize: .sm)
+                                .foregroundStyle(Color.themeSecondary)
+                        )
+                        .onTapGesture {
+                            Task {
+                                await viewModel.login()
+                            }
                         }
-                    }
 
                     Text("or")
                         .font(.caption)
@@ -84,7 +84,7 @@ public struct AuthView: View {
             }
         }
     }
-    
+
     private var onboardingTutorialView: some View {
         AppearTransitionView(
             if: $keyboardIsHidden,
