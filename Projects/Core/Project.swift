@@ -12,8 +12,5 @@ let project = Project(
             deploymentTargets: deploymentTargets,
             sources: ["Sources/**"]
         ),
-    ],
-    additionalFiles: [
-        "Project.swift",
     ]
 )

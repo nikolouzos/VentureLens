@@ -13,8 +13,5 @@ let project = Project(
             sources: ["Sources/**"],
             resources: ["Resources/**"]
         ),
-    ],
-    additionalFiles: [
-        "Project.swift",
     ]
 )
