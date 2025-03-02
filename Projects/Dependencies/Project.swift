@@ -20,8 +20,32 @@ let project = Project(
                 .external(name: "Supabase"),
             ]
         ),
-    ],
-    additionalFiles: [
-        "Project.swift",
+        .target(
+            name: "DependenciesTestHelpers",
+            destinations: destinations,
+            product: .framework,
+            bundleId: sharedBundleId + ".DependenciesTestHelpers",
+            deploymentTargets: deploymentTargets,
+            infoPlist: .default,
+            sources: ["TestHelpers/**"],
+            dependencies: [
+                .target(name: "Dependencies"),
+                .project(target: "Networking", path: "../Networking")
+            ]
+        ),
+        .target(
+            name: "DependenciesTests",
+            destinations: [.iPhone, .iPad],
+            product: .unitTests,
+            bundleId: sharedBundleId + ".DependenciesTests",
+            deploymentTargets: deploymentTargets,
+            infoPlist: .default,
+            sources: ["Tests/**"],
+            dependencies: [
+                .target(name: "Dependencies"),
+                .target(name: "DependenciesTestHelpers"),
+                .project(target: "Networking", path: "../Networking")
+            ]
+        ),
     ]
 )

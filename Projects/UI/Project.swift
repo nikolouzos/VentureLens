@@ -18,8 +18,5 @@ let project = Project(
                 .project(target: "Networking", path: "../Networking"),
             ]
         ),
-    ],
-    additionalFiles: [
-        "Project.swift",
     ]
 )

@@ -59,8 +59,5 @@ let project = Project(
                 .target(name: "App"),
             ]
         ),
-    ],
-    additionalFiles: [
-        "Project.swift",
     ]
 )

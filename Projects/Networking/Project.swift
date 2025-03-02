@@ -15,8 +15,5 @@ let project = Project(
                 .project(target: "Core", path: "../Core"),
             ]
         ),
-    ],
-    additionalFiles: [
-        "Project.swift",
     ]
 )

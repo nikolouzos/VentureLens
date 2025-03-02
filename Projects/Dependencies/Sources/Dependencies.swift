@@ -5,13 +5,13 @@ import Supabase
 public class Dependencies {
     public let authentication: Authentication
     public let apiClient: APIClientProtocol
-    
+
     public convenience init() {
         let supabaseClient = SupabaseClient(
-            supabaseURL: URL(string: EnvironmentVariables.get(key: .supabaseUrl))!,
-            supabaseKey: EnvironmentVariables.get(key: .supabaseKey)
+            supabaseURL: URL(string: EnvironmentVariables.shared.get(key: .supabaseUrl)!)!,
+            supabaseKey: EnvironmentVariables.shared.get(key: .supabaseKey)!
         )
-        
+
         self.init(
             authentication: ConcreteAuthentication(
                 authClient: SupabaseAuthAdapter(
@@ -32,12 +32,3 @@ public class Dependencies {
         self.apiClient = apiClient
     }
 }
-
-#if DEBUG
-    public extension Dependencies {
-        static let mock = Dependencies(
-            authentication: MockAuthentication(),
-            apiClient: MockAPIClient()
-        )
-    }
-#endif
