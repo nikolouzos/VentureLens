@@ -1,14 +1,15 @@
 import Foundation
 
 class EnvironmentVariables {
-    static func get(key: EnvironmentVariableKeys) -> String {
-        let dependenciesBundle = Bundle(for: EnvironmentVariables.self)
-        guard let value = dependenciesBundle.object(forInfoDictionaryKey: key.rawValue) as? String else {
-            fatalError("""
-                Couldn't find \(key.rawValue) environment variable. 
-                Please make sure your environment is configured correctly.
-                """)
-        }
-        return value
+    private let bundle: Bundle
+
+    static let shared = EnvironmentVariables()
+
+    public init(bundle: Bundle = Bundle(for: EnvironmentVariables.self)) {
+        self.bundle = bundle
+    }
+
+    func get(key: EnvironmentVariableKeys) -> String? {
+        return bundle.object(forInfoDictionaryKey: key.rawValue) as? String
     }
 }
