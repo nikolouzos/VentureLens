@@ -16,15 +16,3 @@ extension Networking.User {
         )
     }
 }
-
-extension Networking.UserAttributes {
-    var data: [String: AnyJSON] {
-        var data: [String: AnyJSON] = [:]
-
-        if let name {
-            data["name"] = .string(name)
-        }
-
-        return data
-    }
-}
