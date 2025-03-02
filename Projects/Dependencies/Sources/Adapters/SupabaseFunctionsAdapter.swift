@@ -3,10 +3,15 @@ import Networking
 import Supabase
 
 public class SupabaseFunctionsAdapter: APIClientProtocol {
-    private unowned let supabaseFunctions: Supabase.FunctionsClient
+    private unowned let supabaseFunctions: SupabaseFunctionsClientProtocol
+    private let decoder: JSONDecoder
 
-    init(supabaseFunctions: Supabase.FunctionsClient) {
+    init(
+        supabaseFunctions: SupabaseFunctionsClientProtocol,
+        decoder: JSONDecoder = .init()
+    ) {
         self.supabaseFunctions = supabaseFunctions
+        self.decoder = decoder
     }
 
     public func fetch<DataType: Decodable>(
@@ -23,7 +28,8 @@ public class SupabaseFunctionsAdapter: APIClientProtocol {
                         "Content-Type": "application/json",
                         "Authorization": "Bearer \(accessToken)",
                     ]
-                )
+                ),
+                decoder: decoder
             )
         case let .ideasList(ideasListRequest):
             return try await supabaseFunctions.invoke(
@@ -35,7 +41,8 @@ public class SupabaseFunctionsAdapter: APIClientProtocol {
                         "Authorization": "Bearer \(accessToken)",
                     ],
                     body: JSONEncoder().encode(ideasListRequest)
-                )
+                ),
+                decoder: decoder
             )
         }
     }
