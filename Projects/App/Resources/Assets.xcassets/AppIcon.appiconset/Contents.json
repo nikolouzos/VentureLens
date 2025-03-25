@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "VentureLens-light.png",
+      "filename" : "venturelens-light.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -13,7 +13,7 @@
           "value" : "dark"
         }
       ],
-      "filename" : "VentureLens-dark.png",
+      "filename" : "venturelens-dark.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -25,7 +25,7 @@
           "value" : "tinted"
         }
       ],
-      "filename" : "VentureLens-tinted.png",
+      "filename" : "venturelens-tint.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
