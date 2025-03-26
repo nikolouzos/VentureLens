@@ -31,8 +31,13 @@ public final class SignupViewModel: ObservableObject {
             // Update the user profile with the name
             try await authentication.update(userAttributes)
 
-            // Navigate to the logged in state after successful update
-            coordinator.navigate(to: .loggedIn)
+            // Check if analytics permission has been shown
+            if !UserDefaults.standard.hasShownAnalyticsPermission {
+                coordinator.navigate(to: .analyticsPermission)
+            } else {
+                // Navigate to the logged in state after successful update
+                coordinator.navigate(to: .loggedIn)
+            }
         } catch {
             self.error = error
             isLoading = false

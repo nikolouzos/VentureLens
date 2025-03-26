@@ -26,7 +26,7 @@ public struct ProfileView: View {
             }
         }
     }
-    
+
     private var userInfo: some View {
         Section {
             if isEditing {
@@ -41,7 +41,7 @@ public struct ProfileView: View {
             }
         }
     }
-    
+
     private var buttons: some View {
         Section {
             if isEditing {
@@ -66,6 +66,7 @@ public struct ProfileView: View {
 
 #if DEBUG
     import Core
+    import Dependencies
     import Networking
 
     #Preview {
@@ -73,8 +74,8 @@ public struct ProfileView: View {
             viewModel: ProfileViewModel(
                 settingsViewModel: SettingsViewModel(
                     authentication: MockAuthentication(),
-                    coordinator: NavigationCoordinator()
-                    
+                    coordinator: NavigationCoordinator(),
+                    analytics: Dependencies().analytics
                 )
             )
         )

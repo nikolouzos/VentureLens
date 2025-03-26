@@ -10,13 +10,14 @@ public final class IdeasLiveFeedViewModel: ObservableObject {
     @Published private(set) var isLoading = false
     @Published private(set) var ideasFilters: IdeasFiltersResponse?
     @Published private(set) var currentRequest: IdeasListRequest
-    
+    @Published private(set) var currentUser: User?
+
     private(set) var canLoadMore = true
-    
+
     private let apiClient: APIClientProtocol
     private let authentication: Authentication
     private var errorHandler: (Error) -> Void
-    
+
     public init(
         apiClient: APIClientProtocol,
         authentication: Authentication,
@@ -25,14 +26,17 @@ public final class IdeasLiveFeedViewModel: ObservableObject {
         self.apiClient = apiClient
         self.authentication = authentication
         self.errorHandler = errorHandler
-        self.currentRequest = IdeasListRequest()
+        currentRequest = IdeasListRequest()
     }
-    
+
     func updateErrorHandler(_ handler: @escaping (Error) -> Void) {
-        self.errorHandler = handler
+        errorHandler = handler
     }
-    
+
     func fetchIdeas() async {
+        Task {
+            await updateUser()
+        }
         Task {
             await fetchFilters()
         }
@@ -40,11 +44,11 @@ public final class IdeasLiveFeedViewModel: ObservableObject {
             await loadIdeas(resetResults: true)
         }
     }
-    
+
     func loadMoreIdeas() async {
         await loadIdeas(resetResults: false)
     }
-    
+
     func applyFilters(
         query: String?,
         category: String?,
@@ -63,36 +67,35 @@ public final class IdeasLiveFeedViewModel: ObservableObject {
         )
         await loadIdeas(resetResults: true)
     }
-    
+
+    private func updateUser() async {
+        currentUser = await authentication.currentUser
+    }
+
     private func fetchFilters() async {
         guard !isLoading else { return }
-        
+
         do {
-            guard let accessToken = await authentication.accessToken else { return }
-            
-            let filters: IdeasFiltersResponse = try await apiClient.fetch(
-                .ideasFilters,
-                accessToken: accessToken
-            )
-            
+            let filters: IdeasFiltersResponse = try await apiClient.fetch(.ideasFilters)
+
             ideasFilters = filters
         } catch {
             errorHandler(error)
         }
     }
-    
+
     private func loadIdeas(resetResults: Bool) async {
         guard !isLoading else { return }
-        
+
         isLoading = true
-        
+
         do {
             let nextPage = resetResults ? 1 : (currentRequest.page + 1)
-            
+
             let request: IdeasListRequest
-            
+
             switch currentRequest.requestType {
-            case .filters(let query, let category, let createdBefore, let createdAfter):
+            case let .filters(query, category, createdBefore, createdAfter):
                 request = IdeasListRequest(
                     page: nextPage,
                     pageSize: currentRequest.pageSize,
@@ -103,38 +106,32 @@ public final class IdeasLiveFeedViewModel: ObservableObject {
                         createdAfter: createdAfter
                     )
                 )
-                
-            case .ids(let ids):
+
+            case let .ids(ids):
                 request = IdeasListRequest(
                     page: nextPage,
                     pageSize: currentRequest.pageSize,
                     requestType: .ids(ids: ids)
                 )
             }
-            
-            guard let accessToken = await authentication.accessToken else {
-                isLoading = false
-                return
-            }
-            
+
             let response: IdeasListResponse = try await apiClient.fetch(
-                .ideasList(request),
-                accessToken: accessToken
+                .ideasList(request)
             )
-            
+
             if resetResults {
                 ideas = response.ideas
             } else {
                 ideas.append(contentsOf: response.ideas)
             }
-            
+
             canLoadMore = response.ideas.count >= currentRequest.pageSize
             currentRequest = request
-            
+
         } catch {
             errorHandler(error)
         }
-        
+
         isLoading = false
     }
-} 
+}

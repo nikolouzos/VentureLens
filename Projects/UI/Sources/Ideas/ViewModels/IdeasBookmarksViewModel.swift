@@ -9,16 +9,17 @@ import SwiftUI
 public final class IdeasBookmarksViewModel: ObservableObject {
     @Published private(set) var bookmarkedIdeas: [Idea] = []
     @Published private(set) var isLoading = false
-    
+    @Published private(set) var currentUser: User?
+
     private(set) var canLoadMore = true
     private(set) var currentPage = 1
     private let pageSize = 20
-    
+
     private let apiClient: APIClientProtocol
     private let authentication: Authentication
     private let bookmarkDataSource: DataSource<Bookmark>?
     private var errorHandler: (Error) -> Void
-    
+
     public init(
         apiClient: APIClientProtocol,
         authentication: Authentication,
@@ -30,37 +31,44 @@ public final class IdeasBookmarksViewModel: ObservableObject {
         self.bookmarkDataSource = bookmarkDataSource
         self.errorHandler = errorHandler
     }
-    
+
     func updateErrorHandler(_ handler: @escaping (Error) -> Void) {
-        self.errorHandler = handler
+        errorHandler = handler
     }
-    
+
     func fetchBookmarkedIdeas() async {
+        Task {
+            await fetchCurrentUser()
+        }
         await loadBookmarkedIdeas(resetResults: true)
     }
-    
+
     func loadMoreBookmarkedIdeas() async {
         await loadBookmarkedIdeas(resetResults: false)
     }
-    
+
+    private func fetchCurrentUser() async {
+        currentUser = await authentication.currentUser
+    }
+
     private func loadBookmarkedIdeas(resetResults: Bool) async {
-        guard !isLoading, let bookmarkDataSource = bookmarkDataSource else { 
-            return 
+        guard !isLoading, let bookmarkDataSource = bookmarkDataSource else {
+            return
         }
-        
+
         isLoading = true
-        
+
         if resetResults {
             currentPage = 1
         } else {
             currentPage += 1
         }
-        
+
         do {
             // Fetch bookmarked idea IDs from SwiftData
             let bookmarks = try await bookmarkDataSource.fetch()
             let bookmarkIds = bookmarks.compactMap { $0.id?.uuidString }
-            
+
             guard !bookmarkIds.isEmpty else {
                 if resetResults {
                     bookmarkedIdeas = []
@@ -68,36 +76,30 @@ public final class IdeasBookmarksViewModel: ObservableObject {
                 isLoading = false
                 return
             }
-            
-            guard let accessToken = await authentication.accessToken else {
-                isLoading = false
-                return
-            }
-            
+
             // Create a request for bookmarked ideas
             let request = IdeasListRequest(
                 page: currentPage,
                 pageSize: pageSize,
                 requestType: .ids(ids: bookmarkIds)
             )
-            
+
             let response: IdeasListResponse = try await apiClient.fetch(
-                .ideasList(request),
-                accessToken: accessToken
+                .ideasList(request)
             )
-            
+
             if resetResults {
                 bookmarkedIdeas = response.ideas
             } else {
                 bookmarkedIdeas.append(contentsOf: response.ideas)
             }
-            
+
             canLoadMore = response.ideas.count >= pageSize
-            
+
         } catch {
             errorHandler(error)
         }
-        
+
         isLoading = false
     }
-} 
+}

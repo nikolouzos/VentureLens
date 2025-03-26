@@ -7,34 +7,34 @@ struct IdeasLiveFeedView: View {
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     @StateObject private var viewModel: IdeasLiveFeedViewModel
     @State private var showingFilters = false
-    
+
     let namespace: Namespace.ID
     let onIdeaTap: (Idea) -> Void
-    
+
     init(viewModel: IdeasLiveFeedViewModel, namespace: Namespace.ID, onIdeaTap: @escaping (Idea) -> Void) {
         _viewModel = StateObject(wrappedValue: viewModel)
         self.namespace = namespace
         self.onIdeaTap = onIdeaTap
     }
-    
+
     private var gridLayout: [GridItem] {
         if horizontalSizeClass == .regular {
             // 2 columns
             return [
                 GridItem(.flexible(minimum: 400)),
-                GridItem(.flexible(minimum: 400))
+                GridItem(.flexible(minimum: 400)),
             ]
         }
         return [GridItem(.flexible())]
     }
-    
+
     var body: some View {
         VStack(spacing: 0) {
             if viewModel.isLoading {
                 ProgressView()
                     .padding()
             }
-            
+
             IdeasGridView(
                 ideas: viewModel.ideas,
                 isLoading: viewModel.isLoading,
@@ -46,7 +46,8 @@ struct IdeasLiveFeedView: View {
                     Task {
                         await viewModel.loadMoreIdeas()
                     }
-                }
+                },
+                currentUser: viewModel.currentUser
             )
         }
         .sheet(isPresented: $showingFilters) {
@@ -82,21 +83,21 @@ struct IdeasLiveFeedView: View {
 }
 
 #if DEBUG
-import Networking
-import SwiftData
+    import Networking
+    import SwiftData
 
-#Preview {
-    NavigationView {
-        IdeasLiveFeedView(
-            viewModel: IdeasLiveFeedViewModel(
-                apiClient: MockAPIClient(),
-                authentication: MockAuthentication(accessToken: "mock"),
-                errorHandler: { _ in }
-            ),
-            namespace: Namespace().wrappedValue,
-            onIdeaTap: { _ in }
-        )
+    #Preview {
+        NavigationView {
+            IdeasLiveFeedView(
+                viewModel: IdeasLiveFeedViewModel(
+                    apiClient: MockAPIClient(),
+                    authentication: MockAuthentication(accessToken: "mock"),
+                    errorHandler: { _ in }
+                ),
+                namespace: Namespace().wrappedValue,
+                onIdeaTap: { _ in }
+            )
+        }
+        .tint(AppResourcesAsset.Colors.accentColor.swiftUIColor)
     }
-    .tint(AppResourcesAsset.Colors.accentColor.swiftUIColor)
-}
-#endif 
+#endif

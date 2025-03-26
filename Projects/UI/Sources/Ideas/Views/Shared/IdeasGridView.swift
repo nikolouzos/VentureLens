@@ -13,7 +13,8 @@ struct IdeasGridView: View {
     let onLoadMore: () -> Void
     let emptyStateTitle: String
     let emptyStateMessage: String
-    
+    let currentUser: User?
+
     init(
         ideas: [Idea],
         isLoading: Bool,
@@ -23,7 +24,8 @@ struct IdeasGridView: View {
         onIdeaTap: @escaping (Idea) -> Void,
         onLoadMore: @escaping () -> Void,
         emptyStateTitle: String = "No ideas found",
-        emptyStateMessage: String = "Try adjusting your filters"
+        emptyStateMessage: String = "Try adjusting your filters",
+        currentUser: User? = nil
     ) {
         self.ideas = ideas
         self.isLoading = isLoading
@@ -34,21 +36,22 @@ struct IdeasGridView: View {
         self.onLoadMore = onLoadMore
         self.emptyStateTitle = emptyStateTitle
         self.emptyStateMessage = emptyStateMessage
+        self.currentUser = currentUser
     }
-    
+
     var body: some View {
         LazyVGrid(columns: gridLayout, alignment: .center, spacing: Size.lg.rawValue) {
             if ideas.isEmpty && !isLoading {
                 emptyStateView
             } else {
                 ForEach(ideas) { idea in
-                    IdeaCardView(idea: idea)
+                    IdeaCardView(idea: idea, currentUser: currentUser)
                         .onTapGesture {
                             onIdeaTap(idea)
                         }
                         .matchedTransitionSource(id: idea.id, in: namespace)
                 }
-                
+
                 if !isLoading && canLoadMore {
                     loadMoreButton
                 }
@@ -83,17 +86,17 @@ struct IdeasGridView: View {
 }
 
 #if DEBUG
-import Networking
+    import Networking
 
-#Preview {
-    IdeasGridView(
-        ideas: [],
-        isLoading: false,
-        canLoadMore: false,
-        namespace: Namespace().wrappedValue,
-        gridLayout: [GridItem(.flexible())],
-        onIdeaTap: { _ in },
-        onLoadMore: {}
-    )
-}
-#endif 
+    #Preview {
+        IdeasGridView(
+            ideas: [],
+            isLoading: false,
+            canLoadMore: false,
+            namespace: Namespace().wrappedValue,
+            gridLayout: [GridItem(.flexible())],
+            onIdeaTap: { _ in },
+            onLoadMore: {}
+        )
+    }
+#endif

@@ -26,11 +26,10 @@ public struct SplashView: View {
                 AppResourcesAsset.Assets.logo.swiftUIImage
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .scaleEffect(
-                        hasFinishedLaunching ? 5 : 1.0,
-                        anchor: .init(x: 0.45, y: 0.3)
+                    .animation(
+                        .easeIn(duration: animationDuration),
+                        value: hasFinishedLaunching
                     )
-                    .animation(.easeIn(duration: animationDuration), value: hasFinishedLaunching)
                     .zIndex(1)
             }
 

@@ -1,6 +1,6 @@
 import Combine
 import Core
-import Foundation
+import Dependencies
 import Networking
 import SwiftData
 import SwiftUICore
@@ -9,8 +9,9 @@ import SwiftUICore
 public final class IdeaListViewModel: ObservableObject {
     @Published var error: Error?
 
-    private let apiClient: APIClientProtocol
-    private let authentication: Authentication
+    let apiClient: APIClientProtocol
+    let authentication: Authentication
+    let analytics: Analytics
     private let bookmarkDataSource: DataSource<Bookmark>?
 
     // Child ViewModels
@@ -18,8 +19,7 @@ public final class IdeaListViewModel: ObservableObject {
     let bookmarksViewModel: IdeasBookmarksViewModel
 
     public init(
-        apiClient: APIClientProtocol,
-        authentication: Authentication,
+        dependencies: Dependencies,
         bookmarkDataSource: DataSource<Bookmark>? = .init(
             configurations: ModelConfiguration(
                 isStoredInMemoryOnly: false,
@@ -27,8 +27,9 @@ public final class IdeaListViewModel: ObservableObject {
             )
         )
     ) {
-        self.apiClient = apiClient
-        self.authentication = authentication
+        apiClient = dependencies.apiClient
+        authentication = dependencies.authentication
+        analytics = dependencies.analytics
         self.bookmarkDataSource = bookmarkDataSource
 
         // Initialize with temporary error handlers that do nothing

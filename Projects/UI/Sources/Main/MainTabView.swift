@@ -17,10 +17,7 @@ public struct MainTabView: View {
     public var body: some View {
         TabView {
             IdeaListView(
-                viewModel: IdeaListViewModel(
-                    apiClient: dependencies.apiClient,
-                    authentication: dependencies.authentication
-                )
+                viewModel: IdeaListViewModel(dependencies: dependencies)
             )
             .tabItem {
                 Label("Feed", systemImage: "lightbulb")
@@ -29,21 +26,28 @@ public struct MainTabView: View {
             SettingsView(
                 viewModel: SettingsViewModel(
                     authentication: dependencies.authentication,
-                    coordinator: authCoordinator
+                    coordinator: authCoordinator,
+                    analytics: dependencies.analytics
                 )
             )
             .tabItem {
                 Label("Settings", systemImage: "gear")
             }
         }
+        .onAppear {
+            dependencies.analytics.track(event: .appOpened)
+        }
+        .onDisappear {
+            dependencies.analytics.track(event: .appClosed)
+        }
     }
 }
 
 #if DEBUG
-#Preview {
-    MainTabView(
-        dependencies: Dependencies(),
-        authCoordinator: NavigationCoordinator()
-    )
-}
+    #Preview {
+        MainTabView(
+            dependencies: Dependencies(),
+            authCoordinator: NavigationCoordinator()
+        )
+    }
 #endif
