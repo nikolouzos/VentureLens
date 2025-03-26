@@ -1,11 +1,12 @@
 import Foundation
-import UserNotifications
 import UIKit
+import UserNotifications
 
 public final class PushNotifications: PushNotificationsProtocol {
     private let notificationCenter: UNUserNotificationCenter
     private let urlOpener: URLOpener
-    
+
+    @MainActor
     public init(
         notificationCenter: UNUserNotificationCenter = .current(),
         urlOpener: URLOpener = UIApplication.shared
@@ -13,7 +14,7 @@ public final class PushNotifications: PushNotificationsProtocol {
         self.notificationCenter = notificationCenter
         self.urlOpener = urlOpener
     }
-    
+
     public func requestPermission(
         options: UNAuthorizationOptions = [.alert, .sound, .badge]
     ) async throws -> Bool {
@@ -23,34 +24,36 @@ public final class PushNotifications: PushNotificationsProtocol {
             throw PushNotificationError.unknown(error)
         }
     }
-    
+
     public func getNotificationStatus() async throws -> PushNotificationStatus {
         let settings = await notificationCenter.notificationSettings()
-        
+
         switch settings.authorizationStatus {
         case .authorized:
             return .authorized
-            
+
         case .denied:
             return .denied
-            
+
         case .notDetermined:
             return .notDetermined
-            
+
         case .provisional:
             return .provisional
-            
+
         case .ephemeral:
             return .ephemeral
-            
+
         @unknown default:
             return .notDetermined
         }
     }
-    
+
+    @MainActor
     public func openNotificationSettings() async throws -> Bool {
         guard let settingsUrl = URL(string: "app-settings:notification"),
-              urlOpener.canOpenURL(settingsUrl) else {
+              urlOpener.canOpenURL(settingsUrl)
+        else {
             throw PushNotificationError.settingsURLNotAvailable
         }
         return await urlOpener.open(settingsUrl)
