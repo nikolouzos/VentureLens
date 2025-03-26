@@ -250,9 +250,9 @@ public class MockSupabaseFilterBuilder: SupabaseFilterBuilderProtocol {
     public var executeCalled = false
     
     public var lastColumnFiltered: String?
-    public var lastValueFiltered: Supabase.URLQueryRepresentable?
-    public var lastPatternUsed: Supabase.URLQueryRepresentable?
-    public var lastValuesUsed: [Supabase.URLQueryRepresentable]?
+    public var lastValueFiltered: Supabase.PostgrestFilterValue?
+    public var lastPatternUsed: Supabase.PostgrestFilterValue?
+    public var lastValuesUsed: [Supabase.PostgrestFilterValue]?
     public var lastOrderColumn: String?
     public var lastOrderAscending: Bool?
     public var lastOrderNullsFirst: Bool?
@@ -267,56 +267,56 @@ public class MockSupabaseFilterBuilder: SupabaseFilterBuilderProtocol {
         self.mockError = mockError
     }
     
-    public func eq(_ column: String, value: Supabase.URLQueryRepresentable) -> SupabaseFilterBuilderProtocol {
+    public func eq(_ column: String, value: Supabase.PostgrestFilterValue) -> SupabaseFilterBuilderProtocol {
         eqCalled = true
         lastColumnFiltered = column
         lastValueFiltered = value
         return self
     }
     
-    public func neq(_ column: String, value: Supabase.URLQueryRepresentable) -> SupabaseFilterBuilderProtocol {
+    public func neq(_ column: String, value: Supabase.PostgrestFilterValue) -> SupabaseFilterBuilderProtocol {
         neqCalled = true
         lastColumnFiltered = column
         lastValueFiltered = value
         return self
     }
     
-    public func gt(_ column: String, value: Supabase.URLQueryRepresentable) -> SupabaseFilterBuilderProtocol {
+    public func gt(_ column: String, value: Supabase.PostgrestFilterValue) -> SupabaseFilterBuilderProtocol {
         gtCalled = true
         lastColumnFiltered = column
         lastValueFiltered = value
         return self
     }
     
-    public func lt(_ column: String, value: Supabase.URLQueryRepresentable) -> SupabaseFilterBuilderProtocol {
+    public func lt(_ column: String, value: Supabase.PostgrestFilterValue) -> SupabaseFilterBuilderProtocol {
         ltCalled = true
         lastColumnFiltered = column
         lastValueFiltered = value
         return self
     }
     
-    public func gte(_ column: String, value: Supabase.URLQueryRepresentable) -> SupabaseFilterBuilderProtocol {
+    public func gte(_ column: String, value: Supabase.PostgrestFilterValue) -> SupabaseFilterBuilderProtocol {
         gteCalled = true
         lastColumnFiltered = column
         lastValueFiltered = value
         return self
     }
     
-    public func lte(_ column: String, value: Supabase.URLQueryRepresentable) -> SupabaseFilterBuilderProtocol {
+    public func lte(_ column: String, value: Supabase.PostgrestFilterValue) -> SupabaseFilterBuilderProtocol {
         lteCalled = true
         lastColumnFiltered = column
         lastValueFiltered = value
         return self
     }
     
-    public func like(_ column: String, pattern: Supabase.URLQueryRepresentable) -> SupabaseFilterBuilderProtocol {
+    public func like(_ column: String, pattern: Supabase.PostgrestFilterValue) -> SupabaseFilterBuilderProtocol {
         likeCalled = true
         lastColumnFiltered = column
         lastPatternUsed = pattern
         return self
     }
     
-    public func `in`(_ column: String, values: [Supabase.URLQueryRepresentable]) -> SupabaseFilterBuilderProtocol {
+    public func `in`(_ column: String, values: [Supabase.PostgrestFilterValue]) -> SupabaseFilterBuilderProtocol {
         inCalled = true
         lastColumnFiltered = column
         lastValuesUsed = values

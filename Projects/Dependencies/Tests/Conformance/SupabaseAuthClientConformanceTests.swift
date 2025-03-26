@@ -14,8 +14,8 @@ final class SupabaseAuthClientConformanceTests: XCTestCase {
         super.setUp()
         // Create a test Supabase client with dummy credentials
         let supabaseClient = SupabaseClient(
-            supabaseURL: URL(string: "https://example.supabase.co")!,
-            supabaseKey: "test-key"
+            supabaseURL: URL(string: EnvironmentVariables.shared.get(key: .supabaseUrl)!)!,
+            supabaseKey: EnvironmentVariables.shared.get(key: .supabaseKey)!
         )
         authClientProtocol = supabaseClient.auth
     }

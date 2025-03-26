@@ -17,7 +17,8 @@ extension Dependencies {
             ),
             apiClient: SupabaseFunctionsAdapter(
                 supabaseFunctions: mockClient.functions()
-            )
+            ),
+            analytics: MockAnalytics()
         )
     }
     
@@ -33,7 +34,8 @@ extension Dependencies {
             ),
             apiClient: SupabaseFunctionsAdapter(
                 supabaseFunctions: mockClient.functions()
-            )
+            ),
+            analytics: MockAnalytics()
         )
     }
 } 

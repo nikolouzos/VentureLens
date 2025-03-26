@@ -7,10 +7,12 @@ public extension Dependencies {
     /// - Parameters:
     ///   - mockAuth: Optional mock implementation of SupabaseAuthClientProtocol
     ///   - mockFunctions: Optional mock implementation of SupabaseFunctionsClientProtocol
+    ///   - mockAnalytics: Optional mock implementation of Analytics
     /// - Returns: A Dependencies instance configured with the provided mock implementations
     static func createWithMockSupabase(
         mockAuth: SupabaseAuthClientProtocol = MockSupabaseAuthClient(),
-        mockFunctions: SupabaseFunctionsClientProtocol = MockSupabaseFunctionsClient()
+        mockFunctions: SupabaseFunctionsClientProtocol = MockSupabaseFunctionsClient(),
+        mockAnalytics: Analytics = MockAnalytics()
     ) -> Dependencies {
         let mockSupabaseClient = MockSupabaseClient(
             mockAuth: mockAuth,
@@ -25,16 +27,18 @@ public extension Dependencies {
             ),
             apiClient: SupabaseFunctionsAdapter(
                 supabaseFunctions: mockSupabaseClient.functions()
-            )
+            ),
+            analytics: mockAnalytics
         )
     }
     
     /// Creates a Dependencies instance with fully mocked implementations
-    /// - Returns: A Dependencies instance with mock Authentication and APIClient
-    public static var mock: Dependencies {
+    /// - Returns: A Dependencies instance with mock Authentication, APIClient, and Analytics
+    static var mock: Dependencies {
         Dependencies(
             authentication: MockAuthentication(),
-            apiClient: MockAPIClient()
+            apiClient: MockAPIClient(),
+            analytics: MockAnalytics()
         )
     }
 } 

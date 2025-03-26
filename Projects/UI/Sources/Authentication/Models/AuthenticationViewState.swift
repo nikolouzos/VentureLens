@@ -5,4 +5,5 @@ public enum AuthenticationViewState: Hashable {
     case loggedIn
     case otp(signupEmail: String)
     case signup
+    case analyticsPermission
 }

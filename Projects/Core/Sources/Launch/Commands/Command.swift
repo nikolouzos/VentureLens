@@ -5,7 +5,7 @@ public protocol Command {
 public struct LazyCommand<Wrapped: Command>: Command {
     private let internalCommand: Wrapped
 
-    init(_ internalCommand: Wrapped) {
+    public init(_ internalCommand: Wrapped) {
         self.internalCommand = internalCommand
     }
 

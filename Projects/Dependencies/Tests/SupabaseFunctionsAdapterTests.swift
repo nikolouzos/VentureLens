@@ -42,8 +42,7 @@ final class SupabaseFunctionsAdapterTests: XCTestCase {
         
         // Fetch ideas filters
         let response: IdeasFiltersResponse = try await functionsAdapter.fetch(
-            .ideasFilters,
-            accessToken: accessToken
+            .ideasFilters
         )
         
         // Verify the mock was called correctly
@@ -77,8 +76,7 @@ final class SupabaseFunctionsAdapterTests: XCTestCase {
         
         // Fetch ideas list
         let response: IdeasListResponse = try await functionsAdapter.fetch(
-            .ideasList(request),
-            accessToken: accessToken
+            .ideasList(request)
         )
         
         // Verify the mock was called correctly
@@ -98,8 +96,7 @@ final class SupabaseFunctionsAdapterTests: XCTestCase {
         // Attempt to fetch ideas filters
         do {
             let _: IdeasFiltersResponse = try await functionsAdapter.fetch(
-                .ideasFilters,
-                accessToken: accessToken
+                .ideasFilters
             )
             XCTFail("Expected fetch to throw an error")
         } catch {

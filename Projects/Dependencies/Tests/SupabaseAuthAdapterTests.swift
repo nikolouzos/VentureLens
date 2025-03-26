@@ -94,7 +94,7 @@ final class SupabaseAuthAdapterTests: XCTestCase {
         )
         
         do {
-            let session = try await authAdapter.signInWithIdToken(credentials: credentials)
+            _ = try await authAdapter.signInWithIdToken(credentials: credentials)
             XCTFail("testSignInWithIdTokenThrowsError: This call should throw an error")
         } catch {
             XCTAssertEqual(error.localizedDescription, "No session available")
@@ -183,7 +183,13 @@ final class SupabaseAuthAdapterTests: XCTestCase {
         mockQueryBuilder.mockFilterBuilder.mockResponse = PostgrestResponse(
             data: try JSONEncoder().encode(mockUser),
             response: .init(),
-            value: UserProfileResponse(uid: "mock", subscription: .free)
+            value: UserProfileResponse(
+                uid: "mock",
+                subscription: .free,
+                unlockedIdeas: [],
+                lastUnlockTime: nil,
+                weeklyUnlocksUsed: 0
+            )
         )
         
         return mockSession

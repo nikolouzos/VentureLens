@@ -36,10 +36,14 @@ public struct SettingsView: View {
                     Toggle(isOn: $viewModel.dataSharingToggle) {
                         Label("Data Sharing", systemImage: "document.badge.arrow.up")
                     }
+                    .onChange(of: viewModel.dataSharingToggle) { _, newValue in
+                        viewModel.handleDataSharingChange(newValue)
+                    }
                 } header: {
                     Text("Privacy")
                 } footer: {
                     Text("We use this data for improving our app experience. For more details, please check our Privacy Policy.")
+                        .font(.plusJakartaSans(.subheadline))
                         .multilineTextAlignment(.center)
                         .padding(.top, .md)
                 }
@@ -99,13 +103,15 @@ public struct SettingsView: View {
 
 #if DEBUG
     import Core
+    import Dependencies
     import Networking
 
     #Preview {
         SettingsView(
             viewModel: SettingsViewModel(
                 authentication: MockAuthentication(),
-                coordinator: NavigationCoordinator()
+                coordinator: NavigationCoordinator(),
+                analytics: Dependencies().analytics
             )
         )
         .navigationViewStyle(.stack)

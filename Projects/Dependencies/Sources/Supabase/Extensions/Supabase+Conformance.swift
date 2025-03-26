@@ -59,35 +59,35 @@ extension Supabase.PostgrestQueryBuilder: SupabaseQueryBuilderProtocol {
 }
 
 extension Supabase.PostgrestFilterBuilder: SupabaseFilterBuilderProtocol {
-    public func eq(_ column: String, value: Supabase.URLQueryRepresentable) -> SupabaseFilterBuilderProtocol {
+    public func eq(_ column: String, value: Supabase.PostgrestFilterValue) -> SupabaseFilterBuilderProtocol {
         return eq(column, value: value) as PostgrestFilterBuilder
     }
 
-    public func neq(_ column: String, value: Supabase.URLQueryRepresentable) -> SupabaseFilterBuilderProtocol {
+    public func neq(_ column: String, value: Supabase.PostgrestFilterValue) -> SupabaseFilterBuilderProtocol {
         return neq(column, value: value) as PostgrestFilterBuilder
     }
 
-    public func gt(_ column: String, value: Supabase.URLQueryRepresentable) -> SupabaseFilterBuilderProtocol {
+    public func gt(_ column: String, value: Supabase.PostgrestFilterValue) -> SupabaseFilterBuilderProtocol {
         return gt(column, value: value) as PostgrestFilterBuilder
     }
 
-    public func lt(_ column: String, value: Supabase.URLQueryRepresentable) -> SupabaseFilterBuilderProtocol {
+    public func lt(_ column: String, value: Supabase.PostgrestFilterValue) -> SupabaseFilterBuilderProtocol {
         return lt(column, value: value) as PostgrestFilterBuilder
     }
 
-    public func gte(_ column: String, value: Supabase.URLQueryRepresentable) -> SupabaseFilterBuilderProtocol {
+    public func gte(_ column: String, value: Supabase.PostgrestFilterValue) -> SupabaseFilterBuilderProtocol {
         return gte(column, value: value) as PostgrestFilterBuilder
     }
 
-    public func lte(_ column: String, value: Supabase.URLQueryRepresentable) -> SupabaseFilterBuilderProtocol {
+    public func lte(_ column: String, value: Supabase.PostgrestFilterValue) -> SupabaseFilterBuilderProtocol {
         return lte(column, value: value) as PostgrestFilterBuilder
     }
 
-    public func like(_ column: String, pattern: Supabase.URLQueryRepresentable) -> SupabaseFilterBuilderProtocol {
+    public func like(_ column: String, pattern: Supabase.PostgrestFilterValue) -> SupabaseFilterBuilderProtocol {
         return like(column, pattern: pattern) as PostgrestFilterBuilder
     }
 
-    public func `in`(_ column: String, values: [Supabase.URLQueryRepresentable]) -> SupabaseFilterBuilderProtocol {
+    public func `in`(_ column: String, values: [Supabase.PostgrestFilterValue]) -> SupabaseFilterBuilderProtocol {
         return self.in(column, values: values) as PostgrestFilterBuilder
     }
 }

@@ -69,19 +69,11 @@ public class SupabaseAuthAdapter: AuthClientProtocol {
     }
 
     public func deleteAccount() async throws {
-        guard let accessToken = await session?.accessToken else {
-            return
-        }
-
         do {
             try await supabaseClient.functions().invoke(
                 "delete-account",
                 options: FunctionInvokeOptions(
-                    method: .get,
-                    headers: [
-                        "Content-Type": "application/json",
-                        "Authorization": "Bearer \(accessToken)",
-                    ]
+                    method: .get
                 )
             )
 

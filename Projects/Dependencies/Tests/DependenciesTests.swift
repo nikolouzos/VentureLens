@@ -18,10 +18,12 @@ final class DependenciesTests: XCTestCase {
         // This test verifies that the custom initializer correctly sets the properties
         let mockAuthentication = MockAuthentication()
         let mockAPIClient = MockAPIClient()
+        let mockAnalytics = MockAnalytics()
         
         let dependencies = Dependencies(
             authentication: mockAuthentication,
-            apiClient: mockAPIClient
+            apiClient: mockAPIClient,
+            analytics: mockAnalytics
         )
         
         XCTAssertIdentical(dependencies.authentication as? MockAuthentication, mockAuthentication)

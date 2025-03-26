@@ -56,6 +56,15 @@ struct AppView: View {
                         coordinator: authCoordinator
                     )
                 )
+
+            case .analyticsPermission:
+                AnalyticsPermissionView(
+                    viewModel: AnalyticsPermissionViewModel(
+                        analytics: dependencies.analytics,
+                        authentication: dependencies.authentication,
+                        coordinator: authCoordinator
+                    )
+                )
             }
         }
         .navigationViewStyle(.stack)
@@ -66,6 +75,7 @@ struct AppView: View {
         let user = await dependencies.authentication.currentUser
 
         let commands: [Command] = [
+            AppearanceCommand(),
             LaunchAnimationCommand(
                 hasFinishedLaunching: $hasFinishedLaunching,
                 animationDuration: launchAnimationDuration
