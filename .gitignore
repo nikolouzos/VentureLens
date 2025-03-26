@@ -4,6 +4,9 @@
 # IDE-specific directories
 .vscode/
 
+# Project hidden files
+.project/
+
 # Environment configuration files
 .env
 .env.local

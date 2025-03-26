@@ -1,13 +1,19 @@
 // swift-tools-version:5.9
-import PackageDescription
+@preconcurrency import PackageDescription
 
-#if Tuist
-    import ProjectDescription
-    import ProjectDescriptionHelpers
+#if TUIST
+import ProjectDescription
+import ProjectDescriptionHelpers
 
-    let packageSettings = PackageSettings(
-        productTypes: [:]
-    )
+let packageSettings = PackageSettings(
+    productTypes: [
+        "Mixpanel": .staticLibrary
+    ],
+    projectOptions: [
+        "Supabase": .options(automaticSchemesOptions: .disabled),
+        "Mixpanel": .options(automaticSchemesOptions: .disabled)
+    ]
+)
 #endif
 
 let package = Package(
@@ -16,6 +22,10 @@ let package = Package(
         .package(
             url: "https://github.com/supabase/supabase-swift.git",
             .upToNextMajor(from: "2.0.0")
+        ),
+        .package(
+            url: "https://github.com/mixpanel/mixpanel-swift.git",
+            .upToNextMajor(from: "4.3.0")
         )
     ]
 )

@@ -1,19 +1,10 @@
 import ProjectDescription
 import ProjectDescriptionHelpers
 
-let project = Project(
+let project = appFrameworkProject(
     name: "Networking",
-    targets: [
-        .target(
-            name: "Networking",
-            destinations: destinations,
-            product: .framework,
-            bundleId: sharedBundleId + ".Networking",
-            deploymentTargets: deploymentTargets,
-            sources: ["Sources/**"],
-            dependencies: [
-                .project(target: "Core", path: "../Core"),
-            ]
-        ),
+    product: .framework,
+    dependencies: [
+        .project(target: "Core", path: "../Core"),
     ]
 )

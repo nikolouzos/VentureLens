@@ -15,3 +15,11 @@ public func supabaseKey() -> String {
     print("TUIST_SUPABASE_KEY not found in .env file. Returning mock value...")
     return "mock-supabase-key"
 }
+
+public func mixpanelToken() -> String {
+    if case let .string(mixpanelToken) = Environment.mixpanelToken {
+        return mixpanelToken
+    }
+    print("TUIST_MIXPANEL_TOKEN not found in .env file. Returning mock value...")
+    return "mock-mixpanel-token"
+}

@@ -1,17 +1,8 @@
 import ProjectDescription
 import ProjectDescriptionHelpers
 
-let project = Project(
+let project = appFrameworkProject(
     name: "AppResources",
-    targets: [
-        .target(
-            name: "AppResources",
-            destinations: destinations,
-            product: .framework,
-            bundleId: sharedBundleId + ".Resources",
-            deploymentTargets: deploymentTargets,
-            sources: ["Sources/**"],
-            resources: ["Resources/**"]
-        ),
-    ]
+    product: .framework,
+    includeResources: true
 )

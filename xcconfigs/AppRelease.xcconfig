@@ -1,0 +1,15 @@
+#include "App.xcconfig"
+
+// Release specific settings for App target
+DEBUG_INFORMATION_FORMAT = dwarf-with-dsym
+ENABLE_NS_ASSERTIONS = NO
+GCC_OPTIMIZATION_LEVEL = s
+MTL_ENABLE_DEBUG_INFO = NO
+SWIFT_COMPILATION_MODE = wholemodule
+SWIFT_OPTIMIZATION_LEVEL = -O
+VALIDATE_PRODUCT = YES
+
+// Additional release settings
+SWIFT_STRICT_CONCURRENCY = targeted
+COPY_PHASE_STRIP = YES
+DEPLOYMENT_POSTPROCESSING = YES 

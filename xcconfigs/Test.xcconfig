@@ -1,0 +1,10 @@
+#include "Framework.xcconfig"
+
+// Test target specific settings
+ENABLE_TESTABILITY = YES
+SWIFT_ACTIVE_COMPILATION_CONDITIONS = $(inherited) ENABLE_TESTING
+
+// Code signing settings for test targets
+CODE_SIGN_IDENTITY = Apple Development
+CODE_SIGN_STYLE = Automatic
+DEVELOPMENT_TEAM = MP4H238XSX

@@ -18,12 +18,14 @@ let appEntitlements = Entitlements.dictionary([
     ]
 ])
 
+let infoPlistExtensions: [String : ProjectDescription.Plist.Value] = [
+    "UIBackgroundModes": [
+        "remote-notification"
+    ]
+]
+
 let project = Project(
     name: "App",
-    settings: .settings(configurations: [
-        .debug(name: "Debug", xcconfig: "../../xcconfigs/App.xcconfig"),
-        .release(name: "Release", xcconfig: "../../xcconfigs/App.xcconfig"),
-    ]),
     targets: [
         .target(
             name: "App",
@@ -31,11 +33,7 @@ let project = Project(
             product: .app,
             bundleId: sharedBundleId,
             deploymentTargets: deploymentTargets,
-            infoPlist: .extendingDefault(with: [
-                "UIBackgroundModes": [
-                    "remote-notification"
-                ]
-            ]),
+            infoPlist: .extendingDefault(with: infoPlistExtensions),
             sources: ["Sources/**"],
             resources: ["Resources/**"],
             entitlements: appEntitlements,
@@ -47,17 +45,31 @@ let project = Project(
                 .project(target: "Core", path: "../Core"),
                 .project(target: "Dependencies", path: "../Dependencies"),
                 .project(target: "UI", path: "../UI"),
-            ]
+            ],
+            settings: .settings(
+                base: [:],
+                configurations: [
+                    .debug(name: "Debug", xcconfig: "../../xcconfigs/AppDebug.xcconfig"),
+                    .release(name: "Release", xcconfig: "../../xcconfigs/AppRelease.xcconfig")
+                ]
+            )
         ),
         .target(
             name: "AppTests",
-            destinations: [.iPhone, .iPad],
+            destinations: destinations,
             product: .unitTests,
             bundleId: sharedBundleId + "Tests",
             sources: ["Tests/**"],
             dependencies: [
                 .target(name: "App"),
-            ]
+            ],
+            settings: .settings(
+                base: [:],
+                configurations: [
+                    .debug(name: "Debug", xcconfig: "../../xcconfigs/Test.xcconfig"),
+                    .release(name: "Release", xcconfig: "../../xcconfigs/Test.xcconfig")
+                ]
+            )
         ),
     ]
 )
