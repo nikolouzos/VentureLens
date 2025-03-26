@@ -60,7 +60,7 @@ public final class IdeasBookmarksViewModel: ObservableObject {
 
         if resetResults {
             currentPage = 1
-            ideas = []
+            bookmarkedIdeas = []
         } else {
             currentPage += 1
         }

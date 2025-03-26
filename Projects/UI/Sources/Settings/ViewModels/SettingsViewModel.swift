@@ -17,6 +17,27 @@ public class SettingsViewModel: FailableViewModel, ObservableObject {
     @Published private(set) var isLoading = false
     @Published public var error: Error?
 
+    var freeUnlockAvailable: Bool {
+        guard let lastUnlockTime = user?.lastUnlockTime,
+              user?.weeklyUnlocksUsed ?? 0 >= 1
+        else {
+            return true // No last unlock time or unlocks not used
+        }
+
+        let oneWeekAgo = Date().addingTimeInterval(-7 * 24 * 60 * 60)
+        return lastUnlockTime < oneWeekAgo
+    }
+
+    var nextUnlockDate: Date? {
+        guard !freeUnlockAvailable,
+              let lastUnlockTime = user?.lastUnlockTime
+        else {
+            return nil
+        }
+
+        return lastUnlockTime.addingTimeInterval(7 * 24 * 60 * 60)
+    }
+
     var pushNotificationsToggle: Binding<Bool> {
         Binding(
             get: {

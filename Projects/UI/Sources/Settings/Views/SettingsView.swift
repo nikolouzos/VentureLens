@@ -1,3 +1,5 @@
+import AppResources
+import Core
 import SwiftUI
 
 public struct SettingsView: View {
@@ -18,6 +20,17 @@ public struct SettingsView: View {
     public var body: some View {
         NavigationView {
             Form {
+                Section {
+                    FreeUnlockBannerView(
+                        isAvailable: viewModel.freeUnlockAvailable,
+                        nextUnlockDate: viewModel.nextUnlockDate
+                    )
+                }
+                .frame(maxWidth: .infinity)
+                .listRowInsets(EdgeInsets())
+                .listRowBackground(Color.clear)
+                .padding(.top, .lg)
+
                 NavigationLink(
                     destination: ProfileView(
                         viewModel: ProfileViewModel(settingsViewModel: viewModel)
