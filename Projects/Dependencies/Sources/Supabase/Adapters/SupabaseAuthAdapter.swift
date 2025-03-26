@@ -98,8 +98,6 @@ public class SupabaseAuthAdapter: AuthClientProtocol {
         switch provider {
         case .apple:
             return .apple
-        case .google:
-            return .google
         }
     }
 }

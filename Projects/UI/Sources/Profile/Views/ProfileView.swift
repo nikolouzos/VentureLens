@@ -2,7 +2,6 @@ import SwiftUI
 
 public struct ProfileView: View {
     @StateObject private var viewModel: ProfileViewModel
-    @State private var isEditing = false
 
     public init(viewModel: ProfileViewModel) {
         _viewModel = .init(wrappedValue: viewModel)
@@ -29,36 +28,67 @@ public struct ProfileView: View {
 
     private var userInfo: some View {
         Section {
-            if isEditing {
+            if viewModel.isEditing {
                 TextField("Name", text: $viewModel.nameField)
-                TextField("Email", text: $viewModel.emailField)
-                    .autocapitalization(.none)
-                    .keyboardType(.emailAddress)
+
+                if viewModel.isEmailEditable {
+                    TextField("Email", text: $viewModel.emailField)
+                        .autocapitalization(.none)
+                        .keyboardType(.emailAddress)
+                } else {
+                    HStack {
+                        Image(systemName: "lock.fill")
+                            .help(viewModel.emailEditingDisclaimer)
+                        Spacer()
+                        Text(viewModel.emailField)
+                    }
+                    .foregroundStyle(Color.secondary)
+                }
             } else {
-                Text("Name: \(viewModel.name)")
-                Text("Email: \(viewModel.email)")
-                Text("Subscription: \(viewModel.subscription?.rawValue.capitalized ?? "")")
+                HStack {
+                    Text("Name")
+                    Spacer()
+                    Text(viewModel.nameField)
+                        .foregroundStyle(Color.secondary)
+                        .lineLimit(1)
+                }
+
+                HStack {
+                    Text("Email")
+                    Spacer()
+                    Text(viewModel.emailField)
+                        .foregroundStyle(Color.secondary)
+                        .lineLimit(1)
+                }
             }
+        } footer: {
+            emailEditingDisclaimer
+        }
+    }
+
+    @ViewBuilder
+    private var emailEditingDisclaimer: some View {
+        if !viewModel.isEmailEditable {
+            Text("Note: \(viewModel.emailEditingDisclaimer)")
+                .font(.plusJakartaSans(.subheadline, weight: .medium))
+                .multilineTextAlignment(.center)
+                .padding(.top, .md)
         }
     }
 
     private var buttons: some View {
         Section {
-            if isEditing {
-                Button("Cancel") {
-                    isEditing = false
-                }
-                .foregroundStyle(Color.red)
+            if viewModel.isEditing {
+                Button("Cancel", action: viewModel.stopEditing)
+                    .foregroundStyle(Color.red)
                 Button("Save") {
                     Task {
                         await viewModel.updateProfile()
                     }
-                    isEditing = false
+                    viewModel.stopEditing()
                 }
             } else {
-                Button("Edit Profile") {
-                    isEditing = true
-                }
+                Button("Edit Profile", action: viewModel.startEditing)
             }
         }
     }

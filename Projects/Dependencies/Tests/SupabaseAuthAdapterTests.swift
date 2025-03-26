@@ -74,9 +74,8 @@ final class SupabaseAuthAdapterTests: XCTestCase {
         
         // Test that signInWithIdToken calls the underlying Supabase client
         let credentials = Networking.OpenIDConnectCredentials(
-            provider: .google,
-            idToken: "test-id-token",
-            accessToken: "test-access-token"
+            provider: .apple,
+            idToken: "test-id-token"
         )
         
         let session = try await authAdapter.signInWithIdToken(credentials: credentials)
@@ -88,9 +87,8 @@ final class SupabaseAuthAdapterTests: XCTestCase {
     
     func testSignInWithIdTokenThrowsError() async throws {
         let credentials = Networking.OpenIDConnectCredentials(
-            provider: .google,
-            idToken: "test-id-token",
-            accessToken: "test-access-token"
+            provider: .apple,
+            idToken: "test-id-token"
         )
         
         do {

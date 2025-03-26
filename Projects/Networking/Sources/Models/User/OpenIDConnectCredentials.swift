@@ -12,7 +12,6 @@ public struct OpenIDConnectCredentials {
     }
 }
 
-public enum Provider {
+public enum Provider: String, CaseIterable {
     case apple
-    case google
 }

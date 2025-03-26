@@ -12,6 +12,7 @@ public struct User {
     public let unlockedIdeas: [UUID]
     public let lastUnlockTime: Date?
     public let weeklyUnlocksUsed: Int
+    public let provider: Provider?
 
     public init(
         id: UUID,
@@ -20,7 +21,8 @@ public struct User {
         subscription: SubscriptionType,
         unlockedIdeas: [UUID] = [],
         lastUnlockTime: Date? = nil,
-        weeklyUnlocksUsed: Int = 0
+        weeklyUnlocksUsed: Int = 0,
+        provider: Provider? = nil
     ) {
         self.id = id
         self.email = email
@@ -29,6 +31,7 @@ public struct User {
         self.unlockedIdeas = unlockedIdeas
         self.lastUnlockTime = lastUnlockTime
         self.weeklyUnlocksUsed = weeklyUnlocksUsed
+        self.provider = provider
     }
 }
 

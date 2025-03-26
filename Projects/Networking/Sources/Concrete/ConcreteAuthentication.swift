@@ -37,16 +37,6 @@ public class ConcreteAuthentication: Authentication {
                 )
             )
             try await updateUserAfterSignup(user: session.user, signupData: signupData)
-
-        case let .google(identityToken, accessToken, signupData):
-            let session = try await authClient.signInWithIdToken(
-                credentials: OpenIDConnectCredentials(
-                    provider: .google,
-                    idToken: identityToken,
-                    accessToken: accessToken
-                )
-            )
-            try await updateUserAfterSignup(user: session.user, signupData: signupData)
         }
     }
 
@@ -61,11 +51,11 @@ public class ConcreteAuthentication: Authentication {
     public func update(_ userAttributes: UserAttributes) async throws {
         try await authClient.update(userAttributes: userAttributes)
     }
-    
+
     public func logout() async throws {
         try await authClient.logout()
     }
-    
+
     public func deleteAccount() async throws {
         try await authClient.deleteAccount()
     }

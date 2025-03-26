@@ -10,7 +10,14 @@ extension Networking.User {
             subscription: profile.subscription,
             unlockedIdeas: profile.unlockedIdeas,
             lastUnlockTime: profile.lastUnlockTime,
-            weeklyUnlocksUsed: profile.weeklyUnlocksUsed
+            weeklyUnlocksUsed: profile.weeklyUnlocksUsed,
+            provider: Self.issToProvider(user.userMetadata["iss"]?.stringValue)
         )
+    }
+
+    private static func issToProvider(_ iss: String?) -> Networking.Provider? {
+        guard let iss else { return nil }
+
+        return Provider.allCases.filter { iss.contains($0.rawValue) }.first
     }
 }
