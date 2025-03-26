@@ -1,4 +1,3 @@
-import Combine
 import Core
 import Dependencies
 import Foundation
@@ -16,6 +15,17 @@ public class SettingsViewModel: FailableViewModel, ObservableObject {
     @Published var dataSharingToggle = false
     @Published private(set) var isLoading = false
     @Published public var error: Error?
+
+    private let appVersion: AppVersion
+
+    var versionString: String {
+        "App Version: \(appVersion.versionString)"
+    }
+
+    let legalURLs: (termsOfService: URL, privacyPolicy: URL) = (
+        termsOfService: URL(string: "https://venturelens.app/terms")!,
+        privacyPolicy: URL(string: "https://venturelens.app/privacy")!
+    )
 
     var freeUnlockAvailable: Bool {
         guard let lastUnlockTime = user?.lastUnlockTime,
@@ -64,13 +74,15 @@ public class SettingsViewModel: FailableViewModel, ObservableObject {
         authentication: Authentication,
         pushNotifications: PushNotificationsProtocol = PushNotifications(),
         coordinator: NavigationCoordinator<AuthenticationViewState>,
-        analytics: Analytics
+        analytics: Analytics,
+        appVersion: AppVersion = AppVersion()
     ) {
         dataSharingToggle = isDataSharingEnabled
         self.authentication = authentication
         self.pushNotifications = pushNotifications
         self.coordinator = coordinator
         self.analytics = analytics
+        self.appVersion = appVersion
     }
 
     func handleDataSharingChange(_ isEnabled: Bool) {

@@ -6,7 +6,7 @@ struct FreeUnlockBannerView: View {
     let isAvailable: Bool
     let nextUnlockDate: Date?
     @State private var isExpanded = false
-    
+
     var body: some View {
         VStack(spacing: Size.sm.rawValue) {
             if isAvailable {
@@ -16,7 +16,7 @@ struct FreeUnlockBannerView: View {
                     label: {
                         HStack {
                             Image(systemName: "gift.fill")
-                            
+
                             Text("Free Unlock Available!")
                                 .font(.plusJakartaSans(.headline))
                         }
@@ -28,18 +28,12 @@ struct FreeUnlockBannerView: View {
             } else if let nextUnlockDate = nextUnlockDate {
                 HStack {
                     Image(systemName: "clock.fill")
-                        .foregroundStyle(Color.secondary)
-                    
-                    Text("Next Free Unlock Available")
-                        .font(.plusJakartaSans(.subheadline))
-                        .foregroundStyle(Color.secondary)
-                    
+                    Text("Next Free Unlock: ")
                     Spacer()
-                    
                     Text(nextUnlockDate, style: .date)
-                        .font(.plusJakartaSans(.subheadline))
-                        .foregroundStyle(Color.secondary)
                 }
+                .font(.plusJakartaSans(.subheadline, weight: .medium))
+                .foregroundStyle(Color.secondary)
             }
         }
         .padding()
@@ -52,7 +46,7 @@ struct FreeUnlockBannerView: View {
             transaction.animation = .snappy
         }
     }
-    
+
     private func bulletPoint(_ text: String) -> some View {
         HStack(alignment: .top, spacing: Size.xs.rawValue) {
             Text("•")
@@ -60,19 +54,19 @@ struct FreeUnlockBannerView: View {
             Text(text)
         }
     }
-    
+
     private func unlockDetailsView() -> some View {
         VStack(alignment: .leading, spacing: Size.sm.rawValue) {
             Text("Free Unlock Details")
                 .font(.plusJakartaSans(.subheadline, weight: .medium))
-            
+
             Text("You can unlock any idea for free once per week. This gives you access to the full analysis, including financial projections, market research, and technical details.")
                 .font(.plusJakartaSans(.subheadline))
-            
+
             Text("To use your free unlock:")
                 .font(.plusJakartaSans(.subheadline, weight: .medium))
                 .padding(.top, Size.xs.rawValue)
-            
+
             VStack(alignment: .leading, spacing: Size.xs.rawValue) {
                 bulletPoint("Browse ideas in the feed")
                 bulletPoint("Tap on an idea you're interested in")
@@ -94,7 +88,7 @@ struct FreeUnlockBannerView: View {
         )
         .padding()
     }
-    
+
     #Preview("Not Available") {
         FreeUnlockBannerView(
             isAvailable: false,
@@ -102,4 +96,4 @@ struct FreeUnlockBannerView: View {
         )
         .padding()
     }
-#endif 
+#endif

@@ -20,16 +20,18 @@ public struct SettingsView: View {
     public var body: some View {
         NavigationView {
             Form {
-                Section {
-                    FreeUnlockBannerView(
-                        isAvailable: viewModel.freeUnlockAvailable,
-                        nextUnlockDate: viewModel.nextUnlockDate
-                    )
+                if !viewModel.isLoading && viewModel.user?.subscription == .free {
+                    Section {
+                        FreeUnlockBannerView(
+                            isAvailable: viewModel.freeUnlockAvailable,
+                            nextUnlockDate: viewModel.nextUnlockDate
+                        )
+                    }
+                    .frame(maxWidth: .infinity)
+                    .listRowInsets(EdgeInsets())
+                    .listRowBackground(Color.clear)
+                    .padding(.top, .lg)
                 }
-                .frame(maxWidth: .infinity)
-                .listRowInsets(EdgeInsets())
-                .listRowBackground(Color.clear)
-                .padding(.top, .lg)
 
                 NavigationLink(
                     destination: ProfileView(
@@ -62,8 +64,8 @@ public struct SettingsView: View {
                 }
 
                 Section {
-                    Link("Terms of Service", destination: URL(string: "https://example.com/terms")!)
-                    Link("Privacy Policy", destination: URL(string: "https://example.com/privacy")!)
+                    Link("Terms of Service", destination: viewModel.legalURLs.termsOfService)
+                    Link("Privacy Policy", destination: viewModel.legalURLs.privacyPolicy)
                 }
 
                 Section {
@@ -97,6 +99,16 @@ public struct SettingsView: View {
                         )
                     }
                 }
+
+                Section {
+                    Text(viewModel.versionString)
+                        .font(.plusJakartaSans(.caption))
+                        .foregroundStyle(Color.secondary)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                }
+                .listRowBackground(Color.clear)
+                .listRowInsets(EdgeInsets())
+                .padding(.bottom, .lg)
             }
             .navigationTitle("Settings")
         }
