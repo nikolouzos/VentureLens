@@ -1,23 +1,15 @@
 {
   "images" : [
     {
-      "filename" : "VentureLens.png",
-      "idiom" : "universal",
-      "scale" : "1x"
-    },
-    {
-      "filename" : "VentureLens 1.png",
-      "idiom" : "universal",
-      "scale" : "2x"
-    },
-    {
-      "filename" : "VentureLens 2.png",
-      "idiom" : "universal",
-      "scale" : "3x"
+      "filename" : "venturelens.png",
+      "idiom" : "universal"
     }
   ],
   "info" : {
     "author" : "xcode",
     "version" : 1
+  },
+  "properties" : {
+    "template-rendering-intent" : "template"
   }
 }
