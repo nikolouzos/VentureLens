@@ -227,18 +227,35 @@ struct IdeaDetailView: View {
 
     private func noDataView(for section: String) -> some View {
         VStack(spacingSize: .md) {
-            Image(systemName: "exclamationmark.triangle")
-                .font(.plusJakartaSans(.largeTitle))
-                .foregroundStyle(Color.orange)
+            if !viewModel.isPremiumUser && !viewModel.hasUnlockedIdea {
+                Image(systemName: "lock.fill")
+                    .font(.plusJakartaSans(.largeTitle))
+                    .foregroundStyle(Color.themePrimary)
+            } else {
+                Image(systemName: "exclamationmark.triangle")
+                    .font(.plusJakartaSans(.largeTitle))
+                    .foregroundStyle(Color.orange)
+            }
 
             Text("No \(section) data available")
                 .font(.plusJakartaSans(.headline))
                 .multilineTextAlignment(.center)
 
-            Text("No idea information found for the \(section) section.")
-                .font(.plusJakartaSans(.subheadline))
-                .foregroundStyle(Color.secondary)
-                .multilineTextAlignment(.center)
+            if !viewModel.isPremiumUser && !viewModel.hasUnlockedIdea {
+                Text("This content is locked. Unlock the idea to view the full analysis.")
+                    .font(.plusJakartaSans(.subheadline))
+                    .foregroundStyle(Color.secondary)
+                    .multilineTextAlignment(.center)
+
+                Text("Have you unlocked this idea?")
+                    .font(.plusJakartaSans(.callout, weight: .medium))
+                    .foregroundStyle(Color.tint)
+            } else {
+                Text("No idea information found for the \(section) section.")
+                    .font(.plusJakartaSans(.subheadline))
+                    .foregroundStyle(Color.secondary)
+                    .multilineTextAlignment(.center)
+            }
         }
         .frame(maxWidth: .infinity)
         .padding(.all, .lg)
