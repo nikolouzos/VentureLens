@@ -7,7 +7,7 @@ import SwiftUI
 struct IdeaCardMetricsView: View {
     let report: Report
     let createdAt: Date
-    
+
     var body: some View {
         VStack(alignment: .leading, spacingSize: .md) {
             HStack {
@@ -30,10 +30,9 @@ struct IdeaCardMetricsView: View {
                 .foregroundStyle(Color.themePrimary)
             }
         }
-        .font(.caption)
-        .fontWeight(.medium)
+        .font(.plusJakartaSans(.caption, weight: .medium))
     }
-    
+
     private func formatCurrency(_ value: Int?) -> String {
         guard let value else {
             return "-"
@@ -47,8 +46,8 @@ struct IdeaCardMetricsView: View {
         report: Report(
             competitors: nil,
             financials: Financials(
-                totalYear1Costs: 500000,
-                totalYear1Revenue: 1200000,
+                totalYear1Costs: 500_000,
+                totalYear1Revenue: 1_200_000,
                 startupCosts: nil,
                 projections: nil,
                 fundingAdvice: nil,
@@ -60,4 +59,4 @@ struct IdeaCardMetricsView: View {
         createdAt: Date()
     )
     .padding()
-} 
+}

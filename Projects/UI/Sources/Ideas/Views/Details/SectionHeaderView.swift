@@ -4,11 +4,10 @@ import SwiftUI
 /// A reusable view for section headers
 struct SectionHeaderView: View {
     let title: String
-    
+
     var body: some View {
         Text(title)
-            .font(.headline)
-            .fontWeight(.bold)
+            .font(.plusJakartaSans(.headline, weight: .bold))
             .padding(.bottom, .xs)
             .frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -21,4 +20,4 @@ struct SectionHeaderView: View {
         SectionHeaderView(title: "Competitor Analysis")
     }
     .padding()
-} 
+}

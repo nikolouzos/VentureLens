@@ -1,10 +1,11 @@
+import AppResources
 import Core
 import Networking
 import SwiftUI
 
 struct IdeaProse: View {
     let idea: Idea
-    
+
     private var gradientStops: [Color] {
         guard idea.imageUrl != nil else {
             return []
@@ -13,24 +14,23 @@ struct IdeaProse: View {
             Color.black,
             Color.black.opacity(0.9),
             Color.black.opacity(0.6),
-            Color.clear
+            Color.clear,
         ]
     }
-    
+
     private var hasImage: Bool {
         idea.imageUrl != nil
     }
-    
+
     var body: some View {
         ZStack(alignment: .bottom) {
             imageCover()
-            
+
             VStack {
                 CategoryBadge(category: idea.category)
-                
+
                 Text(idea.title)
-                    .font(.title2)
-                    .fontWeight(.semibold)
+                    .font(.plusJakartaSans(.title2, weight: .bold))
                     .multilineTextAlignment(.center)
                     .lineLimit(2)
                     .foregroundStyle(
@@ -48,7 +48,7 @@ struct IdeaProse: View {
             )
         }
     }
-    
+
     @ViewBuilder
     private func imageCover() -> some View {
         if let imageUrl = idea.imageUrl {
@@ -69,18 +69,17 @@ struct IdeaProse: View {
                     }
                     .tint(.white)
             }
-            .aspectRatio(4/3, contentMode: .fit)
+            .aspectRatio(4 / 3, contentMode: .fit)
         }
     }
 }
 
-fileprivate struct CategoryBadge: View {
+private struct CategoryBadge: View {
     let category: String
 
     var body: some View {
         Text(category)
-            .font(.caption2)
-            .fontWeight(.semibold)
+            .font(.plusJakartaSans(.caption2, weight: .semibold))
             .padding(.horizontal, .sm)
             .padding(.vertical, .xs)
             .background(Color.themeSecondary)
@@ -89,7 +88,7 @@ fileprivate struct CategoryBadge: View {
 }
 
 #if DEBUG
-#Preview {
-    IdeaProse(idea: .mock)
-}
+    #Preview {
+        IdeaProse(idea: .mock)
+    }
 #endif

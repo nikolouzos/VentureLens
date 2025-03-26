@@ -5,57 +5,54 @@ import SwiftUI
 /// A view that displays ethics and risk information for an idea
 struct EthicsView: View {
     let ethics: Ethics?
-    
+
     var body: some View {
         VStack(alignment: .leading, spacingSize: .md) {
             SectionHeaderView(title: "Ethics & Risk Assessment")
-            
+
             if let ethics = ethics {
                 // Risks
                 if let risks = ethics.risks, !risks.isEmpty {
                     risksView(risks)
                 }
-                
+
                 // Mitigations
                 if let mitigations = ethics.mitigations, !mitigations.isEmpty {
                     mitigationsView(mitigations)
                 }
             } else {
                 Text("No ethics information available")
-                    .font(.body)
                     .foregroundStyle(Color.secondary)
             }
         }
         .padding(.vertical, .md)
     }
-    
+
     private func risksView(_ risks: [Risk]) -> some View {
         VStack(alignment: .leading, spacingSize: .sm) {
             Text("Potential Risks")
-                .font(.subheadline)
-                .fontWeight(.medium)
-            
+                .font(.plusJakartaSans(.subheadline, weight: .medium))
+
             ForEach(risks.indices, id: \.self) { index in
                 let risk = risks[index]
                 riskCard(risk)
             }
         }
     }
-    
+
     private func riskCard(_ risk: Risk) -> some View {
         VStack(alignment: .leading, spacingSize: .sm) {
             HStack {
                 if let type = risk.type {
                     Text(type)
-                        .font(.callout)
-                        .fontWeight(.semibold)
+                        .font(.plusJakartaSans(.callout, weight: .semibold))
                 }
-                
+
                 Spacer()
-                
+
                 if let severity = risk.severity {
                     Text(severity)
-                        .font(.caption)
+                        .font(.plusJakartaSans(.caption))
                         .padding(.horizontal, .sm)
                         .padding(.vertical, .xs)
                         .background(
@@ -65,10 +62,9 @@ struct EthicsView: View {
                         .foregroundStyle(severityColor(severity))
                 }
             }
-            
+
             if let description = risk.description {
                 Text(description)
-                    .font(.body)
                     .foregroundStyle(Color.secondary)
             }
         }
@@ -79,21 +75,20 @@ struct EthicsView: View {
         )
         .padding(.bottom, .sm)
     }
-    
+
     private func mitigationsView(_ mitigations: [String]) -> some View {
         VStack(alignment: .leading, spacingSize: .sm) {
             Text("Risk Mitigation Strategies")
-                .font(.subheadline)
-                .fontWeight(.medium)
-            
+                .font(.plusJakartaSans(.subheadline, weight: .medium))
+
             ForEach(mitigations, id: \.self) { mitigation in
-                HStack(alignment: .top, spacingSize: .sm) {
+                HStack(alignment: .center, spacingSize: .sm) {
                     Image(systemName: "shield.checkered")
                         .foregroundStyle(Color.green)
-                    
+
                     Text(mitigation)
-                        .font(.callout)
                 }
+                .font(.plusJakartaSans(.callout))
                 .padding(.vertical, .xs)
             }
         }
@@ -104,10 +99,10 @@ struct EthicsView: View {
                 .fill(Color.secondary.opacity(0.1))
         )
     }
-    
+
     private func severityColor(_ severity: String) -> Color {
         let lowercaseSeverity = severity.lowercased()
-        
+
         if lowercaseSeverity.contains("high") {
             return .red
         } else if lowercaseSeverity.contains("medium") {
@@ -135,14 +130,14 @@ struct EthicsView: View {
                 type: "Security",
                 description: "Payment processing systems may be vulnerable to attacks",
                 severity: "High"
-            )
+            ),
         ],
         mitigations: [
             "Implement end-to-end encryption for all user data",
             "Regular third-party security audits",
             "Diverse training data for AI algorithms",
-            "Clear opt-out options for data collection"
+            "Clear opt-out options for data collection",
         ]
     ))
     .padding()
-} 
+}

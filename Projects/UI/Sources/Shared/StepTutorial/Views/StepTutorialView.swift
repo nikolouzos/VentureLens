@@ -1,3 +1,4 @@
+import AppResources
 import Core
 import SwiftUI
 
@@ -43,8 +44,7 @@ public struct StepTutorialView: View {
                                         .scaledToFit()
 
                                     Text(step.description)
-                                        .fontWeight(.semibold)
-                                        .font(.title2)
+                                        .font(.plusJakartaSans(.headline, weight: .semibold))
                                         .multilineTextAlignment(.center)
                                 }
                                 .padding(.all, .xl)

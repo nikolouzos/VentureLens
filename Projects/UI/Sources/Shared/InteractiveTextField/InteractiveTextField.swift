@@ -17,7 +17,7 @@ struct InteractiveTextField: UIViewRepresentable {
         textField.delegate = context.coordinator
         textField.keyboardType = keyboardType
         textField.textContentType = textContentType
-        textField.font = .preferredFont(for: font, weight: fontWeight)
+        textField.font = .plusJakartaSans(font, weight: fontWeight)
         textField.textAlignment = textAlignment
         textField.isEnabled = isEnabled
 

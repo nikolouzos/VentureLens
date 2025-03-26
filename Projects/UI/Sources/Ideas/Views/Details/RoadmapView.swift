@@ -5,33 +5,32 @@ import SwiftUI
 /// A view that displays roadmap information for an idea
 struct RoadmapView: View {
     let roadmap: [RoadmapPhase]?
-    
+
     private var mvpPhase: RoadmapPhase? {
         roadmap?.first(where: { ($0.phase ?? "").lowercased().contains("mvp") })
     }
-    
+
     private var otherPhases: [RoadmapPhase]? {
         guard let roadmap = roadmap else { return nil }
         return roadmap.filter { !($0.phase ?? "").lowercased().contains("mvp") }
     }
-    
+
     var body: some View {
         VStack(alignment: .leading, spacingSize: .md) {
             SectionHeaderView(title: "Product Roadmap")
-            
+
             if let roadmap = roadmap, !roadmap.isEmpty {
                 // MVP Phase (highlighted)
                 if let mvp = mvpPhase {
                     MVPSectionView(mvpPhase: mvp)
                         .padding(.bottom, .md)
                 }
-                
+
                 // Other phases
                 if let others = otherPhases, !others.isEmpty {
                     Text("Development Phases")
-                        .font(.subheadline)
-                        .fontWeight(.medium)
-                    
+                        .font(.plusJakartaSans(.subheadline, weight: .medium))
+
                     ForEach(others.indices, id: \.self) { index in
                         let phase = others[index]
                         phaseCard(phase, index: index, total: others.count)
@@ -39,27 +38,25 @@ struct RoadmapView: View {
                 }
             } else {
                 Text("No roadmap information available")
-                    .font(.body)
                     .foregroundStyle(Color.secondary)
             }
         }
         .padding(.vertical, .md)
     }
-    
-    private func phaseCard(_ phase: RoadmapPhase, index: Int, total: Int) -> some View {
+
+    private func phaseCard(_ phase: RoadmapPhase, index _: Int, total _: Int) -> some View {
         VStack(alignment: .leading, spacingSize: .sm) {
             HStack {
                 if let phaseName = phase.phase {
                     Text(phaseName)
-                        .font(.title3)
-                        .fontWeight(.semibold)
+                        .font(.plusJakartaSans(.title3, weight: .semibold))
                 }
-                
+
                 Spacer()
-                
+
                 if let timeline = phase.timelineMonths {
                     Text("\(timeline) months")
-                        .font(.callout)
+                        .font(.plusJakartaSans(.callout))
                         .foregroundStyle(Color.secondary)
                         .padding(.horizontal, .sm)
                         .padding(.vertical, .xs)
@@ -69,22 +66,22 @@ struct RoadmapView: View {
                         )
                 }
             }
-            
+
             if let milestones = phase.milestones, !milestones.isEmpty {
                 VStack(alignment: .leading, spacingSize: .xs) {
                     Text("Key Milestones:")
-                        .font(.caption)
+                        .font(.plusJakartaSans(.caption))
                         .foregroundStyle(Color.secondary)
-                    
+
                     ForEach(milestones, id: \.self) { milestone in
                         HStack(alignment: .top, spacingSize: .sm) {
                             Image(systemName: "circle.fill")
                                 .font(.system(size: 6))
                                 .foregroundStyle(Color.secondary)
                                 .padding(.top, 6)
-                            
+
                             Text(milestone)
-                                .font(.subheadline)
+                                .font(.plusJakartaSans(.subheadline))
                         }
                     }
                 }
@@ -108,7 +105,7 @@ struct RoadmapView: View {
                 "User authentication and profile creation",
                 "Basic habit tracking functionality",
                 "Simple analytics dashboard",
-                "Notification system for reminders"
+                "Notification system for reminders",
             ]
         ),
         RoadmapPhase(
@@ -117,7 +114,7 @@ struct RoadmapView: View {
             milestones: [
                 "Advanced analytics",
                 "Social sharing features",
-                "Integration with health apps"
+                "Integration with health apps",
             ]
         ),
         RoadmapPhase(
@@ -126,9 +123,9 @@ struct RoadmapView: View {
             milestones: [
                 "Premium subscription tier",
                 "Cross-platform support",
-                "Marketing campaign launch"
+                "Marketing campaign launch",
             ]
-        )
+        ),
     ])
     .padding()
-} 
+}

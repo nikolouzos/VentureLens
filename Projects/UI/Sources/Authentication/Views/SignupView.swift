@@ -1,16 +1,16 @@
-import SwiftUI
 import Core
 import Networking
+import SwiftUI
 
 public struct SignupView: View {
     @StateObject private var viewModel: SignupViewModel
     @FocusState private var isNameFieldFocused: Bool
     @State private var keyboardIsHidden = true
-    
+
     public init(viewModel: SignupViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
     }
-    
+
     public var body: some View {
         NavigationView {
             VStack(spacingSize: .lg) {
@@ -23,11 +23,11 @@ public struct SignupView: View {
                 ) {
                     headerView
                 }
-                
+
                 Spacer()
-                
+
                 nameInputSection
-                
+
                 continueButton
                     .padding(.vertical, .md)
             }
@@ -54,31 +54,29 @@ public struct SignupView: View {
             }
         }
     }
-    
+
     private var headerView: some View {
         VStack(spacingSize: .md) {
             Text("Welcome to")
                 .font(.title)
-            
+
             Text("VentureLens")
-                .font(.largeTitle)
-                .fontWeight(.bold)
+                .font(.plusJakartaSans(.largeTitle, weight: .bold))
                 .foregroundStyle(Color.tint)
-            
+
             Text("Let's get started by setting up your profile")
-                .font(.body)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(Color.secondary)
                 .padding(.top, .sm)
         }
     }
-    
+
     private var nameInputSection: some View {
         VStack(alignment: .leading, spacingSize: .sm) {
             Text("What's your name?")
-                .font(.headline)
+                .font(.plusJakartaSans(.headline))
                 .foregroundStyle(Color.primary)
-            
+
             GroupBox {
                 TextField("Enter your name", text: $viewModel.name)
                     .autocapitalization(.words)
@@ -92,7 +90,7 @@ public struct SignupView: View {
             .padding(.bottom, .sm)
         }
     }
-    
+
     private var continueButton: some View {
         Button {
             Task {
@@ -106,7 +104,7 @@ public struct SignupView: View {
                         .tint(.white)
                 } else {
                     Text("Continue")
-                        .fontWeight(.semibold)
+                        .font(.plusJakartaSans(.body, weight: .semibold))
                 }
             }
             .frame(maxWidth: .infinity)
@@ -130,4 +128,4 @@ public struct SignupView: View {
             )
         )
     }
-#endif 
+#endif

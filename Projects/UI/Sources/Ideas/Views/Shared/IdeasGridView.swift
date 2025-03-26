@@ -55,25 +55,25 @@ struct IdeasGridView: View {
             }
         }
     }
-    
+
     private var emptyStateView: some View {
         VStack(spacing: 16) {
             Image(systemName: "bookmark.slash")
                 .font(.system(size: 48))
                 .foregroundColor(.secondary)
-            
+
             Text(emptyStateTitle)
-                .font(.headline)
-            
+                .font(.plusJakartaSans(.headline))
+
             Text(emptyStateMessage)
-                .font(.subheadline)
+                .font(.plusJakartaSans(.subheadline))
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 60)
     }
-    
+
     private var loadMoreButton: some View {
         Button("Load More") {
             onLoadMore()

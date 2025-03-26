@@ -1,20 +1,21 @@
+import AppResources
 import SwiftUI
 
 public struct IdeaFiltersView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var viewModel: IdeaFiltersViewModel
-    
+
     public init(viewModel: IdeaFiltersViewModel) {
         _viewModel = .init(wrappedValue: viewModel)
     }
-    
+
     public var body: some View {
         NavigationView {
             Form {
                 Section("Search") {
                     TextField("Search ideas...", text: $viewModel.query)
                 }
-                
+
                 Section("Category") {
                     Picker("Category", selection: $viewModel.category) {
                         Text("All Categories")
@@ -25,7 +26,7 @@ public struct IdeaFiltersView: View {
                         }
                     }
                 }
-                
+
                 Section("Date Range") {
                     DatePicker(
                         "From",
@@ -33,7 +34,7 @@ public struct IdeaFiltersView: View {
                         in: viewModel.fromDateRange,
                         displayedComponents: [.date]
                     )
-                    
+
                     DatePicker(
                         "To",
                         selection: $viewModel.createdBeforeDate,
@@ -41,7 +42,7 @@ public struct IdeaFiltersView: View {
                         displayedComponents: [.date]
                     )
                 }
-                
+
                 Section {
                     Button("Reset Filters", role: .destructive) {
                         viewModel.resetFilters()
@@ -56,7 +57,7 @@ public struct IdeaFiltersView: View {
                         dismiss()
                     }
                 }
-                
+
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Apply") {
                         viewModel.applyFilters()

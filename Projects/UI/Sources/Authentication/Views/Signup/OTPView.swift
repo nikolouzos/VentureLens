@@ -15,9 +15,9 @@ public struct OTPView: View {
             (
                 Text("Please enter the One-Time Password you received on ") +
                     Text(viewModel.signupEmail)
-                    .fontWeight(.medium)
+                    .font(.plusJakartaSans(.body, weight: .medium))
             )
-            .font(.headline)
+            .font(.plusJakartaSans(.body))
             .padding(.all, .lg)
             .multilineTextAlignment(.center)
 
@@ -54,7 +54,7 @@ public struct OTPView: View {
                         .tint(.white)
                 } else {
                     Text(viewModel.resendCooldown > 0 ? "Resend code in \(viewModel.resendCooldown)s" : "Resend code")
-                        .fontWeight(.semibold)
+                        .font(.plusJakartaSans(.body, weight: .semibold))
                 }
             }
             .padding(.horizontal, .lg)

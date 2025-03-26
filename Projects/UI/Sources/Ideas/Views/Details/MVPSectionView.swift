@@ -1,3 +1,4 @@
+import AppResources
 import Core
 import Networking
 import SwiftUI
@@ -5,20 +6,19 @@ import SwiftUI
 /// A view that displays the MVP phase information for an idea
 struct MVPSectionView: View {
     let mvpPhase: RoadmapPhase
-    
+
     var body: some View {
         VStack(alignment: .leading, spacingSize: .md) {
             HStack {
                 Text("MVP Development")
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .foregroundStyle(Color.themePrimary)
-                
+                    .font(.plusJakartaSans(.title2, weight: .bold))
+                    .foregroundStyle(Color.tint)
+
                 Spacer()
-                
+
                 if let timeline = mvpPhase.timelineMonths {
                     Text("\(timeline) months")
-                        .font(.callout)
+                        .font(.plusJakartaSans(.callout))
                         .foregroundStyle(Color.white)
                         .padding(.horizontal, .sm)
                         .padding(.vertical, .xs)
@@ -28,21 +28,21 @@ struct MVPSectionView: View {
                         )
                 }
             }
-            
+
             if let milestones = mvpPhase.milestones, !milestones.isEmpty {
                 VStack(alignment: .leading, spacingSize: .sm) {
                     Text("Key MVP Milestones:")
-                        .font(.headline)
+                        .font(.plusJakartaSans(.headline))
                         .foregroundStyle(Color.secondary)
-                    
+
                     ForEach(milestones, id: \.self) { milestone in
                         HStack(alignment: .top, spacingSize: .sm) {
                             Image(systemName: "checkmark.circle.fill")
                                 .foregroundStyle(Color.themeSecondary)
                                 .font(.system(size: 18))
-                            
+
                             Text(milestone)
-                                .font(.subheadline)
+                                .font(.plusJakartaSans(.subheadline))
                         }
                     }
                 }
@@ -69,9 +69,9 @@ struct MVPSectionView: View {
                 "User authentication and profile creation",
                 "Basic habit tracking functionality",
                 "Simple analytics dashboard",
-                "Notification system for reminders"
+                "Notification system for reminders",
             ]
         )
     )
     .padding()
-} 
+}

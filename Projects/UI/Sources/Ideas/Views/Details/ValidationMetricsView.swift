@@ -1,16 +1,16 @@
+import Charts
 import Core
 import Networking
 import SwiftUI
-import Charts
 
 /// A view that displays validation metrics information for an idea
 struct ValidationMetricsView: View {
     let metrics: ValidationMetrics?
-    
+
     var body: some View {
         VStack(alignment: .leading, spacingSize: .md) {
             SectionHeaderView(title: "Validation Metrics")
-            
+
             if let metrics = metrics {
                 // Summary metrics
                 HStack(spacingSize: .md) {
@@ -19,10 +19,10 @@ struct ValidationMetricsView: View {
                             title: "Pre-launch Signups",
                             value: "\(signups)",
                             systemImage: "person.3.fill",
-                            color: Color.themePrimary
+                            color: Color.tint
                         )
                     }
-                    
+
                     if let conversionRate = metrics.pilotConversionRate {
                         metricCard(
                             title: "Pilot Conversion",
@@ -32,32 +32,31 @@ struct ValidationMetricsView: View {
                         )
                     }
                 }
-                
+
                 // Early adopter segments
                 if let segments = metrics.earlyAdopterSegments, !segments.isEmpty {
                     earlyAdopterSegmentsView(segments)
                 }
             } else {
                 Text("No validation metrics available")
-                    .font(.body)
                     .foregroundStyle(Color.secondary)
             }
         }
         .padding(.vertical, .md)
     }
-    
+
     private func metricCard(title: String, value: String, systemImage: String, color: Color) -> some View {
         VStack(alignment: .leading, spacingSize: .xs) {
             Text(title)
-                .font(.caption)
+                .font(.plusJakartaSans(.caption))
                 .foregroundStyle(Color.secondary)
-            
+
             HStack(spacingSize: .xs) {
                 Image(systemName: systemImage)
                     .foregroundStyle(color)
-                
+
                 Text(value)
-                    .font(.headline)
+                    .font(.plusJakartaSans(.headline))
                     .foregroundStyle(color)
             }
         }
@@ -68,13 +67,12 @@ struct ValidationMetricsView: View {
                 .fill(Color.secondary.opacity(0.1))
         )
     }
-    
+
     private func earlyAdopterSegmentsView(_ segments: [EarlyAdopterSegment]) -> some View {
         VStack(alignment: .leading, spacingSize: .sm) {
             Text("Early Adopter Segments")
-                .font(.subheadline)
-                .fontWeight(.medium)
-            
+                .font(.plusJakartaSans(.subheadline, weight: .medium))
+
             // Chart for early adopter segments
             Chart {
                 ForEach(segments.indices, id: \.self) { index in
@@ -89,15 +87,14 @@ struct ValidationMetricsView: View {
                         .foregroundStyle(by: .value("Group", group))
                         .annotation(position: .overlay) {
                             Text("\(Int(percentage))%")
-                                .font(.caption)
-                                .fontWeight(.bold)
+                                .font(.plusJakartaSans(.caption, weight: .bold))
                                 .foregroundStyle(Color.white)
                         }
                     }
                 }
             }
             .frame(height: 200)
-            
+
             // Legend
             VStack(alignment: .leading, spacingSize: .xs) {
                 ForEach(segments.indices, id: \.self) { index in
@@ -107,9 +104,9 @@ struct ValidationMetricsView: View {
                             Circle()
                                 .fill(segmentColor(index))
                                 .frame(width: 12, height: 12)
-                            
+
                             Text("\(group): \(percentage)")
-                                .font(.callout)
+                                .font(.plusJakartaSans(.callout))
                         }
                     }
                 }
@@ -122,14 +119,14 @@ struct ValidationMetricsView: View {
                 .fill(Color.secondary.opacity(0.1))
         )
     }
-    
+
     private func segmentColor(_ index: Int) -> Color {
         let colors: [Color] = [
-            .blue, .green, .orange, .purple, .pink, .yellow, .red
+            .blue, .green, .orange, .purple, .pink, .yellow, .red,
         ]
         return colors[index % colors.count]
     }
-    
+
     private func parsePercentage(_ percentageStr: String) -> Double {
         let cleaned = percentageStr.replacingOccurrences(of: "%", with: "")
         return Double(cleaned) ?? 0.0
@@ -144,8 +141,8 @@ struct ValidationMetricsView: View {
             EarlyAdopterSegment(group: "Tech Enthusiasts", percentage: "45%"),
             EarlyAdopterSegment(group: "Small Business Owners", percentage: "30%"),
             EarlyAdopterSegment(group: "Students", percentage: "15%"),
-            EarlyAdopterSegment(group: "Others", percentage: "10%")
+            EarlyAdopterSegment(group: "Others", percentage: "10%"),
         ]
     ))
     .padding()
-} 
+}

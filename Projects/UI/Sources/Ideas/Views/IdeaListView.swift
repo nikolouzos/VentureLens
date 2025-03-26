@@ -46,6 +46,14 @@ public struct IdeaListView: View {
                     )
                 }
             }
+            .refreshable {
+                switch feedState {
+                case .live:
+                    await viewModel.liveFeedViewModel.fetchIdeas()
+                case .bookmarks:
+                    await viewModel.bookmarksViewModel.fetchBookmarkedIdeas()
+                }
+            }
             .toolbar {
                 toolbarItems
             }
@@ -73,16 +81,7 @@ public struct IdeaListView: View {
                 }
             }
         }) { idea in
-            NavigationStack {
-                IdeaDetailView(
-                    viewModel: IdeaDetailsViewModel(
-                        idea: idea
-                    )
-                )
-                .navigationTransition(
-                    .zoom(sourceID: idea.id, in: ideaNamespace)
-                )
-            }
+            ideaDetails(for: idea)
         }
         .alert(isPresented: .init(
             get: { viewModel.error != nil },
@@ -103,19 +102,15 @@ public struct IdeaListView: View {
                     Text(value.rawValue)
                         .tag(value)
                 }
-            } label: {
-                Text(feedState.rawValue)
-            }
+            } label: {}
         } label: {
             HStack {
                 Text(feedState.rawValue)
-                    .font(.largeTitle)
+                    .font(.plusJakartaSans(.largeTitle, weight: .bold))
 
                 Image(systemName: "chevron.down")
-                    .font(.title3)
                     .offset(y: 2)
             }
-            .fontWeight(.bold)
             .foregroundStyle(Color.systemLabel)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -128,26 +123,35 @@ public struct IdeaListView: View {
             AppResourcesAsset.Assets.logo.swiftUIImage
                 .resizable()
                 .frame(widthSize: .xl, heightSize: .xl)
+                .foregroundStyle(Color.tint)
+        }
+    }
+
+    private func ideaDetails(for idea: Idea) -> some View {
+        NavigationStack {
+            IdeaDetailView(
+                viewModel: IdeaDetailViewModel(
+                    idea: idea,
+                    apiClient: viewModel.apiClient,
+                    authentication: viewModel.authentication,
+                    analytics: viewModel.analytics
+                )
+            )
+            .navigationTransition(
+                .zoom(sourceID: idea.id, in: ideaNamespace)
+            )
         }
     }
 }
 
 #if DEBUG
-    import Networking
+    import Dependencies
     import SwiftData
 
     #Preview {
         IdeaListView(
             viewModel: IdeaListViewModel(
-                apiClient: MockAPIClient(),
-                authentication: MockAuthentication(
-                    accessToken: "mock"
-                ),
-                bookmarkDataSource: DataSource<Bookmark>(
-                    configurations: ModelConfiguration(
-                        isStoredInMemoryOnly: true
-                    )
-                )
+                dependencies: Dependencies()
             )
         )
         .tint(AppResourcesAsset.Colors.accentColor.swiftUIColor)

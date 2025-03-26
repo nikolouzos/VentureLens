@@ -22,11 +22,11 @@ public struct AuthView: View {
                 ) {
                     (
                         Text("Welcome to ") +
-                            Text("VentureLens")
-                            .fontWeight(.bold)
-                            .foregroundStyle(Color.tint)
+                            (Text("VentureLens")
+
+                                .foregroundStyle(Color.tint))
                     )
-                    .font(.largeTitle)
+                    .font(.plusJakartaSans(.title, weight: .bold))
                     .multilineTextAlignment(.center)
                 }
 
@@ -54,8 +54,7 @@ public struct AuthView: View {
                         }
 
                     Text("or")
-                        .font(.caption)
-                        .fontWeight(.medium)
+                        .font(.plusJakartaSans(.caption, weight: .medium))
                         .foregroundStyle(Color.gray)
 
                     SignInWithAppleButton(
@@ -94,20 +93,24 @@ public struct AuthView: View {
         ) {
             StepTutorialView(steps: [
                 .init(
-                    image: Image(systemName: "eraser.fill"),
-                    description: "Start your day with unique AI-curated business opportunities"
+                    image: AppResourcesAsset.Assets.onboardingList.swiftUIImage,
+                    description: "Every morning, we serve you with fresh, curated business opportunities. Our smart algorithms do the heavy lifting for you."
                 ),
                 .init(
-                    image: Image(systemName: "text.document"),
-                    description: "Explore in-depth opportunity reports for every idea."
+                    image: AppResourcesAsset.Assets.onboardingOverview.swiftUIImage,
+                    description: "Tap into any idea to explore a comprehensive report. Each report is packed with insights to help you make informed decisions."
                 ),
                 .init(
-                    image: Image(systemName: "text.below.photo"),
-                    description: "Validate ideas with financial snapshots and competitor benchmarks"
+                    image: AppResourcesAsset.Assets.onboardingFinancial.swiftUIImage,
+                    description: "Not sure if an idea is worth pursuing? VentureLens all the data & analysis to help you validate opportunities quickly and confidently."
                 ),
                 .init(
-                    image: Image(systemName: "line.3.horizontal.decrease.circle.fill"),
-                    description: "Tailor VentureLens to your interests. Set investment tiers, specific industries and more."
+                    image: AppResourcesAsset.Assets.onboardingFilters.swiftUIImage,
+                    description: "Make VentureLens truly yours! Use the filtering options to customize your feed and find opportunities that align with your goals."
+                ),
+                .init(
+                    image: AppResourcesAsset.Assets.onboardingRoadmap.swiftUIImage,
+                    description: "Use our roadmap feature to break it down into actionable steps - get MVP ready in an instant!"
                 ),
             ])
         }
@@ -126,5 +129,6 @@ public struct AuthView: View {
             )
         )
         .tint(AppResourcesAsset.Colors.accentColor.swiftUIColor)
+        .environment(\.font, .plusJakartaSans(.body))
     }
 #endif

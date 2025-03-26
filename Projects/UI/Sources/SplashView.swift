@@ -16,9 +16,7 @@ public struct SplashView: View {
     public var body: some View {
         VStack(alignment: .center, spacingSize: .xl) {
             Text("VentureLens")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-                .foregroundStyle(Color.tint)
+                .font(.plusJakartaSans(.largeTitle, weight: .bold))
                 .multilineTextAlignment(.center)
 
             AppearTransitionView(
