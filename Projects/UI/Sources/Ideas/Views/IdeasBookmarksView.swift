@@ -28,29 +28,22 @@ struct IdeasBookmarksView: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            if viewModel.isLoading {
-                ProgressView()
-                    .padding()
-            }
-
-            IdeasGridView(
-                ideas: viewModel.bookmarkedIdeas,
-                isLoading: viewModel.isLoading,
-                canLoadMore: viewModel.canLoadMore,
-                namespace: namespace,
-                gridLayout: gridLayout,
-                onIdeaTap: onIdeaTap,
-                onLoadMore: {
-                    Task {
-                        await viewModel.loadMoreBookmarkedIdeas()
-                    }
-                },
-                emptyStateTitle: "No bookmarked ideas",
-                emptyStateMessage: "Ideas you bookmark will appear here",
-                currentUser: viewModel.currentUser
-            )
-        }
+        IdeasGridView(
+            ideas: viewModel.bookmarkedIdeas,
+            isLoading: viewModel.isLoading,
+            canLoadMore: viewModel.canLoadMore,
+            namespace: namespace,
+            gridLayout: gridLayout,
+            onIdeaTap: onIdeaTap,
+            onLoadMore: {
+                Task {
+                    await viewModel.loadMoreBookmarkedIdeas()
+                }
+            },
+            emptyStateTitle: "No bookmarked ideas",
+            emptyStateMessage: "Ideas you bookmark will appear here",
+            currentUser: viewModel.currentUser
+        )
     }
 }
 

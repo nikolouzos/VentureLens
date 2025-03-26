@@ -29,27 +29,20 @@ struct IdeasLiveFeedView: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            if viewModel.isLoading {
-                ProgressView()
-                    .padding()
-            }
-
-            IdeasGridView(
-                ideas: viewModel.ideas,
-                isLoading: viewModel.isLoading,
-                canLoadMore: viewModel.canLoadMore,
-                namespace: namespace,
-                gridLayout: gridLayout,
-                onIdeaTap: onIdeaTap,
-                onLoadMore: {
-                    Task {
-                        await viewModel.loadMoreIdeas()
-                    }
-                },
-                currentUser: viewModel.currentUser
-            )
-        }
+        IdeasGridView(
+            ideas: viewModel.ideas,
+            isLoading: viewModel.isLoading,
+            canLoadMore: viewModel.canLoadMore,
+            namespace: namespace,
+            gridLayout: gridLayout,
+            onIdeaTap: onIdeaTap,
+            onLoadMore: {
+                Task {
+                    await viewModel.loadMoreIdeas()
+                }
+            },
+            currentUser: viewModel.currentUser
+        )
         .sheet(isPresented: $showingFilters) {
             IdeaFiltersView(
                 viewModel: IdeaFiltersViewModel(

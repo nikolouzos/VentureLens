@@ -52,7 +52,11 @@ struct IdeasGridView: View {
                         .matchedTransitionSource(id: idea.id, in: namespace)
                 }
 
-                if !isLoading && canLoadMore {
+                if isLoading {
+                    ProgressView()
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                } else if canLoadMore {
                     loadMoreButton
                 }
             }

@@ -60,6 +60,7 @@ public final class IdeasBookmarksViewModel: ObservableObject {
 
         if resetResults {
             currentPage = 1
+            ideas = []
         } else {
             currentPage += 1
         }

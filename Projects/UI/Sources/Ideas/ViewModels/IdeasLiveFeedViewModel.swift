@@ -89,6 +89,10 @@ public final class IdeasLiveFeedViewModel: ObservableObject {
 
         isLoading = true
 
+        if resetResults {
+            ideas = []
+        }
+
         do {
             let nextPage = resetResults ? 1 : (currentRequest.page + 1)
 
