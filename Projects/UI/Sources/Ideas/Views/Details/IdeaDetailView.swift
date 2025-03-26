@@ -1,127 +1,61 @@
 import AppResources
 import Core
+import Dependencies
 import Networking
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 struct IdeaDetailView: View {
     @Environment(\.dismiss) var dismiss
-    @ObservedObject private var viewModel: IdeaDetailsViewModel
-    
-    init(viewModel: IdeaDetailsViewModel) {
+    @ObservedObject private var viewModel: IdeaDetailViewModel
+
+    init(viewModel: IdeaDetailViewModel) {
         self.viewModel = viewModel
     }
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacingSize: .lg) {
-                // Header with image and title
                 ZStack(alignment: .top) {
                     IdeaProse(idea: viewModel.idea)
                         .padding(.top, viewModel.idea.imageUrl == nil ? .xxl : .zero)
-                    
-                    HStack {
-                        Circle()
-                            .fill(Color.gray.opacity(0.5))
-                            .overlay {
-                                Image(systemName: "xmark")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .padding(.all, 10)
-                            }
-                            .frame(widthSize: .xl, heightSize: .xl)
-                            .onTapGesture { dismiss() }
-                        
-                        Spacer()
-                        
-                        Button {
-                            Task {
-                                await viewModel.toggleBookmark()
-                            }
-                        }
-                        label: {
-                            Image(systemName: viewModel.isBookmarked ? "bookmark.fill" : "bookmark")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(widthSize: .lg)
-                        }
-                    }
-                    .padding(.all, .lg)
+
+                    sheetNavigationBarButtons
                 }
-                
-                // Content sections
+
                 VStack(alignment: .leading, spacingSize: .lg) {
-                    // Summary and monetary analysis
                     VStack(alignment: .leading, spacingSize: .md) {
-                        monetaryAnalysisView
-                        
+                        financialOverviewView
+
                         Text(viewModel.idea.summary)
-                            .font(.body)
                             .foregroundStyle(Color.gray)
-                            .fontWeight(.medium)
+                            .font(.plusJakartaSans(.body, weight: .medium))
                     }
-                    
-                    // Tab selection for different sections
+
+                    if let user = viewModel.currentUser,
+                       !viewModel.isPremiumUser &&
+                       !viewModel.hasUnlockedIdea
+                    {
+                        UnlockIdeaCardView(
+                            viewModel: UnlockIdeaViewModel(
+                                user: user,
+                                ideaId: viewModel.idea.id.uuidString,
+                                apiClient: viewModel.apiClient,
+                                authentication: viewModel.authentication
+                            ),
+                            onUnlocked: {
+                                // TODO: Refresh user & idea data
+                            }
+                        )
+                    }
+
                     tabSelectionView
-                    
-                    // Report sections based on selected tab
-                    switch  viewModel.selectedTab {
-                    case .overview:
-                        analysisView
-                        
-                    case .financial:
-                        // Show detailed financial analysis
-                        if let report = viewModel.idea.report, let financials = report.financials {
-                            FinancialAnalysisView(financials: financials)
-                        } else {
-                            noDataView(for: "financial")
-                        }
-                        
-                    case .market:
-                        // Show detailed market analysis
-                        if let report = viewModel.idea.report, let market = report.market {
-                            MarketAnalysisView(market: market)
-                        } else {
-                            noDataView(for: "market")
-                        }
-                        
-                    case .roadmap:
-                        // Show detailed roadmap
-                        if let report = viewModel.idea.report, let roadmap = report.roadmap {
-                            RoadmapView(roadmap: roadmap)
-                        } else {
-                            noDataView(for: "roadmap")
-                        }
-                        
-                    case .techStack:
-                        // Show detailed tech stack
-                        if let techStack = viewModel.idea.techStack {
-                            TechStackView(techStack: techStack)
-                        } else {
-                            noDataView(for: "tech stack")
-                        }
-                        
-                    case .ethics:
-                        // Show detailed ethics & risks
-                        if let ethics = viewModel.idea.ethics {
-                            EthicsView(ethics: ethics)
-                        } else {
-                            noDataView(for: "ethics")
-                        }
-                        
-                    case .validation:
-                        // Show detailed validation metrics
-                        if let validationMetrics = viewModel.idea.validationMetrics {
-                            ValidationMetricsView(metrics: validationMetrics)
-                        } else {
-                            noDataView(for: "validation metrics")
-                        }
-                    }
+                    activeTabView
 
                     HStack {
                         Spacer()
                         Text("Created: \(viewModel.idea.createdAt, style: .date)")
-                            .font(.caption)
+                            .font(.plusJakartaSans(.caption))
                             .foregroundStyle(Color.tint)
                     }
                 }
@@ -136,7 +70,37 @@ struct IdeaDetailView: View {
 
     // MARK: - Subviews
 
-    private var monetaryAnalysisView: some View {
+    private var sheetNavigationBarButtons: some View {
+        HStack {
+            Circle()
+                .fill(Color.gray.opacity(0.5))
+                .overlay {
+                    Image(systemName: "xmark")
+                        .resizable()
+                        .scaledToFit()
+                        .padding(.all, 10)
+                }
+                .frame(widthSize: .xl, heightSize: .xl)
+                .onTapGesture { dismiss() }
+
+            Spacer()
+
+            Button {
+                Task {
+                    await viewModel.toggleBookmark()
+                }
+            }
+            label: {
+                Image(systemName: viewModel.isBookmarked ? "bookmark.fill" : "bookmark")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(widthSize: .lg)
+            }
+        }
+        .padding(.all, .lg)
+    }
+
+    private var financialOverviewView: some View {
         Group {
             if let report = viewModel.idea.report, let financials = report.financials {
                 HStack {
@@ -158,22 +122,23 @@ struct IdeaDetailView: View {
             }
             Divider()
         }
-        .font(.caption)
-        .fontWeight(.medium)
+        .font(.plusJakartaSans(.caption, weight: .medium))
     }
 
     @ViewBuilder
-    private var analysisView: some View {
+    private var overviewView: some View {
         if let fullDetails = viewModel.idea.fullDetails {
             VStack(alignment: .leading, spacingSize: .md) {
                 SectionHeaderView(title: "Full Analysis")
-                
+
                 Text(fullDetails)
-                    .font(.body)
+                    .lineSpacing(8)
             }
+        } else {
+            noDataView(for: viewModel.selectedTab.title)
         }
     }
-    
+
     private var tabSelectionView: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacingSize: .md) {
@@ -184,7 +149,60 @@ struct IdeaDetailView: View {
             .padding(.vertical, .sm)
         }
     }
-    
+
+    @ViewBuilder
+    private var activeTabView: some View {
+        switch viewModel.selectedTab {
+        case .overview:
+            overviewView
+
+        case .financial:
+            if let report = viewModel.idea.report, let financials = report.financials {
+                FinancialAnalysisView(financials: financials)
+            } else {
+                noDataView(for: viewModel.selectedTab.title)
+            }
+
+        case .market:
+            if let report = viewModel.idea.report, let market = report.market {
+                MarketAnalysisView(
+                    market: market,
+                    competitors: report.competitors
+                )
+            } else {
+                noDataView(for: viewModel.selectedTab.title)
+            }
+
+        case .roadmap:
+            if let report = viewModel.idea.report, let roadmap = report.roadmap {
+                RoadmapView(roadmap: roadmap)
+            } else {
+                noDataView(for: viewModel.selectedTab.title)
+            }
+
+        case .techStack:
+            if let techStack = viewModel.idea.techStack {
+                TechStackView(techStack: techStack)
+            } else {
+                noDataView(for: viewModel.selectedTab.title)
+            }
+
+        case .ethics:
+            if let ethics = viewModel.idea.ethics {
+                EthicsView(ethics: ethics)
+            } else {
+                noDataView(for: viewModel.selectedTab.title)
+            }
+
+        case .validation:
+            if let validationMetrics = viewModel.idea.validationMetrics {
+                ValidationMetricsView(metrics: validationMetrics)
+            } else {
+                noDataView(for: viewModel.selectedTab.title)
+            }
+        }
+    }
+
     private func tabButton(_ tab: DetailTab) -> some View {
         Button {
             withAnimation {
@@ -193,8 +211,10 @@ struct IdeaDetailView: View {
         }
         label: {
             Text(tab.title)
-                .font(.subheadline)
-                .fontWeight( viewModel.selectedTab == tab ? .bold : .regular)
+                .font(.plusJakartaSans(
+                    .subheadline,
+                    weight: viewModel.selectedTab == tab ? .bold : .regular
+                ))
                 .padding(.horizontal, .md)
                 .padding(.vertical, .sm)
                 .background(
@@ -204,19 +224,19 @@ struct IdeaDetailView: View {
                 .foregroundStyle(viewModel.selectedTab == tab ? .white : .primary)
         }
     }
-    
+
     private func noDataView(for section: String) -> some View {
         VStack(spacingSize: .md) {
             Image(systemName: "exclamationmark.triangle")
-                .font(.largeTitle)
+                .font(.plusJakartaSans(.largeTitle))
                 .foregroundStyle(Color.orange)
-            
+
             Text("No \(section) data available")
-                .font(.headline)
+                .font(.plusJakartaSans(.headline))
                 .multilineTextAlignment(.center)
-            
-            Text("This viewModel.idea doesn't include \(section) information.")
-                .font(.subheadline)
+
+            Text("No idea information found for the \(section) section.")
+                .font(.plusJakartaSans(.subheadline))
                 .foregroundStyle(Color.secondary)
                 .multilineTextAlignment(.center)
         }
@@ -230,13 +250,18 @@ struct IdeaDetailView: View {
 }
 
 #if DEBUG
-import AppResources
+    import AppResources
+    import Dependencies
 
-#Preview {
-    NavigationView {
-        IdeaDetailView(
-            viewModel: IdeaDetailsViewModel(idea: .mock)
-        )
+    #Preview {
+        NavigationView {
+            IdeaDetailView(
+                viewModel: IdeaDetailViewModel(
+                    idea: .mock,
+                    apiClient: MockAPIClient(),
+                    authentication: MockAuthentication()
+                )
+            )
+        }
     }
-}
 #endif

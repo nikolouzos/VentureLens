@@ -9,27 +9,39 @@ public struct User {
     public let email: String?
     public let name: String?
     public let subscription: SubscriptionType
+    public let unlockedIdeas: [UUID]
+    public let lastUnlockTime: Date?
+    public let weeklyUnlocksUsed: Int
 
     public init(
         id: UUID,
         email: String?,
         name: String?,
-        subscription: SubscriptionType
+        subscription: SubscriptionType,
+        unlockedIdeas: [UUID] = [],
+        lastUnlockTime: Date? = nil,
+        weeklyUnlocksUsed: Int = 0
     ) {
         self.id = id
         self.email = email
         self.name = name
         self.subscription = subscription
+        self.unlockedIdeas = unlockedIdeas
+        self.lastUnlockTime = lastUnlockTime
+        self.weeklyUnlocksUsed = weeklyUnlocksUsed
     }
 }
 
 #if DEBUG
-    extension User {
-        public static let mock = User(
+    public extension User {
+        static let mock = User(
             id: UUID(uuidString: "48b3ebc4-039b-42b1-b676-51f5616fe1fb")!,
             email: "test@example.com",
             name: "Test User",
-            subscription: .free
+            subscription: .free,
+            unlockedIdeas: [],
+            lastUnlockTime: Date(timeIntervalSince1970: 0),
+            weeklyUnlocksUsed: 0
         )
     }
 #endif
