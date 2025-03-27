@@ -12,6 +12,6 @@ public struct OpenIDConnectCredentials {
     }
 }
 
-public enum Provider: String, CaseIterable {
+public enum Provider: String, CaseIterable, Sendable {
     case apple
 }

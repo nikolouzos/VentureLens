@@ -16,7 +16,10 @@ public struct ProfileView: View {
             .navigationTitle("Profile")
             .alert(
                 "Error updating profile",
-                isPresented: $viewModel.hasError,
+                isPresented: Binding(
+                    get: { viewModel.error != nil },
+                    set: { _ in viewModel.error = nil }
+                ),
                 presenting: viewModel.error
             ) { _ in
                 Button("OK", role: .cancel, action: {})
@@ -104,6 +107,7 @@ public struct ProfileView: View {
             viewModel: ProfileViewModel(
                 settingsViewModel: SettingsViewModel(
                     authentication: MockAuthentication(),
+                    pushNotifications: PushNotifications(),
                     coordinator: NavigationCoordinator(),
                     analytics: Dependencies().analytics
                 )

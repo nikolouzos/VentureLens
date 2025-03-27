@@ -2,7 +2,7 @@ import Foundation
 import Networking
 import Supabase
 
-public class SupabaseAuthAdapter: AuthClientProtocol {
+public final class SupabaseAuthAdapter: AuthClientProtocol {
     private unowned let supabaseClient: any SupabaseClientProtocol
 
     public init(supabaseClient: any SupabaseClientProtocol) {

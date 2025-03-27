@@ -2,7 +2,7 @@ import Foundation
 import Networking
 import Supabase
 
-public class SupabaseFunctionsAdapter: APIClientProtocol {
+public final class SupabaseFunctionsAdapter: APIClientProtocol {
     private unowned let supabaseFunctions: SupabaseFunctionsClientProtocol
     private let decoder: JSONDecoder
 

@@ -1,6 +1,6 @@
 import Foundation
 
-public struct UserAttributes {
+public struct UserAttributes: Sendable {
     public let email: String?
     public let name: String?
 

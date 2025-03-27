@@ -5,7 +5,7 @@ import Networking
 import SwiftUI
 
 @MainActor
-public final class IdeasLiveFeedViewModel: ObservableObject {
+public class IdeasLiveFeedViewModel: ObservableObject {
     @Published private(set) var ideas: [Idea] = []
     @Published private(set) var isLoading = false
     @Published private(set) var ideasFilters: IdeasFiltersResponse?
@@ -34,14 +34,12 @@ public final class IdeasLiveFeedViewModel: ObservableObject {
     }
 
     func fetchIdeas() async {
-        Task {
-            await updateUser()
-        }
-        Task {
-            await fetchFilters()
-        }
-        Task {
-            await loadIdeas(resetResults: true)
+        await withTaskGroup(of: Void.self) { group in
+            group.addTask { await self.updateUser() }
+            group.addTask { await self.fetchFilters() }
+            group.addTask { await self.loadIdeas(resetResults: true) }
+
+            await group.waitForAll()
         }
     }
 

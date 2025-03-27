@@ -26,6 +26,7 @@ public struct MainTabView: View {
             SettingsView(
                 viewModel: SettingsViewModel(
                     authentication: dependencies.authentication,
+                    pushNotifications: PushNotifications(),
                     coordinator: authCoordinator,
                     analytics: dependencies.analytics
                 )

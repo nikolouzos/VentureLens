@@ -1,6 +1,6 @@
 import Foundation
 
-public protocol AuthClientProtocol {
+public protocol AuthClientProtocol: Sendable {
     var session: Session? { get async }
 
     func signInWithOTP(email: String) async throws
@@ -14,6 +14,6 @@ public protocol AuthClientProtocol {
     func refreshSession() async throws
 
     func update(userAttributes: UserAttributes) async throws
-    
+
     func deleteAccount() async throws
 }

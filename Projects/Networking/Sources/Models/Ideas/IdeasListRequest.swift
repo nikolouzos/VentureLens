@@ -1,6 +1,6 @@
 import Foundation
 
-public struct IdeasListRequest: Encodable {
+public struct IdeasListRequest: Encodable, Sendable {
     public let page: Int
     public let pageSize: Int
     public let requestType: RequestType
@@ -15,7 +15,7 @@ public struct IdeasListRequest: Encodable {
         case ids
     }
 
-    public enum RequestType {
+    public enum RequestType: Sendable {
         case filters(query: String?, category: String?, createdBefore: String?, createdAfter: String?)
         case ids(ids: [String])
     }

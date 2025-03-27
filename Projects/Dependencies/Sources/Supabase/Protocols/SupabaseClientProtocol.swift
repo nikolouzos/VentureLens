@@ -1,6 +1,6 @@
 import Foundation
 
-public protocol SupabaseClientProtocol: AnyObject {
+public protocol SupabaseClientProtocol: AnyObject, Sendable {
     func auth() -> SupabaseAuthClientProtocol
     func functions() -> SupabaseFunctionsClientProtocol
 

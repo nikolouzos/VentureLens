@@ -5,7 +5,7 @@ import Networking
 import SwiftUICore
 
 @MainActor
-public class ProfileViewModel: FailableViewModel, ObservableObject {
+public class ProfileViewModel: ObservableObject {
     private let updateUserProfile: (_ userAttributes: UserAttributes) async throws -> Void
     private let updateUser: () async -> Void
 

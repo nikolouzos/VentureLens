@@ -116,7 +116,12 @@ public struct SettingsView: View {
         .task {
             await viewModel.getSettings()
         }
-        .alert(isPresented: $viewModel.hasError) {
+        .alert(
+            isPresented: Binding(
+                get: { viewModel.error != nil },
+                set: { _ in viewModel.error = nil }
+            )
+        ) {
             Alert(
                 title: Text("Error"),
                 message: Text(viewModel.error?.localizedDescription ?? ""),
@@ -135,6 +140,7 @@ public struct SettingsView: View {
         SettingsView(
             viewModel: SettingsViewModel(
                 authentication: MockAuthentication(),
+                pushNotifications: PushNotifications(),
                 coordinator: NavigationCoordinator(),
                 analytics: Dependencies().analytics
             )

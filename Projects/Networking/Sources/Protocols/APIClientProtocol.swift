@@ -1,13 +1,13 @@
 import Foundation
 
-public protocol APIClientProtocol {
+public protocol APIClientProtocol: Sendable {
     func fetch<DataType: Decodable>(
         _ function: FunctionName
     ) async throws -> DataType
 }
 
 #if DEBUG
-    public class MockAPIClient: APIClientProtocol {
+    public final class MockAPIClient: APIClientProtocol {
         public init() {}
 
         public var overrideResponse: (() async throws -> Decodable)?

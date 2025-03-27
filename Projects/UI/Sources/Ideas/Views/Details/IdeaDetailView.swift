@@ -63,8 +63,9 @@ struct IdeaDetailView: View {
             }
         }
         .task {
-            await viewModel.updateBookmark()
+            viewModel.onAppear()
         }
+        .onDisappear(perform: viewModel.onDisappear)
         .disabled(viewModel.isLoading)
     }
 

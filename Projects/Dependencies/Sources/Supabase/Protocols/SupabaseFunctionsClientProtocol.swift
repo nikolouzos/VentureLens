@@ -1,7 +1,7 @@
 import Foundation
 import Supabase
 
-public protocol SupabaseFunctionsClientProtocol: AnyObject {
+public protocol SupabaseFunctionsClientProtocol: AnyObject, Sendable {
     /// Invokes a Supabase Edge Function and decodes the response as a specific type.
     /// - Parameters:
     ///   - functionName: The name of the function to invoke.

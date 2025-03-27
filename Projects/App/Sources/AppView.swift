@@ -24,7 +24,7 @@ struct AppView: View {
                     hasFinishedLaunching: $hasFinishedLaunching,
                     animationDuration: launchAnimationDuration
                 )
-                .task(scaffold)
+                .task { await scaffold() }
 
             case .loggedOut:
                 AuthView(
@@ -70,24 +70,25 @@ struct AppView: View {
         .navigationViewStyle(.stack)
     }
 
-    @Sendable
     private func scaffold() async {
-        let user = await dependencies.authentication.currentUser
+        Task { [self] in
+            let user = await dependencies.authentication.currentUser
 
-        let commands: [Command] = [
-            AppearanceCommand(),
-            LaunchAnimationCommand(
-                hasFinishedLaunching: $hasFinishedLaunching,
-                animationDuration: launchAnimationDuration
-            ),
-            NavigationCommand(
-                user: user,
-                coordinator: authCoordinator
-            ),
-        ]
+            let commands: [Command] = [
+                AppearanceCommand(),
+                LaunchAnimationCommand(
+                    hasFinishedLaunching: $hasFinishedLaunching,
+                    animationDuration: launchAnimationDuration
+                ),
+                NavigationCommand(
+                    user: user,
+                    coordinator: authCoordinator
+                ),
+            ]
 
-        for command in commands {
-            try? await command.execute()
+            for command in commands {
+                try? await command.execute()
+            }
         }
     }
 }

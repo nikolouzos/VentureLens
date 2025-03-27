@@ -6,7 +6,7 @@ import Networking
 import SwiftData
 import SwiftUI
 
-public class AuthViewModel: FailableViewModel, ObservableObject {
+public class AuthViewModel: ObservableObject {
     private let authentication: Authentication
     @Published var email = ""
     @Published var isLoading = false
@@ -88,6 +88,7 @@ public class AuthViewModel: FailableViewModel, ObservableObject {
         return try? await signupDataSource?.fetch().first
     }
 
+    @MainActor
     private func signInWithApple(
         identityToken: String,
         signupData: OAuthSignupData?
@@ -99,13 +100,9 @@ public class AuthViewModel: FailableViewModel, ObservableObject {
                     signupData: signupData
                 )
             )
-            await MainActor.run {
-                coordinator.navigate(to: .loggedIn)
-            }
+            coordinator.navigate(to: .loggedIn)
         } catch {
-            await MainActor.run {
-                self.error = error
-            }
+            self.error = error
         }
     }
 }

@@ -1,6 +1,6 @@
 import Foundation
 
-public protocol Authentication: AnyObject {
+public protocol Authentication: Sendable {
     /// Gets the current `User`.
     var currentUser: User? { get async }
 
@@ -22,10 +22,10 @@ public protocol Authentication: AnyObject {
     /// Updates user data
     /// Parameter userAttributes: The user attributes you would like to update
     func update(_ userAttributes: UserAttributes) async throws
-    
+
     /// Logs the ``currentUser`` out
     func logout() async throws
-    
+
     /// Deletes the ``currentUser`` account
     func deleteAccount() async throws
 }
@@ -35,7 +35,7 @@ public protocol Authentication: AnyObject {
         case mock
     }
 
-    public class MockAuthentication: Authentication {
+    public final class MockAuthentication: Authentication {
         public var currentUser: User?
         public var accessToken: String?
 
@@ -72,12 +72,12 @@ public protocol Authentication: AnyObject {
                 subscription: user.subscription
             )
         }
-        
+
         public func logout() async throws {
             try await Task.sleep(for: .seconds(1.5))
             currentUser = nil
         }
-        
-        public func deleteAccount() async throws { }
+
+        public func deleteAccount() async throws {}
     }
 #endif

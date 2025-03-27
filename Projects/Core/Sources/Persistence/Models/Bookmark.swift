@@ -2,7 +2,7 @@ import Foundation
 import SwiftData
 
 @Model
-public class Bookmark {
+public final class Bookmark: Sendable {
     public var id: UUID?
     public var createdAt: Date = Date()
 

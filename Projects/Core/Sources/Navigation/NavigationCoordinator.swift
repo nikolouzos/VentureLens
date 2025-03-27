@@ -1,5 +1,6 @@
 import SwiftUI
 
+@MainActor
 public class NavigationCoordinator<Route: Hashable>: ObservableObject {
     @Published public var path: NavigationPath
     @Published public var currentRoute: Route?

@@ -69,7 +69,7 @@ struct IdeaProse: View {
                     }
                     .tint(.white)
             }
-            .aspectRatio(4 / 3, contentMode: .fit)
+            .aspectRatio(5 / 3, contentMode: .fit)
         }
     }
 }

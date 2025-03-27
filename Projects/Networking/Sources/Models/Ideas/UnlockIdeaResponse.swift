@@ -1,6 +1,6 @@
 import Foundation
 
-public struct UnlockIdeaResponse: Decodable {
+public struct UnlockIdeaResponse: Decodable, Sendable {
     public let success: Bool
     public let message: String?
     public let unlockedIdeas: [String]?

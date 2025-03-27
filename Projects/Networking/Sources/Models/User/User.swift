@@ -1,10 +1,10 @@
 import Foundation
 
-public enum SubscriptionType: String, Decodable {
+public enum SubscriptionType: String, Decodable, Sendable {
     case free, premium
 }
 
-public struct User {
+public struct User: Sendable {
     public let id: UUID
     public let email: String?
     public let name: String?

@@ -1,8 +1,9 @@
+import Combine
 import Core
 import Foundation
 import Networking
 
-public class OTPViewModel: FailableViewModel, ObservableObject {
+public final class OTPViewModel: ObservableObject {
     private let authentication: Authentication
     let signupEmail: String
     @Published var coordinator: NavigationCoordinator<AuthenticationViewState>
@@ -12,6 +13,7 @@ public class OTPViewModel: FailableViewModel, ObservableObject {
     @Published public var resendCooldown: Int = 60
     private var resendTimer: Timer?
     private var verificationTask: Task<Void, Never>?
+    private var timerCancellable: Cancellable?
 
     public init(
         authentication: Authentication,
@@ -66,20 +68,15 @@ public class OTPViewModel: FailableViewModel, ObservableObject {
     private func startResendCooldown() {
         resendCooldown = 60
         resendTimer?.invalidate()
-        resendTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] timer in
-            guard let self = self else {
-                timer.invalidate()
-                return
-            }
-
-            DispatchQueue.main.async {
+        timerCancellable = Timer.publish(every: 1, on: .main, in: .default)
+            .autoconnect()
+            .sink { _ in
                 if self.resendCooldown > 0 {
                     self.resendCooldown -= 1
                 } else {
-                    timer.invalidate()
+                    self.timerCancellable?.cancel()
                 }
             }
-        }
     }
 
     deinit {

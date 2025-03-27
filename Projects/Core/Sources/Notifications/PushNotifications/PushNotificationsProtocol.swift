@@ -1,7 +1,7 @@
 import Foundation
 import UserNotifications
 
-public enum PushNotificationStatus {
+public enum PushNotificationStatus: Sendable {
     case authorized
     case denied
     case notDetermined
@@ -33,6 +33,12 @@ public enum PushNotificationError: LocalizedError {
 }
 
 public protocol PushNotificationsProtocol: AnyObject {
+    @MainActor
+    init(
+        notificationCenter: UNUserNotificationCenter,
+        urlOpener: URLOpener
+    )
+
     /// Request permission to send push notifications
     /// - Parameter options: The types of notifications to request. Defaults to [.alert, .sound, .badge]
     /// - Returns: A boolean indicating if permission was granted

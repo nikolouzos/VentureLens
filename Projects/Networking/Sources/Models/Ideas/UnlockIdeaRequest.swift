@@ -1,6 +1,6 @@
 import Foundation
 
-public struct UnlockIdeaRequest: Encodable {
+public struct UnlockIdeaRequest: Encodable, Sendable {
     let ideaId: String
     
     public init(ideaId: String) {

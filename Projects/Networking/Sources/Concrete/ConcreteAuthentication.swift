@@ -1,6 +1,6 @@
 import Foundation
 
-public class ConcreteAuthentication: Authentication {
+public final class ConcreteAuthentication: Authentication {
     private let authClient: AuthClientProtocol
     private var session: Session? {
         get async {

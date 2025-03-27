@@ -9,7 +9,7 @@ import SwiftUI
 public struct IdeaListView: View {
     fileprivate enum FeedState: String, CaseIterable {
         case live = "Feed"
-        case bookmarks = "Bookmarked"
+        case bookmarks = "Bookmarks"
     }
 
     @Namespace var ideaNamespace

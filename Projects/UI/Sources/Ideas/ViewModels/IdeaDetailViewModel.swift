@@ -5,6 +5,7 @@ import Networking
 import SwiftData
 import SwiftUICore
 
+@MainActor
 class IdeaDetailViewModel: ObservableObject {
     let idea: Idea
     let apiClient: APIClientProtocol
@@ -36,15 +37,23 @@ class IdeaDetailViewModel: ObservableObject {
         self.authentication = authentication
         self.analytics = analytics
         self.bookmarkDataSource = bookmarkDataSource
+    }
 
-        fetchUser()
+    func onAppear() {
+        Task {
+            await withTaskGroup(of: Void.self) { group in
+                group.addTask { await self.updateBookmark() }
+                group.addTask { await self.fetchUser() }
+
+                await group.waitForAll()
+            }
+        }
 
         // Track idea view when initialized
         trackIdeaViewed()
     }
 
-    deinit {
-        // Track when the user leaves the idea view
+    func onDisappear() {
         trackIdeaViewEnded()
     }
 
@@ -54,14 +63,12 @@ class IdeaDetailViewModel: ObservableObject {
         selectedTab = tab
     }
 
-    @MainActor
-    func updateBookmark() async {
+    private func updateBookmark() async {
         isLoading = true
         isBookmarked = await(try? bookmarkDataSource?.fetchSingle(idea.id)) != nil
         isLoading = false
     }
 
-    @MainActor
     func toggleBookmark() async {
         isLoading = true
         guard let bookmarkDataSource else {
@@ -87,14 +94,11 @@ class IdeaDetailViewModel: ObservableObject {
         isLoading = false
     }
 
-    private func fetchUser() {
-        Task { @MainActor in
-            currentUser = await authentication.currentUser
-            checkSubscriptionStatus()
-        }
+    private func fetchUser() async {
+        currentUser = await authentication.currentUser
+        checkSubscriptionStatus()
     }
 
-    @MainActor
     private func checkSubscriptionStatus() {
         guard let user = currentUser else { return }
 

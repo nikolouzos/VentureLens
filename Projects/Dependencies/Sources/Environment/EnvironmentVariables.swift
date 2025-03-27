@@ -1,6 +1,6 @@
 import Foundation
 
-class EnvironmentVariables {
+final class EnvironmentVariables: Sendable {
     private let bundle: Bundle
 
     static let shared = EnvironmentVariables()

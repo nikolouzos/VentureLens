@@ -2,7 +2,7 @@ import Foundation
 import SwiftData
 
 @Model
-public class OAuthSignupData {
+public final class OAuthSignupData: Sendable {
     var email: String?
     var name: String?
 
@@ -12,7 +12,7 @@ public class OAuthSignupData {
     }
 }
 
-public enum AuthenticationProvider {
+public enum AuthenticationProvider: Sendable {
     case otp(email: String)
     case apple(
         identityToken: String,

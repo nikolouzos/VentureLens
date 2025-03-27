@@ -5,7 +5,7 @@ import Networking
 import SwiftUICore
 
 @MainActor
-public class SettingsViewModel: FailableViewModel, ObservableObject {
+public final class SettingsViewModel: ObservableObject {
     private let authentication: Authentication
     private let pushNotifications: PushNotificationsProtocol
     private let analytics: Analytics
@@ -72,7 +72,7 @@ public class SettingsViewModel: FailableViewModel, ObservableObject {
     public init(
         isDataSharingEnabled: Bool = UserDefaults.standard.isAnalyticsTrackingEnabled,
         authentication: Authentication,
-        pushNotifications: PushNotificationsProtocol = PushNotifications(),
+        pushNotifications: PushNotificationsProtocol,
         coordinator: NavigationCoordinator<AuthenticationViewState>,
         analytics: Analytics,
         appVersion: AppVersion = AppVersion()
@@ -93,7 +93,6 @@ public class SettingsViewModel: FailableViewModel, ObservableObject {
         }
     }
 
-    @MainActor
     func getSettings() async {
         isLoading = true
 
@@ -107,7 +106,6 @@ public class SettingsViewModel: FailableViewModel, ObservableObject {
         isLoading = false
     }
 
-    @MainActor
     private func handlePushNotificationsUpdated(_ newStatus: Bool) async {
         let canRequestPushNotifications = pushNotificationStatus == .none ||
             pushNotificationStatus == .notDetermined ||
@@ -139,7 +137,6 @@ public class SettingsViewModel: FailableViewModel, ObservableObject {
         }
     }
 
-    @MainActor
     func fetchUser() async {
         user = await authentication.currentUser
     }
@@ -148,7 +145,6 @@ public class SettingsViewModel: FailableViewModel, ObservableObject {
         try await authentication.update(userAttributes)
     }
 
-    @MainActor
     func logout() {
         isLoading = true
         Task { @MainActor in
@@ -163,7 +159,6 @@ public class SettingsViewModel: FailableViewModel, ObservableObject {
         }
     }
 
-    @MainActor
     func deleteAccount() {
         isLoading = true
         Task { @MainActor in

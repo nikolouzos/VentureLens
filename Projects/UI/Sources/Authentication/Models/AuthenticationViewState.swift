@@ -1,6 +1,6 @@
 import Foundation
 
-public enum AuthenticationViewState: Hashable {
+public enum AuthenticationViewState: Hashable, Sendable {
     case loggedOut
     case loggedIn
     case otp(signupEmail: String)

@@ -68,7 +68,10 @@ public struct AuthView: View {
             .padding(.all, .lg)
             .alert(
                 "Error",
-                isPresented: $viewModel.hasError,
+                isPresented: Binding(
+                    get: { viewModel.error != nil },
+                    set: { _ in viewModel.error = nil }
+                ),
                 presenting: viewModel.error
             ) { _ in
                 Button("OK", role: .cancel, action: {})

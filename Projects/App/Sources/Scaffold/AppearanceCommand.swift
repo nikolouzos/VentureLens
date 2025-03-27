@@ -3,17 +3,18 @@ import Core
 import Foundation
 import UIKit
 
-final class AppearanceCommand: Command {
+final class AppearanceCommand: Command, Sendable {
     func execute() async throws {
         registerFonts()
-        setTabBarAppearance()
-        setNavigationBarAppearance()
+        await setTabBarAppearance()
+        await setNavigationBarAppearance()
     }
 
     private func registerFonts() {
         AppResourcesFontFamily.registerAllCustomFonts()
     }
 
+    @MainActor
     private func setTabBarAppearance() {
         let appearance = UITabBarItem.appearance()
         let attributes = [
@@ -22,6 +23,7 @@ final class AppearanceCommand: Command {
         appearance.setTitleTextAttributes(attributes, for: .normal)
     }
 
+    @MainActor
     private func setNavigationBarAppearance() {
         let appearance = UINavigationBarAppearance()
 
