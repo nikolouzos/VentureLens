@@ -1,4 +1,5 @@
 import XCTest
+import DependenciesTestHelpers
 @testable import Dependencies
 @testable import Mixpanel
 
@@ -29,6 +30,8 @@ final class MixpanelPropertiesConversionTests: XCTestCase {
     
     func testBasicPropertyTypes() {
         // Given
+        analytics.optIn(uid: nil)
+        
         let properties: [String: Any] = [
             "string": "test string",
             "int": 42,
@@ -40,6 +43,7 @@ final class MixpanelPropertiesConversionTests: XCTestCase {
         
         // When - Use identify which calls convertToMixpanelProperties internally
         analytics.identify(uid: "test_basic_types", properties: properties)
+        MixpanelHelpers.waitForTrackingQueue(mixpanelInstance)
         
         // Then - We can only verify the method doesn't crash
         XCTAssertEqual(mixpanelInstance.distinctId, "test_basic_types")
@@ -47,6 +51,8 @@ final class MixpanelPropertiesConversionTests: XCTestCase {
     
     func testArrayPropertyTypes() {
         // Given
+        analytics.optIn(uid: nil)
+        
         let properties: [String: Any] = [
             "string_array": ["one", "two", "three"],
             "number_array": [1, 2, 3],
@@ -56,6 +62,7 @@ final class MixpanelPropertiesConversionTests: XCTestCase {
         
         // When
         analytics.identify(uid: "test_array_types", properties: properties)
+        MixpanelHelpers.waitForTrackingQueue(mixpanelInstance)
         
         // Then
         XCTAssertEqual(mixpanelInstance.distinctId, "test_array_types")
@@ -63,6 +70,8 @@ final class MixpanelPropertiesConversionTests: XCTestCase {
     
     func testNullValues() {
         // Given
+        analytics.optIn(uid: nil)
+        
         let properties: [String: Any] = [
             "null_value": NSNull(),
             "valid_value": "test"
@@ -70,6 +79,7 @@ final class MixpanelPropertiesConversionTests: XCTestCase {
         
         // When
         analytics.identify(uid: "test_null_values", properties: properties)
+        MixpanelHelpers.waitForTrackingQueue(mixpanelInstance)
         
         // Then
         XCTAssertEqual(mixpanelInstance.distinctId, "test_null_values")
@@ -77,10 +87,13 @@ final class MixpanelPropertiesConversionTests: XCTestCase {
     
     func testEmptyProperties() {
         // Given
+        analytics.optIn(uid: nil)
+        
         let emptyProperties: [String: Any] = [:]
         
         // When
         analytics.identify(uid: "test_empty_properties", properties: emptyProperties)
+        MixpanelHelpers.waitForTrackingQueue(mixpanelInstance)
         
         // Then
         XCTAssertEqual(mixpanelInstance.distinctId, "test_empty_properties")
@@ -88,9 +101,11 @@ final class MixpanelPropertiesConversionTests: XCTestCase {
     
     func testNilProperties() {
         // Given - No properties
+        analytics.optIn(uid: nil)
         
         // When
         analytics.identify(uid: "test_nil_properties", properties: nil)
+        MixpanelHelpers.waitForTrackingQueue(mixpanelInstance)
         
         // Then
         XCTAssertEqual(mixpanelInstance.distinctId, "test_nil_properties")
@@ -98,6 +113,8 @@ final class MixpanelPropertiesConversionTests: XCTestCase {
     
     func testUnsupportedTypes() {
         // Given
+        analytics.optIn(uid: nil)
+        
         class CustomClass {
             let value: String
             init(value: String) { self.value = value }
@@ -110,6 +127,7 @@ final class MixpanelPropertiesConversionTests: XCTestCase {
         
         // When
         analytics.identify(uid: "test_unsupported_types", properties: properties)
+        MixpanelHelpers.waitForTrackingQueue(mixpanelInstance)
         
         // Then - The method should not crash and should ignore the unsupported type
         XCTAssertEqual(mixpanelInstance.distinctId, "test_unsupported_types")
@@ -117,6 +135,8 @@ final class MixpanelPropertiesConversionTests: XCTestCase {
     
     func testNestedCollections() {
         // Given
+        analytics.optIn(uid: nil)
+        
         let properties: [String: Any] = [
             "nested_array": [
                 ["name": "Item 1", "value": 1],
@@ -131,6 +151,7 @@ final class MixpanelPropertiesConversionTests: XCTestCase {
         
         // When
         analytics.identify(uid: "test_nested_collections", properties: properties)
+        MixpanelHelpers.waitForTrackingQueue(mixpanelInstance)
         
         // Then - The method should handle or ignore nested collections appropriately
         XCTAssertEqual(mixpanelInstance.distinctId, "test_nested_collections")
@@ -138,6 +159,8 @@ final class MixpanelPropertiesConversionTests: XCTestCase {
     
     func testLargePropertySet() {
         // Given
+        analytics.optIn(uid: nil)
+        
         var properties: [String: Any] = [:]
         
         // Create a large set of properties
@@ -147,6 +170,7 @@ final class MixpanelPropertiesConversionTests: XCTestCase {
         
         // When
         analytics.identify(uid: "test_large_property_set", properties: properties)
+        MixpanelHelpers.waitForTrackingQueue(mixpanelInstance)
         
         // Then
         XCTAssertEqual(mixpanelInstance.distinctId, "test_large_property_set")

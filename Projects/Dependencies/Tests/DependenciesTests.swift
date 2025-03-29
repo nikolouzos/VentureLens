@@ -2,6 +2,7 @@ import XCTest
 import Networking
 @testable import Dependencies
 @testable import DependenciesTestHelpers
+@testable import NetworkingTestHelpers
 
 final class DependenciesTests: XCTestCase {
     

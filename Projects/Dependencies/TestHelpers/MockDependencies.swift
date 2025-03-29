@@ -1,6 +1,7 @@
 import Foundation
 import Networking
 @testable import Dependencies
+@testable import NetworkingTestHelpers
 
 public extension Dependencies {
     /// Creates a Dependencies instance with mock Supabase implementations

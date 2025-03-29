@@ -2,11 +2,16 @@ import Foundation
 import Networking
 import Supabase
 
-public final class SupabaseAuthAdapter: AuthClientProtocol {
+public actor SupabaseAuthAdapter: AuthClientProtocol {
+    public let interceptors: [any Networking.AuthInterceptor]
     private unowned let supabaseClient: any SupabaseClientProtocol
 
-    public init(supabaseClient: any SupabaseClientProtocol) {
+    public init(
+        supabaseClient: any SupabaseClientProtocol,
+        interceptors: [any Networking.AuthInterceptor] = []
+    ) {
         self.supabaseClient = supabaseClient
+        self.interceptors = interceptors
     }
 
     public var session: Networking.Session? {

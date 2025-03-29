@@ -1,4 +1,6 @@
 import XCTest
+import Combine
+import DependenciesTestHelpers
 @testable import Dependencies
 @testable import Mixpanel
 
@@ -14,12 +16,16 @@ final class MixpanelConformanceTests: XCTestCase {
     override func setUp() {
         super.setUp()
         // Initialize Mixpanel with a test token
-        mixpanelInstance = Mixpanel.initialize(token: "test_token", trackAutomaticEvents: false)
+        mixpanelInstance = Mixpanel.initialize(
+            token: "test_token",
+            trackAutomaticEvents: false,
+            instanceName: "tests"
+        )
         analytics = mixpanelInstance as Analytics
     }
     
     override func tearDown() {
-        Mixpanel.removeInstance(name: "test_token")
+        Mixpanel.removeInstance(name: "tests")
         mixpanelInstance = nil
         analytics = nil
         super.tearDown()
@@ -29,10 +35,13 @@ final class MixpanelConformanceTests: XCTestCase {
     
     func testOptOut() {
         // Given
+        mixpanelInstance.optInTracking()
+        MixpanelHelpers.waitForTrackingQueue(mixpanelInstance)
         XCTAssertFalse(mixpanelInstance.hasOptedOutTracking(), "User should not be opted out initially")
         
         // When
         analytics.optOut()
+        MixpanelHelpers.waitForTrackingQueue(mixpanelInstance)
         
         // Then
         XCTAssertTrue(mixpanelInstance.hasOptedOutTracking(), "User should be opted out after calling optOut()")
@@ -41,10 +50,12 @@ final class MixpanelConformanceTests: XCTestCase {
     func testOptIn() {
         // Given
         mixpanelInstance.optOutTracking()
+        MixpanelHelpers.waitForTrackingQueue(mixpanelInstance)
         XCTAssertTrue(mixpanelInstance.hasOptedOutTracking(), "User should be opted out initially")
         
         // When
         analytics.optIn(uid: "test_user_123")
+        MixpanelHelpers.waitForTrackingQueue(mixpanelInstance)
         
         // Then
         XCTAssertFalse(mixpanelInstance.hasOptedOutTracking(), "User should be opted in after calling optIn()")
@@ -53,6 +64,8 @@ final class MixpanelConformanceTests: XCTestCase {
     
     func testIdentify() {
         // Given
+        // User needs to have opted in for identify to work
+        analytics.optIn(uid: nil)
         let testUserId = "test_user_456"
         let testProperties: [String: Any] = [
             "email": "test@example.com",
@@ -62,21 +75,25 @@ final class MixpanelConformanceTests: XCTestCase {
         
         // When
         analytics.identify(uid: testUserId, properties: testProperties)
+        MixpanelHelpers.waitForTrackingQueue(mixpanelInstance)
         
         // Then
         XCTAssertEqual(mixpanelInstance.distinctId, testUserId, "Distinct ID should be set to the provided UID")
-        // Note: We can't directly verify people properties were set since they're not exposed publicly
-        // This is a limitation of testing the real implementation
     }
     
     func testReset() {
         // Given
+        analytics.optIn(uid: nil)
+        
         let originalDistinctId = mixpanelInstance.distinctId
         analytics.identify(uid: "user_to_reset", properties: nil)
+        MixpanelHelpers.waitForTrackingQueue(mixpanelInstance)
+        
         XCTAssertEqual(mixpanelInstance.distinctId, "user_to_reset", "User should be identified before reset")
         
         // When
         analytics.reset()
+        MixpanelHelpers.waitForTrackingQueue(mixpanelInstance)
         
         // Then
         // After reset, Mixpanel generates a new anonymous ID
@@ -157,6 +174,8 @@ final class MixpanelConformanceTests: XCTestCase {
     func testPropertyConversionWithVariousTypes() {
         // Given
         // Create properties with various types that should be handled by convertToMixpanelProperties
+        analytics.optIn(uid: nil)
+        
         let testProperties: [String: Any] = [
             "string": "test",
             "number": 123,
@@ -170,6 +189,7 @@ final class MixpanelConformanceTests: XCTestCase {
         // When
         // Use identify which calls convertToMixpanelProperties internally
         analytics.identify(uid: "test_user_789", properties: testProperties)
+        MixpanelHelpers.waitForTrackingQueue(mixpanelInstance)
         
         // Then
         // We can't directly verify the properties were converted correctly,
@@ -179,6 +199,8 @@ final class MixpanelConformanceTests: XCTestCase {
     
     func testPropertyConversionWithNestedArrays() {
         // Given
+        analytics.optIn(uid: nil)
+        
         let testProperties: [String: Any] = [
             "nested_array": [
                 ["name": "Item 1", "value": 1],
@@ -189,6 +211,7 @@ final class MixpanelConformanceTests: XCTestCase {
         // When
         // This should not crash even though nested dictionaries aren't supported
         analytics.identify(uid: "test_user_nested", properties: testProperties)
+        MixpanelHelpers.waitForTrackingQueue(mixpanelInstance)
         
         // Then
         XCTAssertEqual(mixpanelInstance.distinctId, "test_user_nested", "User should be identified")
@@ -197,6 +220,8 @@ final class MixpanelConformanceTests: XCTestCase {
     func testPropertyConversionWithUnsupportedTypes() {
         // Given
         // Create a class instance that isn't a MixpanelType
+        analytics.optIn(uid: nil)
+        
         class UnsupportedClass {}
         let unsupported = UnsupportedClass()
         
@@ -208,6 +233,7 @@ final class MixpanelConformanceTests: XCTestCase {
         // When
         // This should not crash even with unsupported types
         analytics.identify(uid: "test_user_unsupported", properties: testProperties)
+        MixpanelHelpers.waitForTrackingQueue(mixpanelInstance)
         
         // Then
         XCTAssertEqual(mixpanelInstance.distinctId, "test_user_unsupported", "User should be identified")

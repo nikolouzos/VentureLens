@@ -4,13 +4,16 @@ import Supabase
 
 public final class SupabaseFunctionsAdapter: APIClientProtocol {
     private unowned let supabaseFunctions: SupabaseFunctionsClientProtocol
+    public let interceptors: [any Networking.NetworkInterceptor]
     private let decoder: JSONDecoder
 
     init(
         supabaseFunctions: SupabaseFunctionsClientProtocol,
+        interceptors: [any Networking.NetworkInterceptor] = [],
         decoder: JSONDecoder = .init()
     ) {
         self.supabaseFunctions = supabaseFunctions
+        self.interceptors = interceptors
         self.decoder = decoder
     }
 

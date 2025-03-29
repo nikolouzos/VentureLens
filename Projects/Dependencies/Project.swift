@@ -16,9 +16,12 @@ let project = appFrameworkProject(
         .external(name: "Supabase")
     ],
     testDependencies: [
-        .project(target: "Networking", path: "../Networking")
+        .project(target: "Networking", path: "../Networking"),
+        .project(target: "NetworkingTestHelpers", path: "../Networking"),
     ],
     testHelpersDependencies: [
-        .project(target: "Networking", path: "../Networking")
+        .project(target: "Networking", path: "../Networking"),
+        .project(target: "NetworkingTestHelpers", path: "../Networking"),
+        .xctest
     ]
 )
