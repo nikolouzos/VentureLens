@@ -8,6 +8,7 @@ import SwiftUI
 public class IdeasLiveFeedViewModel: ObservableObject {
     @Published private(set) var ideas: [Idea] = []
     @Published private(set) var isLoading = false
+    @Published private(set) var isRefreshing = false
     @Published private(set) var ideasFilters: IdeasFiltersResponse?
     @Published private(set) var currentRequest: IdeasListRequest
     @Published private(set) var currentUser: User?
@@ -33,11 +34,11 @@ public class IdeasLiveFeedViewModel: ObservableObject {
         errorHandler = handler
     }
 
-    func fetchIdeas() async {
+    func fetchIdeas(isRefreshing: Bool = false) async {
         await withTaskGroup(of: Void.self) { group in
             group.addTask { await self.updateUser() }
             group.addTask { await self.fetchFilters() }
-            group.addTask { await self.loadIdeas(resetResults: true) }
+            group.addTask { await self.loadIdeas(resetResults: true, isRefreshing: isRefreshing) }
 
             await group.waitForAll()
         }
@@ -82,10 +83,11 @@ public class IdeasLiveFeedViewModel: ObservableObject {
         }
     }
 
-    private func loadIdeas(resetResults: Bool) async {
+    private func loadIdeas(resetResults: Bool, isRefreshing: Bool = false) async {
         guard !isLoading else { return }
 
         isLoading = true
+        self.isRefreshing = isRefreshing
 
         if resetResults {
             ideas = []
@@ -135,5 +137,6 @@ public class IdeasLiveFeedViewModel: ObservableObject {
         }
 
         isLoading = false
+        self.isRefreshing = false
     }
 }

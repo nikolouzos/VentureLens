@@ -139,7 +139,7 @@ public struct SettingsView: View {
     #Preview {
         SettingsView(
             viewModel: SettingsViewModel(
-                authentication: MockAuthentication(),
+                authentication: Dependencies().authentication,
                 pushNotifications: PushNotifications(),
                 coordinator: NavigationCoordinator(),
                 analytics: Dependencies().analytics

@@ -276,8 +276,8 @@ struct IdeaDetailView: View {
             IdeaDetailView(
                 viewModel: IdeaDetailViewModel(
                     idea: .mock,
-                    apiClient: MockAPIClient(),
-                    authentication: MockAuthentication()
+                    apiClient: Dependencies().apiClient,
+                    authentication: Dependencies().authentication
                 )
             )
         }

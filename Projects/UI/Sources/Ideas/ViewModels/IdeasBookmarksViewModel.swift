@@ -9,6 +9,7 @@ import SwiftUI
 public final class IdeasBookmarksViewModel: ObservableObject {
     @Published private(set) var bookmarkedIdeas: [Idea] = []
     @Published private(set) var isLoading = false
+    @Published private(set) var isRefreshing = false
     @Published private(set) var currentUser: User?
 
     private(set) var canLoadMore = true
@@ -51,12 +52,13 @@ public final class IdeasBookmarksViewModel: ObservableObject {
         currentUser = await authentication.currentUser
     }
 
-    private func loadBookmarkedIdeas(resetResults: Bool) async {
+    private func loadBookmarkedIdeas(resetResults: Bool, isRefreshing: Bool = false) async {
         guard !isLoading, let bookmarkDataSource = bookmarkDataSource else {
             return
         }
 
         isLoading = true
+        self.isRefreshing = isRefreshing
 
         if resetResults {
             currentPage = 1
@@ -75,6 +77,7 @@ public final class IdeasBookmarksViewModel: ObservableObject {
                     bookmarkedIdeas = []
                 }
                 isLoading = false
+                self.isRefreshing = false
                 return
             }
 
@@ -102,5 +105,6 @@ public final class IdeasBookmarksViewModel: ObservableObject {
         }
 
         isLoading = false
+        self.isRefreshing = false
     }
 }

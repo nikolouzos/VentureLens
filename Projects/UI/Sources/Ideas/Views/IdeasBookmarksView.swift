@@ -31,6 +31,7 @@ struct IdeasBookmarksView: View {
         IdeasGridView(
             ideas: viewModel.bookmarkedIdeas,
             isLoading: viewModel.isLoading,
+            isRefreshing: viewModel.isRefreshing,
             canLoadMore: viewModel.canLoadMore,
             namespace: namespace,
             gridLayout: gridLayout,
@@ -48,6 +49,7 @@ struct IdeasBookmarksView: View {
 }
 
 #if DEBUG
+    import Dependencies
     import Networking
     import SwiftData
 
@@ -55,8 +57,8 @@ struct IdeasBookmarksView: View {
         NavigationView {
             IdeasBookmarksView(
                 viewModel: IdeasBookmarksViewModel(
-                    apiClient: MockAPIClient(),
-                    authentication: MockAuthentication(accessToken: "mock"),
+                    apiClient: Dependencies().apiClient,
+                    authentication: Dependencies().authentication,
                     bookmarkDataSource: DataSource<Bookmark>(
                         configurations: ModelConfiguration(
                             isStoredInMemoryOnly: true

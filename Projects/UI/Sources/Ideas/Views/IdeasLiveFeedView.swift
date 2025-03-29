@@ -32,6 +32,7 @@ struct IdeasLiveFeedView: View {
         IdeasGridView(
             ideas: viewModel.ideas,
             isLoading: viewModel.isLoading,
+            isRefreshing: viewModel.isRefreshing,
             canLoadMore: viewModel.canLoadMore,
             namespace: namespace,
             gridLayout: gridLayout,
@@ -76,6 +77,7 @@ struct IdeasLiveFeedView: View {
 }
 
 #if DEBUG
+    import Dependencies
     import Networking
     import SwiftData
 
@@ -83,8 +85,8 @@ struct IdeasLiveFeedView: View {
         NavigationView {
             IdeasLiveFeedView(
                 viewModel: IdeasLiveFeedViewModel(
-                    apiClient: MockAPIClient(),
-                    authentication: MockAuthentication(accessToken: "mock"),
+                    apiClient: Dependencies().apiClient,
+                    authentication: Dependencies().authentication,
                     errorHandler: { _ in }
                 ),
                 namespace: Namespace().wrappedValue,

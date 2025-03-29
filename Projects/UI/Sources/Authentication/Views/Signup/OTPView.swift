@@ -75,12 +75,13 @@ public struct OTPView: View {
 
 #if DEBUG
     import Core
+    import Dependencies
     import Networking
 
     #Preview {
         OTPView(
             viewModel: OTPViewModel(
-                authentication: MockAuthentication(),
+                authentication: Dependencies().authentication,
                 coordinator: NavigationCoordinator<AuthenticationViewState>(),
                 signupEmail: "example@email.com"
             )

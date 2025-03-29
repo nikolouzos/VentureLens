@@ -6,6 +6,7 @@ import SwiftUI
 struct IdeasGridView: View {
     let ideas: [Idea]
     let isLoading: Bool
+    let isRefreshing: Bool
     let canLoadMore: Bool
     let namespace: Namespace.ID
     let gridLayout: [GridItem]
@@ -18,6 +19,7 @@ struct IdeasGridView: View {
     init(
         ideas: [Idea],
         isLoading: Bool,
+        isRefreshing: Bool,
         canLoadMore: Bool,
         namespace: Namespace.ID,
         gridLayout: [GridItem],
@@ -29,6 +31,7 @@ struct IdeasGridView: View {
     ) {
         self.ideas = ideas
         self.isLoading = isLoading
+        self.isRefreshing = isRefreshing
         self.canLoadMore = canLoadMore
         self.namespace = namespace
         self.gridLayout = gridLayout
@@ -52,7 +55,7 @@ struct IdeasGridView: View {
                         .matchedTransitionSource(id: idea.id, in: namespace)
                 }
 
-                if isLoading {
+                if isLoading && !isRefreshing {
                     ProgressView()
                         .frame(maxWidth: .infinity)
                         .padding()
@@ -96,6 +99,7 @@ struct IdeasGridView: View {
         IdeasGridView(
             ideas: [],
             isLoading: false,
+            isRefreshing: false,
             canLoadMore: false,
             namespace: Namespace().wrappedValue,
             gridLayout: [GridItem(.flexible())],

@@ -106,7 +106,7 @@ public struct ProfileView: View {
         ProfileView(
             viewModel: ProfileViewModel(
                 settingsViewModel: SettingsViewModel(
-                    authentication: MockAuthentication(),
+                    authentication: Dependencies().authentication,
                     pushNotifications: PushNotifications(),
                     coordinator: NavigationCoordinator(),
                     analytics: Dependencies().analytics

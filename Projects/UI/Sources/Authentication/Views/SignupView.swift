@@ -120,10 +120,12 @@ public struct SignupView: View {
 }
 
 #if DEBUG
+    import Dependencies
+
     #Preview {
         SignupView(
             viewModel: SignupViewModel(
-                authentication: MockAuthentication(),
+                authentication: Dependencies().authentication,
                 coordinator: NavigationCoordinator<AuthenticationViewState>()
             )
         )
