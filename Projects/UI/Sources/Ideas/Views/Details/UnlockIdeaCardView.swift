@@ -5,8 +5,6 @@ struct UnlockIdeaCardView: View {
     @ObservedObject var viewModel: UnlockIdeaViewModel
     let onUnlocked: () -> Void
 
-    @State private var isUnlocking = false
-
     var body: some View {
         VStack(spacingSize: .md) {
             Image(systemName: "lock.shield.fill")

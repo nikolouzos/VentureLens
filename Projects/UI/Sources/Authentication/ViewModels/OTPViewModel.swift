@@ -7,7 +7,6 @@ public final class OTPViewModel: ObservableObject {
     private let authentication: Authentication
     let signupEmail: String
     @Published var coordinator: NavigationCoordinator<AuthenticationViewState>
-    @Published var otp: String = ""
     @Published public var isLoading: Bool = false
     @Published public var error: Error?
     @Published public var resendCooldown: Int = 60

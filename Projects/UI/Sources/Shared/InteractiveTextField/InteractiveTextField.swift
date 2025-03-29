@@ -1,4 +1,3 @@
-import Core
 import SwiftUI
 
 struct InteractiveTextField: UIViewRepresentable {

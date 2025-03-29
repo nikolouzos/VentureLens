@@ -1,5 +1,5 @@
 import Foundation
-@testable import Networking
+import XCTest
 
 /// A protocol for API client test helpers
 public protocol APIClientTesting {

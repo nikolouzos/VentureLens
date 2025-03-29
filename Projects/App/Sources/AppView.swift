@@ -5,7 +5,6 @@ import SwiftUI
 import UI
 
 struct AppView: View {
-    @Environment(\.logger) var logger
     @State private var hasFinishedLaunching: Bool = false
     @StateObject var authCoordinator = NavigationCoordinator<AuthenticationViewState>()
 
@@ -84,6 +83,7 @@ struct AppView: View {
                     user: user,
                     coordinator: authCoordinator
                 ),
+                AnalyticsCommand(user: user, analytics: dependencies.analytics),
             ]
 
             for command in commands {

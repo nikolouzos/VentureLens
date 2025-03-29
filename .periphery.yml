@@ -1,0 +1,12 @@
+project: VentureLens.xcworkspace
+retain_public: true
+schemes:
+- App
+- AppResources
+- Core
+- Dependencies
+- DependenciesTestHelpers
+- Networking
+- NetworkingTestHelpers
+- UI
+- VentureLens-Workspace

@@ -1,6 +1,5 @@
 import XCTest
 @testable import Networking
-import NetworkingTestHelpers
 
 final class APIResponseTests: XCTestCase {
     class EmptyResponse: Codable { }

@@ -4,7 +4,6 @@ import SwiftUI
 
 public struct OTPView: View {
     @StateObject var viewModel: OTPViewModel
-    @FocusState private var focusedField: Int?
 
     public init(viewModel: OTPViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
@@ -76,7 +75,6 @@ public struct OTPView: View {
 #if DEBUG
     import Core
     import Dependencies
-    import Networking
 
     #Preview {
         OTPView(

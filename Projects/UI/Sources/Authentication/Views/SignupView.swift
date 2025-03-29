@@ -1,5 +1,5 @@
+import AppResources
 import Core
-import Networking
 import SwiftUI
 
 public struct SignupView: View {

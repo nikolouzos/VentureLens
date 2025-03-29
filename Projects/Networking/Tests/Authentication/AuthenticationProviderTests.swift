@@ -1,6 +1,5 @@
 import XCTest
 @testable import Networking
-import NetworkingTestHelpers
 
 final class AuthenticationProviderTests: XCTestCase {
     func testOTPProvider() {

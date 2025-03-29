@@ -1,5 +1,4 @@
 import AppResources
-import Core
 import SwiftUI
 
 /// A view that displays the summary for an idea card

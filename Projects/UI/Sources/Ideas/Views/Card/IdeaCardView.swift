@@ -1,4 +1,3 @@
-import AppResources
 import Core
 import Networking
 import SwiftUI

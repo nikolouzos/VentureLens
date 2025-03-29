@@ -1,4 +1,4 @@
-import Core
+import Combine
 import Dependencies
 import Foundation
 import Networking
@@ -16,7 +16,6 @@ class UnlockIdeaViewModel: ObservableObject {
     private let user: User
     private let ideaId: String
     private let apiClient: APIClientProtocol
-    private let authentication: Authentication
 
     @Published private(set) var state: State = .idle
 
@@ -24,12 +23,11 @@ class UnlockIdeaViewModel: ObservableObject {
         user: User,
         ideaId: String,
         apiClient: APIClientProtocol,
-        authentication: Authentication
+        authentication _: Authentication
     ) {
         self.user = user
         self.ideaId = ideaId
         self.apiClient = apiClient
-        self.authentication = authentication
 
         setDefaultState()
     }

@@ -1,5 +1,4 @@
 import Combine
-import Core
 import Foundation
 import Networking
 import SwiftUICore
@@ -60,8 +59,7 @@ public class ProfileViewModel: ObservableObject {
             )
             await updateUser()
 
-            name = nameField
-            email = email
+            email = emailField
         } catch {
             self.error = error
         }

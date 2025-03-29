@@ -12,7 +12,6 @@ public final class IdeaListViewModel: ObservableObject {
     let apiClient: APIClientProtocol
     let authentication: Authentication
     let analytics: Analytics
-    private let bookmarkDataSource: DataSource<Bookmark>?
 
     // Child ViewModels
     let liveFeedViewModel: IdeasLiveFeedViewModel
@@ -30,7 +29,6 @@ public final class IdeaListViewModel: ObservableObject {
         apiClient = dependencies.apiClient
         authentication = dependencies.authentication
         analytics = dependencies.analytics
-        self.bookmarkDataSource = bookmarkDataSource
 
         // Initialize with temporary error handlers that do nothing
         liveFeedViewModel = IdeasLiveFeedViewModel(

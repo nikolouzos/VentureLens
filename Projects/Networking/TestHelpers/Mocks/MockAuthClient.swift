@@ -129,9 +129,8 @@ public actor MockAuthClient: AuthClientProtocol {
     /// Set the mock tokens to return
     /// - Parameters:
     ///   - accessToken: The mock access token
-    ///   - refreshToken: The mock refresh token
     ///   - userId: Optional user ID
-    public func setMockTokens(accessToken: String, refreshToken: String, userId: UUID? = nil) {
+    public func setMockTokens(accessToken: String, userId: UUID? = nil) {
         let user = User(
             id: userId ?? UUID(),
             email: "test@example.com",

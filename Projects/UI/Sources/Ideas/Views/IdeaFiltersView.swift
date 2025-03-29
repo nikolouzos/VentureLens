@@ -1,4 +1,3 @@
-import AppResources
 import SwiftUI
 
 public struct IdeaFiltersView: View {

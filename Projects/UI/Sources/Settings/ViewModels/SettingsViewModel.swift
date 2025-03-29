@@ -6,7 +6,7 @@ import SwiftUICore
 
 @MainActor
 public final class SettingsViewModel: ObservableObject {
-    private let authentication: Authentication
+    let authentication: Authentication
     private let pushNotifications: PushNotificationsProtocol
     private let analytics: Analytics
     @Published private var pushNotificationStatus: PushNotificationStatus? = .none

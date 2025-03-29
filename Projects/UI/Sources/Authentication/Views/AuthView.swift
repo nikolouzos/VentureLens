@@ -123,7 +123,6 @@ public struct AuthView: View {
 #if DEBUG
     import Core
     import Dependencies
-    import Networking
 
     #Preview {
         AuthView(

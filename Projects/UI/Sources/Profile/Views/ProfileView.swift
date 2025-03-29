@@ -100,7 +100,6 @@ public struct ProfileView: View {
 #if DEBUG
     import Core
     import Dependencies
-    import Networking
 
     #Preview {
         ProfileView(

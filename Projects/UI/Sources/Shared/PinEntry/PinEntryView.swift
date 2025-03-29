@@ -9,12 +9,10 @@ public struct PinEntryView: View {
     @State private var hasEmittedPin = false
 
     private let maxDigits: Int
-    private let shouldShowPaste: Bool
     private let onPinFilled: (_ pin: String) -> Void
 
     public init(
         maxDigits: Int = 6,
-        shouldShowPaste: Bool = false,
         isDisabled: Binding<Bool> = .constant(false),
         onPinFilled: @escaping (_ pin: String) -> Void = { _ in }
     ) {
@@ -24,7 +22,6 @@ public struct PinEntryView: View {
             count: maxDigits
         ))
         self.maxDigits = maxDigits
-        self.shouldShowPaste = shouldShowPaste
         self.onPinFilled = onPinFilled
     }
 
