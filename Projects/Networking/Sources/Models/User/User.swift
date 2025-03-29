@@ -4,7 +4,7 @@ public enum SubscriptionType: String, Decodable, Sendable {
     case free, premium
 }
 
-public struct User: Sendable {
+public struct User: Decodable, Equatable, Sendable {
     public let id: UUID
     public let email: String?
     public let name: String?

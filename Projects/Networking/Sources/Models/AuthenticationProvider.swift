@@ -6,13 +6,13 @@ public final class OAuthSignupData: Sendable {
     var email: String?
     var name: String?
 
-    public init(email: String, name: String) {
+    public init(email: String?, name: String?) {
         self.email = email
         self.name = name
     }
 }
 
-public enum AuthenticationProvider: Sendable {
+public enum AuthenticationProvider: Equatable, Sendable {
     case otp(email: String)
     case apple(
         identityToken: String,

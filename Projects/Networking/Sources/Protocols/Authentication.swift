@@ -30,54 +30,5 @@ public protocol Authentication: Sendable {
     func deleteAccount() async throws
 }
 
-#if DEBUG
-    public enum AuthenticationError: Error {
-        case mock
-    }
-
-    public final class MockAuthentication: Authentication {
-        public var currentUser: User?
-        public var accessToken: String?
-
-        public init(
-            currentUser: User? = nil,
-            accessToken: String? = nil
-        ) {
-            self.currentUser = currentUser
-            self.accessToken = accessToken
-        }
-
-        public func authenticate(with _: AuthenticationProvider) async throws {
-            try await Task.sleep(for: .seconds(1.5))
-            currentUser = User.mock
-        }
-
-        public func verifyOTP(email _: String, token _: String) {}
-
-        public func refreshToken() async throws {
-            if currentUser != nil {
-                return
-            }
-            throw AuthenticationError.mock
-        }
-
-        public func update(_ userAttributes: UserAttributes) async throws {
-            guard let user = currentUser else {
-                throw AuthenticationError.mock
-            }
-            currentUser = User(
-                id: user.id,
-                email: userAttributes.email,
-                name: userAttributes.name,
-                subscription: user.subscription
-            )
-        }
-
-        public func logout() async throws {
-            try await Task.sleep(for: .seconds(1.5))
-            currentUser = nil
-        }
-
-        public func deleteAccount() async throws {}
-    }
-#endif
+// For mock implementation, use MockAuthentication from NetworkingTestHelpers module
+// See Projects/Networking/TestHelpers/Mocks/MockAuthentication.swift
