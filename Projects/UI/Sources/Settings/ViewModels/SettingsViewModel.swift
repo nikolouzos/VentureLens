@@ -150,6 +150,8 @@ public final class SettingsViewModel: ObservableObject {
         Task { @MainActor in
             do {
                 try await authentication.logout()
+                analytics.reset()
+                
                 isLoading = false
                 coordinator.reset()
             } catch {
@@ -164,6 +166,8 @@ public final class SettingsViewModel: ObservableObject {
         Task { @MainActor in
             do {
                 try await authentication.deleteAccount()
+                analytics.reset()
+                
                 isLoading = false
                 coordinator.reset()
             } catch {
