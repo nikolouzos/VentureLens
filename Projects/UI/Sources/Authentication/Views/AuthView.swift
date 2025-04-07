@@ -59,7 +59,11 @@ public struct AuthView: View {
 
                     SignInWithAppleButton(
                         onRequest: viewModel.signInWithAppleOnRequest,
-                        onCompletion: viewModel.signInWithAppleOnCompletion
+                        onCompletion: { result in
+                            viewModel.signInWithAppleOnCompletion(
+                                result: result.map { $0 as AppleAuthorizationProtocol }
+                            )
+                        }
                     )
                     .frame(height: 44)
                 }

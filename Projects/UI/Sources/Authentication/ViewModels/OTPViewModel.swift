@@ -30,9 +30,7 @@ public final class OTPViewModel: ObservableObject {
         guard otp.count == 6, !isLoading else { return }
         isLoading = true
 
-        // Cancel any existing verification task
         verificationTask?.cancel()
-
         verificationTask = Task { @MainActor in
             do {
                 try await authentication.verifyOTP(email: signupEmail, token: otp)

@@ -29,17 +29,17 @@ public class AuthViewModel: ObservableObject {
         self.signupDataSource = signupDataSource
     }
 
-    func signInWithAppleOnRequest(request: ASAuthorizationAppleIDRequest) {
+    func signInWithAppleOnRequest(request: AppleIDRequestProtocol) {
         request.requestedScopes = [.email, .fullName]
         isLoading = true
     }
 
     @MainActor
-    func signInWithAppleOnCompletion(result: Result<ASAuthorization, any Error>) {
+    func signInWithAppleOnCompletion(result: Result<AppleAuthorizationProtocol, any Error>) {
         do {
             let authorization = try result.throwable()
 
-            guard let credential = authorization.credential as? ASAuthorizationAppleIDCredential,
+            guard let credential = authorization.credential as? AppleIDCredentialProtocol,
                   let identityTokenData = credential.identityToken,
                   let identityToken = String(data: identityTokenData, encoding: .utf8)
             else {
@@ -75,7 +75,7 @@ public class AuthViewModel: ObservableObject {
     }
 
     private func constructSignupData(
-        from credential: ASAuthorizationAppleIDCredential
+        from credential: AppleIDCredentialProtocol
     ) async -> OAuthSignupData? {
         if let email = credential.email,
            let fullName = credential.fullName
