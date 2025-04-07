@@ -35,6 +35,9 @@ public final class MockAuthentication: Authentication {
     /// Flag to determine if authentication should throw an error
     public var shouldThrowOnAuthenticate = false
     
+    /// Flag to determine if verify otp should throw an error
+    public var shouldThrowOnVerifyOTP = false
+    
     /// Flag to determine if token refresh should throw an error
     public var shouldThrowOnRefresh = false
     
@@ -65,6 +68,7 @@ public final class MockAuthentication: Authentication {
         logoutCalls = []
         deleteAccountCalls = []
         shouldThrowOnAuthenticate = false
+        shouldThrowOnVerifyOTP = false
         shouldThrowOnRefresh = false
         shouldThrowOnUpdate = false
         shouldThrowOnLogout = false
@@ -86,6 +90,10 @@ public final class MockAuthentication: Authentication {
     /// Verify an OTP token
     public func verifyOTP(email: String, token: String) async throws {
         otpVerificationCalls.append((email: email, token: token))
+        
+        if shouldThrowOnVerifyOTP {
+            throw AuthenticationError.mock
+        }
     }
     
     /// Refresh the authentication token

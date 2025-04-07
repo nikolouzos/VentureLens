@@ -1,5 +1,6 @@
 import XCTest
 import Networking
+import NetworkingTestHelpers
 @testable import Dependencies
 @testable import DependenciesTestHelpers
 @testable import Supabase
@@ -54,8 +55,7 @@ final class SupabaseFunctionsAdapterTests: XCTestCase {
     }
     
     func testFetchIdeasList() async throws {
-        // Configure mock to return test data
-        let mockIdea = Idea.mock
+        let mockIdea = IdeaFixtures.standard()
         let mockResponse = IdeasListResponse(
             ideas: [mockIdea, mockIdea, mockIdea],
             currentPage: 1,
