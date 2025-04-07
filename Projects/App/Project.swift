@@ -19,6 +19,7 @@ let appEntitlements = Entitlements.dictionary([
 ])
 
 let infoPlistExtensions: [String : ProjectDescription.Plist.Value] = [
+    "ITSAppUsesNonExemptEncryption": .boolean(false),
     "UIBackgroundModes": [
         "remote-notification"
     ]
