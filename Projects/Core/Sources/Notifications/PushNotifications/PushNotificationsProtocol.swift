@@ -5,8 +5,8 @@ public enum PushNotificationStatus: Sendable {
     case authorized
     case denied
     case notDetermined
-    case provisional // For provisional authorization
-    case ephemeral // For app clips
+    case provisional
+    case ephemeral
 }
 
 public enum PushNotificationError: LocalizedError {
@@ -32,8 +32,8 @@ public enum PushNotificationError: LocalizedError {
     }
 }
 
+@MainActor
 public protocol PushNotificationsProtocol: AnyObject {
-    @MainActor
     init(
         notificationCenter: UNUserNotificationCenter,
         urlOpener: URLOpener
@@ -54,7 +54,6 @@ public protocol PushNotificationsProtocol: AnyObject {
     /// - Note: This will take the user out of your app and into the Settings app
     /// - Throws: PushNotificationError.settingsURLNotAvailable if unable to open Settings
     /// - Returns: A boolean indicating if the Settings app was opened
-    @MainActor
     @discardableResult
     func openNotificationSettings() async throws -> Bool
 }

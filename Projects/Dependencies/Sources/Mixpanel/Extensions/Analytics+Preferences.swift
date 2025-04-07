@@ -6,12 +6,12 @@ public extension Analytics {
     /// Enable tracking and save user preference
     func enableTracking(userId: String?) {
         UserDefaults.standard.isAnalyticsTrackingEnabled = true
-        optIn(uid: userId ?? UUID().uuidString)
+        optIn(uid: userId)
     }
-    
+
     /// Disable tracking and save user preference
     func disableTracking() {
         UserDefaults.standard.isAnalyticsTrackingEnabled = false
         optOut()
     }
-} 
+}
