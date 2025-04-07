@@ -40,6 +40,15 @@ class IdeaDetailViewModel: ObservableObject {
     }
 
     func onAppear() {
+        updateData()
+        trackIdeaViewed()
+    }
+
+    func onDisappear() {
+        trackIdeaViewEnded()
+    }
+
+    func updateData() {
         Task {
             await withTaskGroup(of: Void.self) { group in
                 group.addTask { await self.updateBookmark() }
@@ -48,13 +57,6 @@ class IdeaDetailViewModel: ObservableObject {
                 await group.waitForAll()
             }
         }
-
-        // Track idea view when initialized
-        trackIdeaViewed()
-    }
-
-    func onDisappear() {
-        trackIdeaViewEnded()
     }
 
     func updateSelectedTab(_ tab: DetailTab) {

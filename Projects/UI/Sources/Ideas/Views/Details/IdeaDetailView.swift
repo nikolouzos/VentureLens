@@ -44,7 +44,7 @@ struct IdeaDetailView: View {
                                 authentication: viewModel.authentication
                             ),
                             onUnlocked: {
-                                // TODO: Refresh user & idea data
+                                viewModel.onAppear()
                             }
                         )
                     }
@@ -275,7 +275,7 @@ struct IdeaDetailView: View {
         NavigationView {
             IdeaDetailView(
                 viewModel: IdeaDetailViewModel(
-                    idea: .mock,
+                    idea: IdeaPreviews.standard,
                     apiClient: Dependencies().apiClient,
                     authentication: Dependencies().authentication
                 )

@@ -64,11 +64,11 @@ struct IdeaCardView: View {
 
 #if DEBUG
     #Preview {
-        IdeaCardView(idea: .mock)
+        IdeaCardView(idea: IdeaPreviews.standard)
     }
 
     #Preview("With Unlocked Icon") {
-        let idea = Idea.mock
+        let idea = IdeaPreviews.standard
 
         IdeaCardView(
             idea: idea,

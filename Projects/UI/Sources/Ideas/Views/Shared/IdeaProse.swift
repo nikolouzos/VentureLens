@@ -47,6 +47,7 @@ struct IdeaProse: View {
                 )
             )
         }
+        .ignoresSafeArea(edges: .top)
     }
 
     @ViewBuilder
@@ -89,6 +90,6 @@ private struct CategoryBadge: View {
 
 #if DEBUG
     #Preview {
-        IdeaProse(idea: .mock)
+        IdeaProse(idea: IdeaPreviews.standard)
     }
 #endif

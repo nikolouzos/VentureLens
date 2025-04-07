@@ -7,7 +7,7 @@ import SwiftUI
 // MARK: - Coordinator View
 
 public struct IdeaListView: View {
-    fileprivate enum FeedState: String, CaseIterable {
+    public enum FeedState: String, CaseIterable {
         case live = "Feed"
         case bookmarks = "Bookmarks"
     }
@@ -17,8 +17,12 @@ public struct IdeaListView: View {
     @State private var presentingIdea: Idea?
     @State private var feedState: FeedState = .live
 
-    public init(viewModel: IdeaListViewModel) {
+    public init(
+        viewModel: IdeaListViewModel,
+        feedState: FeedState = .live
+    ) {
         _viewModel = .init(wrappedValue: viewModel)
+        _feedState = .init(initialValue: feedState)
     }
 
     public var body: some View {
@@ -137,10 +141,11 @@ public struct IdeaListView: View {
                     analytics: viewModel.analytics
                 )
             )
-            .navigationTransition(
-                .zoom(sourceID: idea.id, in: ideaNamespace)
-            )
         }
+        .navigationTransition(
+            .zoom(sourceID: idea.id, in: ideaNamespace)
+        )
+        .presentationDetents([.large])
     }
 }
 
