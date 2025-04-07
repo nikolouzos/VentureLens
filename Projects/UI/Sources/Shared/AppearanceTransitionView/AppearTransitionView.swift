@@ -4,30 +4,31 @@ import SwiftUI
 struct AppearTransitionView<Content: View>: View {
     /// Optional predicate to control transitions
     private var predicate: Binding<Bool>?
-    
+
     /// Duration of the transition animation
     private let duration: Double
-    
+
     /// Delay before starting the transition
     private let delay: Double
-    
+
     /// The custom transition to use
     private let transition: AnyTransition
-    
+
     /// The content to be displayed
     @ViewBuilder private let content: () -> Content
-    
+
     /// View's opacity state
     @State private var isVisible: Bool = false
-    
+
     var body: some View {
         HStack {
             if isVisible {
-                content().transition(transition)
+                content()
+                    .transition(transition)
             }
         }
         .onAppear {
-            // If predicate is nil, trigger transition on appearance
+            // If predicate is nil, trigger transition immediately
             if predicate == nil {
                 animateIn()
             }
@@ -41,14 +42,14 @@ struct AppearTransitionView<Content: View>: View {
             }
         }
     }
-    
+
     /// Animates the view in
     private func animateIn() {
         withAnimation(.easeOut(duration: duration).delay(delay)) {
             isVisible = true
         }
     }
-    
+
     /// Animates the view out
     private func animateOut() {
         withAnimation(.easeIn(duration: duration).delay(delay)) {
@@ -58,6 +59,7 @@ struct AppearTransitionView<Content: View>: View {
 }
 
 // MARK: - Convenience Initializers
+
 extension AppearTransitionView {
     /// Initializer for predicate-based transitions
     init(
@@ -73,7 +75,7 @@ extension AppearTransitionView {
         self.delay = delay
         self.content = content
     }
-    
+
     /// Initializer for appearance-based transitions
     init(
         transition: AnyTransition,
@@ -81,7 +83,7 @@ extension AppearTransitionView {
         delay: Double = 0,
         @ViewBuilder content: @escaping () -> Content
     ) {
-        self.predicate = nil
+        predicate = nil
         self.transition = transition
         self.duration = duration
         self.delay = delay
@@ -90,11 +92,12 @@ extension AppearTransitionView {
 }
 
 // MARK: - Preview Provider
+
 #Preview {
     @Previewable @State var showSlide = false
-    
+
     VStack(spacing: 20) {
-        // Example with appearance-based transition
+        // Appearance-based transition
         AppearTransitionView(
             transition: .offset(y: 20).combined(with: .opacity),
             delay: 0.3
@@ -104,8 +107,8 @@ extension AppearTransitionView {
                 .background(Color.blue)
                 .cornerRadius(8)
         }
-        
-        // Example with predicate-based transition
+
+        // Predicate-based transition
         AppearTransitionView(
             if: $showSlide,
             transition: .slide,
@@ -116,10 +119,9 @@ extension AppearTransitionView {
                 .background(Color.green)
                 .cornerRadius(8)
         }
-        
+
         Button("\(showSlide ? "Hide" : "Show") sliding button") {
             showSlide.toggle()
         }
     }
 }
-
