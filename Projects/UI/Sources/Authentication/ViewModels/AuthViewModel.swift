@@ -11,12 +11,12 @@ public class AuthViewModel: ObservableObject {
     @Published var email = ""
     @Published var isLoading = false
     @Published public var error: Error?
-    @Published public var coordinator: NavigationCoordinator<AuthenticationViewState>
+    @Published public var coordinator: any NavigationCoordinatorProtocol<AuthenticationViewState>
     private let signupDataSource: DataSource<OAuthSignupData>?
 
     public init(
         authentication: Authentication,
-        coordinator: NavigationCoordinator<AuthenticationViewState>,
+        coordinator: any NavigationCoordinatorProtocol<AuthenticationViewState>,
         signupDataSource: DataSource<OAuthSignupData>? = .init(
             configurations: ModelConfiguration(
                 isStoredInMemoryOnly: false,

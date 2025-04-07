@@ -6,7 +6,7 @@ import Networking
 public final class OTPViewModel: ObservableObject {
     private let authentication: Authentication
     let signupEmail: String
-    @Published var coordinator: NavigationCoordinator<AuthenticationViewState>
+    @Published var coordinator: any NavigationCoordinatorProtocol<AuthenticationViewState>
     @Published public var isLoading: Bool = false
     @Published public var error: Error?
     @Published public var resendCooldown: Int = 60
@@ -16,7 +16,7 @@ public final class OTPViewModel: ObservableObject {
 
     public init(
         authentication: Authentication,
-        coordinator: NavigationCoordinator<AuthenticationViewState>,
+        coordinator: any NavigationCoordinatorProtocol<AuthenticationViewState>,
         signupEmail: String
     ) {
         self.authentication = authentication

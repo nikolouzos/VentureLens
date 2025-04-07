@@ -126,7 +126,7 @@ public struct SignupView: View {
         SignupView(
             viewModel: SignupViewModel(
                 authentication: Dependencies().authentication,
-                coordinator: NavigationCoordinator<AuthenticationViewState>()
+                coordinator: NavigationCoordinator()
             )
         )
     }

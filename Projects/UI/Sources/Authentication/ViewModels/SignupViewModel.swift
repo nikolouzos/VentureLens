@@ -6,14 +6,14 @@ import Networking
 @MainActor
 public final class SignupViewModel: ObservableObject {
     private let authentication: Authentication
-    @Published var coordinator: NavigationCoordinator<AuthenticationViewState>
+    @Published var coordinator: any NavigationCoordinatorProtocol<AuthenticationViewState>
     @Published var name: String = ""
     @Published var isLoading: Bool = false
     @Published var error: Error?
 
     public init(
         authentication: Authentication,
-        coordinator: NavigationCoordinator<AuthenticationViewState>
+        coordinator: any NavigationCoordinatorProtocol<AuthenticationViewState>
     ) {
         self.authentication = authentication
         self.coordinator = coordinator

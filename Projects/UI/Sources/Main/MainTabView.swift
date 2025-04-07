@@ -4,11 +4,11 @@ import SwiftUI
 
 public struct MainTabView: View {
     let dependencies: Dependencies
-    let authCoordinator: NavigationCoordinator<AuthenticationViewState>
+    let authCoordinator: any NavigationCoordinatorProtocol<AuthenticationViewState>
 
     public init(
         dependencies: Dependencies,
-        authCoordinator: NavigationCoordinator<AuthenticationViewState>
+        authCoordinator: any NavigationCoordinatorProtocol<AuthenticationViewState>
     ) {
         self.dependencies = dependencies
         self.authCoordinator = authCoordinator

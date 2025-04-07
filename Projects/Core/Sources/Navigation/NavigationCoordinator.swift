@@ -1,7 +1,18 @@
 import SwiftUI
 
 @MainActor
-public class NavigationCoordinator<Route: Hashable>: ObservableObject {
+public protocol NavigationCoordinatorProtocol<Route>: ObservableObject {
+    associatedtype Route: Sendable, Hashable
+
+    var path: NavigationPath { get }
+    var currentRoute: Route? { get }
+
+    func navigate(to route: Route)
+    func pop()
+    func reset()
+}
+
+public class NavigationCoordinator<Route: Sendable & Hashable>: NavigationCoordinatorProtocol {
     @Published public var path: NavigationPath
     @Published public var currentRoute: Route?
     private var routes: [Route] {

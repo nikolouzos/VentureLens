@@ -4,15 +4,21 @@ import Networking
 import SwiftUI
 import UI
 
-struct AppView: View {
+struct AppView<
+    AuthCoordinator: NavigationCoordinatorProtocol<AuthenticationViewState>
+>: View {
     @State private var hasFinishedLaunching: Bool = false
-    @StateObject var authCoordinator = NavigationCoordinator<AuthenticationViewState>()
+    @StateObject var authCoordinator: AuthCoordinator
 
     private let launchAnimationDuration = 0.5
     private let dependencies: Dependencies
 
-    init(dependencies: Dependencies = Dependencies()) {
+    init(
+        dependencies: Dependencies = Dependencies(),
+        authCoordinator: AuthCoordinator = NavigationCoordinator()
+    ) {
         self.dependencies = dependencies
+        _authCoordinator = StateObject(wrappedValue: authCoordinator)
     }
 
     var body: some View {

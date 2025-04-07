@@ -80,7 +80,7 @@ public struct OTPView: View {
         OTPView(
             viewModel: OTPViewModel(
                 authentication: Dependencies().authentication,
-                coordinator: NavigationCoordinator<AuthenticationViewState>(),
+                coordinator: NavigationCoordinator(),
                 signupEmail: "example@email.com"
             )
         )

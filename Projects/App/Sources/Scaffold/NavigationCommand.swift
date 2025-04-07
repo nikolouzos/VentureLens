@@ -5,9 +5,12 @@ import UI
 
 final class NavigationCommand: Command {
     let user: User?
-    let coordinator: NavigationCoordinator<AuthenticationViewState>
+    let coordinator: any NavigationCoordinatorProtocol<AuthenticationViewState>
 
-    init(user: User?, coordinator: NavigationCoordinator<AuthenticationViewState>) {
+    init(
+        user: User?,
+        coordinator: any NavigationCoordinatorProtocol<AuthenticationViewState>
+    ) {
         self.user = user
         self.coordinator = coordinator
     }

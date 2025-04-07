@@ -10,7 +10,7 @@ public final class SettingsViewModel: ObservableObject {
     private let pushNotifications: PushNotificationsProtocol
     private let analytics: Analytics
     @Published private var pushNotificationStatus: PushNotificationStatus? = .none
-    @Published private var coordinator: NavigationCoordinator<AuthenticationViewState>
+    @Published private var coordinator: any NavigationCoordinatorProtocol<AuthenticationViewState>
     @Published var user: User?
     @Published var dataSharingToggle = false
     @Published private(set) var isLoading = false
@@ -73,7 +73,7 @@ public final class SettingsViewModel: ObservableObject {
         isDataSharingEnabled: Bool = UserDefaults.standard.isAnalyticsTrackingEnabled,
         authentication: Authentication,
         pushNotifications: PushNotificationsProtocol,
-        coordinator: NavigationCoordinator<AuthenticationViewState>,
+        coordinator: any NavigationCoordinatorProtocol<AuthenticationViewState>,
         analytics: Analytics,
         appVersion: AppVersion = AppVersion()
     ) {
@@ -151,7 +151,7 @@ public final class SettingsViewModel: ObservableObject {
             do {
                 try await authentication.logout()
                 analytics.reset()
-                
+
                 isLoading = false
                 coordinator.reset()
             } catch {
@@ -167,7 +167,7 @@ public final class SettingsViewModel: ObservableObject {
             do {
                 try await authentication.deleteAccount()
                 analytics.reset()
-                
+
                 isLoading = false
                 coordinator.reset()
             } catch {
