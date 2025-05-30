@@ -7,22 +7,23 @@ let swiftFormatScript: TargetScript = .pre(
 )
 
 let appEntitlements = Entitlements.dictionary([
-    "com.apple.developer.applesignin": [
-        "Default"
-    ],
-    "com.apple.developer.icloud-container-identifiers": [
-        "iCloud.\(sharedBundleId).UserData"
-    ],
-    "com.apple.developer.icloud-services": [
-        "CloudKit"
-    ]
+    "com.apple.developer.applesignin": .array([
+        .string("Default")
+    ]),
+    "com.apple.developer.icloud-container-identifiers": .array([
+        .string("iCloud.\(sharedBundleId).UserData")
+    ]),
+    "com.apple.developer.icloud-services": .array([
+        .string("CloudKit")
+    ]),
+    "aps-environment": .string("development")
 ])
 
 let infoPlistExtensions: [String : ProjectDescription.Plist.Value] = [
     "ITSAppUsesNonExemptEncryption": .boolean(false),
-    "UIBackgroundModes": [
-        "remote-notification"
-    ]
+    "UIBackgroundModes": .array([
+        .string("remote-notification")
+    ])
 ]
 
 let project = Project(

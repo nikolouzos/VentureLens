@@ -6,7 +6,6 @@ let workspace = Workspace(
         "Projects/**",
     ],
     additionalFiles: [
-        "Tuist/**",
         "Scripts/**",
         "xcconfigs/**",
         "Workspace.swift",

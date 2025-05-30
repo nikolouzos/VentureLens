@@ -23,3 +23,11 @@ public func mixpanelToken() -> String {
     print("TUIST_MIXPANEL_TOKEN not found in .env file. Returning mock value...")
     return "mock-mixpanel-token"
 }
+
+public func revenueCatApiKey() -> String {
+    if case let .string(revenueCatApiKey) = Environment.revenuecatApiKey {
+        return revenueCatApiKey
+    }
+    print("TUIST_REVENUECAT_API_KEY not found in .env file. Returning mock value...")
+    return "mock-revenuecat-api-key"
+}

@@ -1,4 +1,4 @@
-// swift-tools-version:5.9
+// swift-tools-version:6.1
 @preconcurrency import PackageDescription
 
 #if TUIST
@@ -11,7 +11,8 @@ let packageSettings = PackageSettings(
     ],
     projectOptions: [
         "Supabase": .options(automaticSchemesOptions: .disabled),
-        "Mixpanel": .options(automaticSchemesOptions: .disabled)
+        "Mixpanel": .options(automaticSchemesOptions: .disabled),
+        "RevenueCat": .options(automaticSchemesOptions: .disabled)
     ]
 )
 #endif
@@ -26,6 +27,10 @@ let package = Package(
         .package(
             url: "https://github.com/mixpanel/mixpanel-swift.git",
             .upToNextMajor(from: "4.3.0")
+        ),
+        .package(
+            url: "https://github.com/RevenueCat/purchases-ios-spm.git",
+            .upToNextMajor(from: "5.0.0")
         )
     ]
 )

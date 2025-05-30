@@ -67,7 +67,10 @@ public func appFrameworkProject(
                         target: .target("\(name)Tests")
                     )
                 ])
-                : nil
+                : nil,
+            runAction: nil,
+            archiveAction: nil,
+            profileAction: nil
         )
     ]
     
