@@ -7,6 +7,7 @@ public class Dependencies {
     public let authentication: Authentication
     public let apiClient: APIClientProtocol
     public let analytics: Analytics
+    public let inAppPurchasesManager: InAppPurchasesManager
 
     public convenience init() {
         let supabaseClient = SupabaseClient(
@@ -15,6 +16,7 @@ public class Dependencies {
         )
 
         let analytics = Self.initializeAnalytics()
+        let inAppPurchasesManager = Self.initializeRevenueCat()
 
         self.init(
             authentication: ConcreteAuthentication(
@@ -25,18 +27,21 @@ public class Dependencies {
             apiClient: SupabaseFunctionsAdapter(
                 supabaseFunctions: supabaseClient.functions
             ),
-            analytics: analytics
+            analytics: analytics,
+            inAppPurchasesManager: inAppPurchasesManager
         )
     }
 
     public init(
         authentication: Authentication,
         apiClient: APIClientProtocol,
-        analytics: Analytics
+        analytics: Analytics,
+        inAppPurchasesManager: InAppPurchasesManager
     ) {
         self.authentication = authentication
         self.apiClient = apiClient
         self.analytics = analytics
+        self.inAppPurchasesManager = inAppPurchasesManager
     }
 
     private class func initializeAnalytics() -> Analytics {
@@ -60,5 +65,10 @@ public class Dependencies {
         #endif
 
         return mixpanelInstance
+    }
+
+    private class func initializeRevenueCat() -> InAppPurchasesManager {
+        let revenueCatAPIKey = EnvironmentVariables.shared.get(key: .revenueCatAPIKey)!
+        return RevenueCatAdapter(apiKey: revenueCatAPIKey)
     }
 }
