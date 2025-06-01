@@ -8,14 +8,18 @@ import SwiftUI
 
 public class AuthViewModel: ObservableObject {
     private let authentication: Authentication
+    let appMetadata: AppMetadata
+
     @Published var email = ""
     @Published var isLoading = false
     @Published public var error: Error?
     @Published public var coordinator: any NavigationCoordinatorProtocol<AuthenticationViewState>
     private let signupDataSource: DataSource<OAuthSignupData>?
+    // MARK: - Initializer
 
     public init(
         authentication: Authentication,
+        appMetadata: AppMetadata,
         coordinator: any NavigationCoordinatorProtocol<AuthenticationViewState>,
         signupDataSource: DataSource<OAuthSignupData>? = .init(
             configurations: ModelConfiguration(
@@ -25,6 +29,7 @@ public class AuthViewModel: ObservableObject {
         )
     ) {
         self.authentication = authentication
+        self.appMetadata = appMetadata
         self.coordinator = coordinator
         self.signupDataSource = signupDataSource
     }

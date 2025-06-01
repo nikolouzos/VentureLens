@@ -1,6 +1,6 @@
 import Foundation
 
-public struct AppVersion {
+public struct AppMetadata {
     private let bundle: Bundle
 
     private enum Keys: String {
@@ -11,6 +11,8 @@ public struct AppVersion {
     public init(bundle: Bundle = .main) {
         self.bundle = bundle
     }
+
+    // MARK: - Versioning
 
     public var version: String {
         bundle.infoDictionary?[Keys.shortVersion.rawValue] as? String ?? "1.0"
@@ -23,4 +25,11 @@ public struct AppVersion {
     public var versionString: String {
         "\(version) (\(buildNumber))"
     }
+
+    // MARK: - Legal
+
+    public let legalURLs: (termsOfService: URL, privacyPolicy: URL) = (
+        termsOfService: URL(string: "https://venturelens.app/terms")!,
+        privacyPolicy: URL(string: "https://venturelens.app/privacy")!
+    )
 }

@@ -35,6 +35,7 @@ struct AppView<
                 AuthView(
                     viewModel: AuthViewModel(
                         authentication: dependencies.authentication,
+                        appMetadata: AppMetadata(),
                         coordinator: authCoordinator
                     )
                 )

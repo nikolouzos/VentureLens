@@ -9,6 +9,8 @@ public final class SettingsViewModel: ObservableObject {
     let authentication: Authentication
     private let pushNotifications: PushNotificationsProtocol
     private let analytics: Analytics
+    let appMetadata: AppMetadata
+
     @Published private var pushNotificationStatus: PushNotificationStatus? = .none
     @Published private var coordinator: any NavigationCoordinatorProtocol<AuthenticationViewState>
     @Published var user: User?
@@ -16,16 +18,7 @@ public final class SettingsViewModel: ObservableObject {
     @Published private(set) var isLoading = false
     @Published public var error: Error?
 
-    private let appVersion: AppVersion
-
-    var versionString: String {
-        "App Version: \(appVersion.versionString)"
     }
-
-    let legalURLs: (termsOfService: URL, privacyPolicy: URL) = (
-        termsOfService: URL(string: "https://venturelens.app/terms")!,
-        privacyPolicy: URL(string: "https://venturelens.app/privacy")!
-    )
 
     var freeUnlockAvailable: Bool {
         guard let lastUnlockTime = user?.lastUnlockTime,
@@ -75,14 +68,14 @@ public final class SettingsViewModel: ObservableObject {
         pushNotifications: PushNotificationsProtocol,
         coordinator: any NavigationCoordinatorProtocol<AuthenticationViewState>,
         analytics: Analytics,
-        appVersion: AppVersion = AppVersion()
+        appMetadata: AppMetadata = AppMetadata()
     ) {
         dataSharingToggle = isDataSharingEnabled
         self.authentication = authentication
         self.pushNotifications = pushNotifications
         self.coordinator = coordinator
         self.analytics = analytics
-        self.appVersion = appVersion
+        self.appMetadata = appMetadata
     }
 
     func handleDataSharingChange(_ isEnabled: Bool) {

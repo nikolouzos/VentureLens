@@ -64,15 +64,22 @@ public struct SettingsView: View {
                 }
 
                 Section {
-                    Link("Terms of Service", destination: viewModel.legalURLs.termsOfService)
-                    Link("Privacy Policy", destination: viewModel.legalURLs.privacyPolicy)
+                    Link(
+                        "Terms of Service",
+                        destination: viewModel.appMetadata.legalURLs.termsOfService
+                    )
+                    Link(
+                        "Privacy Policy",
+                        destination: viewModel.appMetadata.legalURLs.privacyPolicy
+                    )
                 }
+                .buttonStyle(TextButtonStyle())
 
                 Section {
                     Button("Logout") {
                         showingLogoutAlert = true
                     }
-                    .foregroundStyle(Color.red)
+                    .buttonStyle(TextButtonStyle(tintColor: .themePrimary))
                     .alert(isPresented: $showingLogoutAlert) {
                         Alert(
                             title: Text("Logout"),
@@ -87,7 +94,7 @@ public struct SettingsView: View {
                     Button("Delete Account") {
                         showingDeleteAccountAlert = true
                     }
-                    .foregroundStyle(Color.red)
+                    .buttonStyle(TextButtonStyle(tintColor: .themePrimary))
                     .alert(isPresented: $showingDeleteAccountAlert) {
                         Alert(
                             title: Text("Delete Account"),
@@ -101,7 +108,7 @@ public struct SettingsView: View {
                 }
 
                 Section {
-                    Text(viewModel.versionString)
+                    Text("App Version: \(viewModel.appMetadata.versionString)")
                         .font(.plusJakartaSans(.caption))
                         .foregroundStyle(Color.secondary)
                         .frame(maxWidth: .infinity, alignment: .center)
