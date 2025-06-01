@@ -2,6 +2,7 @@ import Core
 import Foundation
 import SwiftUI
 
+@MainActor
 final class LaunchAnimationCommand: Command {
     var hasFinishedLaunching: Binding<Bool>
     let animationDuration: Double
@@ -12,10 +13,7 @@ final class LaunchAnimationCommand: Command {
     }
 
     func execute() async throws {
-        await MainActor.run { [hasFinishedLaunching] in
-            hasFinishedLaunching.wrappedValue = true
-        }
-
+        hasFinishedLaunching.wrappedValue = true
         try? await Task.sleep(for: .seconds(animationDuration))
     }
 }

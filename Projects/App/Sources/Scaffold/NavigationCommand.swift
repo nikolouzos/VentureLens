@@ -3,6 +3,7 @@ import Foundation
 import Networking
 import UI
 
+@MainActor
 final class NavigationCommand: Command {
     let user: User?
     let coordinator: any NavigationCoordinatorProtocol<AuthenticationViewState>
@@ -15,14 +16,13 @@ final class NavigationCommand: Command {
         self.coordinator = coordinator
     }
 
-    @MainActor
     func execute() async throws {
         guard let user else {
             coordinator.navigate(to: .loggedOut)
             return
         }
 
-        if user.name == nil {
+        if user.name == nil, !user.isAnonymous {
             coordinator.navigate(to: .signup)
             return
         }

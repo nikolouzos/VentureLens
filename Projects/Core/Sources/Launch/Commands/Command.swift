@@ -1,3 +1,3 @@
-public protocol Command {
+public protocol Command: AnyObject {
     func execute() async throws
 }
