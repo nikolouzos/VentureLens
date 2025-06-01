@@ -5,6 +5,7 @@ extension Networking.User {
     init(user: Supabase.User, profile: UserProfileResponse) {
         self.init(
             id: user.id,
+            isAnonymous: user.isAnonymous,
             email: user.email,
             name: user.userMetadata["name"]?.stringValue,
             subscription: profile.subscription,

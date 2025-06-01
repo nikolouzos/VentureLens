@@ -8,6 +8,7 @@ public struct User: Decodable, Equatable, Sendable {
     public let id: UUID
     public let email: String?
     public let name: String?
+    public let isAnonymous: Bool
     public let subscription: SubscriptionType
     public let unlockedIdeas: [UUID]
     public let lastUnlockTime: Date?
@@ -16,6 +17,7 @@ public struct User: Decodable, Equatable, Sendable {
 
     public init(
         id: UUID,
+        isAnonymous: Bool,
         email: String?,
         name: String?,
         subscription: SubscriptionType,
@@ -27,6 +29,7 @@ public struct User: Decodable, Equatable, Sendable {
         self.id = id
         self.email = email
         self.name = name
+        self.isAnonymous = isAnonymous
         self.subscription = subscription
         self.unlockedIdeas = unlockedIdeas
         self.lastUnlockTime = lastUnlockTime
@@ -39,6 +42,7 @@ public struct User: Decodable, Equatable, Sendable {
     public extension User {
         static let mock = User(
             id: UUID(uuidString: "48b3ebc4-039b-42b1-b676-51f5616fe1fb")!,
+            isAnonymous: false,
             email: "test@example.com",
             name: "Test User",
             subscription: .free,

@@ -3,29 +3,42 @@ import Networking
 import Supabase
 
 public actor SupabaseAuthAdapter: AuthClientProtocol {
-    public let interceptors: [any Networking.AuthInterceptor]
     private unowned let supabaseClient: any SupabaseClientProtocol
+    private var authStateSubscription: AuthStateChangeListenerRegistration?
 
-    public init(
-        supabaseClient: any SupabaseClientProtocol,
-        interceptors: [any Networking.AuthInterceptor] = []
-    ) {
+    // The user should be fresh the first time we retrieve them
+    private var shouldRefreshUser: Bool = true
+
+    public init(supabaseClient: any SupabaseClientProtocol) {
         self.supabaseClient = supabaseClient
-        self.interceptors = interceptors
+
+        Task {
+            await listenToAuthStateChanges()
+        }
+    }
+
+    deinit {
+        authStateSubscription?.remove()
     }
 
     public var session: Networking.Session? {
         get async {
             do {
                 let supabaseSession = try await supabaseClient.auth().session
-                return try Session(
-                    user: await fetchUser(using: supabaseSession),
+                return try await Session(
+                    user: fetchUser(using: supabaseSession),
                     accessToken: supabaseSession.accessToken
                 )
             } catch {
                 return nil
             }
         }
+    }
+
+    // MARK: - Operations
+
+    public func signInAnonymously() async throws {
+        try await supabaseClient.auth().signInAnonymously()
     }
 
     public func signInWithOTP(email: String) async throws {
@@ -43,8 +56,8 @@ public actor SupabaseAuthAdapter: AuthClientProtocol {
             credentials: supabaseCredentials
         )
 
-        return try Session(
-            user: await fetchUser(using: supabaseSession),
+        return try await Session(
+            user: fetchUser(using: supabaseSession),
             accessToken: supabaseSession.accessToken
         )
     }
@@ -66,11 +79,22 @@ public actor SupabaseAuthAdapter: AuthClientProtocol {
     }
 
     public func update(userAttributes: Networking.UserAttributes) async throws {
-        try await supabaseClient.auth().update(
-            user: Supabase.UserAttributes(
-                email: userAttributes.email
+        var userMetadata: [String: AnyJSON] = [:]
+
+        if let name = userAttributes.name {
+            userMetadata["name"] = .string(name)
+        }
+
+        do {
+            try await supabaseClient.auth().update(
+                user: Supabase.UserAttributes(
+                    email: userAttributes.email,
+                    data: userMetadata
+                )
             )
-        )
+        } catch {
+            throw error
+        }
     }
 
     public func deleteAccount() async throws {
@@ -88,21 +112,62 @@ public actor SupabaseAuthAdapter: AuthClientProtocol {
         }
     }
 
+    // MARK: - User Fetching
+
     private func fetchUser(using session: Supabase.Session) async throws -> Networking.User {
-        let profileResponse: PostgrestResponse<UserProfileResponse> = try await supabaseClient
+        async let user = shouldRefreshUser
+            ? try await supabaseClient.auth().user
+            : session.user
+
+        async let profile = try await fetchProfile(for: session.user.id)
+
+        do {
+            let finalUser = try await User(user: user, profile: profile)
+            shouldRefreshUser = false
+            return finalUser
+
+        } catch {
+            throw error
+        }
+    }
+
+    private func fetchProfile(for uid: UUID) async throws -> UserProfileResponse {
+        let postgrestResponse: PostgrestResponse<UserProfileResponse> = try await supabaseClient
             .from("profiles")
             .select("*", head: false, count: nil)
-            .eq("uid", value: session.user.id)
+            .eq("uid", value: uid)
             .single()
             .execute(options: FetchOptions())
 
-        return User(user: session.user, profile: profileResponse.value)
+        return postgrestResponse.value
+    }
+
+    // MARK: - Helpers
+
+    private func setShouldRefreshUser(_ shouldRefreshUser: Bool) {
+        self.shouldRefreshUser = shouldRefreshUser
     }
 
     private func mapProvider(_ provider: Networking.Provider) -> Supabase.OpenIDConnectCredentials.Provider {
         switch provider {
         case .apple:
-            return .apple
+            .apple
+        }
+    }
+
+    // MARK: - Auth State Listener
+
+    private func listenToAuthStateChanges() async {
+        authStateSubscription = await supabaseClient.auth().onAuthStateChange { [weak self] event, _ in
+            switch event {
+            case .userUpdated, .userDeleted, .signedOut:
+                Task {
+                    await self?.setShouldRefreshUser(true)
+                }
+
+            default:
+                return
+            }
         }
     }
 }

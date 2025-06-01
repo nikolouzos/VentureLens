@@ -27,6 +27,9 @@ public final class ConcreteAuthentication: Authentication {
 
     public func authenticate(with provider: AuthenticationProvider) async throws {
         switch provider {
+        case .anonymous:
+            try await authClient.signInAnonymously()
+
         case let .otp(email):
             try await authClient.signInWithOTP(email: email)
 
@@ -65,7 +68,7 @@ public final class ConcreteAuthentication: Authentication {
         user: User,
         signupData: OAuthSignupData?
     ) async throws {
-        guard let signupData = signupData, user.email == nil || user.email == "" else {
+        guard let signupData, user.email == nil || user.email == "" else {
             return
         }
 
