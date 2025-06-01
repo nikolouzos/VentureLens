@@ -18,16 +18,16 @@ public enum PushNotificationError: LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .notificationSettingsUnavailable:
-            return "Unable to fetch notification settings"
+            "Unable to fetch notification settings"
 
         case .permissionDenied:
-            return "Push notification permission was denied"
+            "Push notification permission was denied"
 
         case .settingsURLNotAvailable:
-            return "Could not open Settings app"
+            "Could not open Settings app"
 
         case let .unknown(error):
-            return error.localizedDescription
+            error.localizedDescription
         }
     }
 }
@@ -36,7 +36,7 @@ public enum PushNotificationError: LocalizedError {
 public protocol PushNotificationsProtocol: AnyObject {
     init(
         notificationCenter: UNUserNotificationCenter,
-        urlOpener: URLOpener
+        urlOpener: URLOpener?
     )
 
     /// Request permission to send push notifications

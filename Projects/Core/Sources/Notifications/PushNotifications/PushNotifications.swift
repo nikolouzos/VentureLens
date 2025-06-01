@@ -9,10 +9,10 @@ public final class PushNotifications: PushNotificationsProtocol {
 
     public init(
         notificationCenter: UNUserNotificationCenter = .current(),
-        urlOpener: URLOpener = UIApplication.shared
+        urlOpener: URLOpener? = nil
     ) {
         self.notificationCenter = notificationCenter
-        self.urlOpener = urlOpener
+        self.urlOpener = urlOpener ?? UIApplication.shared
     }
 
     public func requestPermission(
