@@ -29,6 +29,3 @@ public protocol Authentication: Sendable {
     /// Deletes the ``currentUser`` account
     func deleteAccount() async throws
 }
-
-// For mock implementation, use MockAuthentication from NetworkingTestHelpers module
-// See Projects/Networking/TestHelpers/Mocks/MockAuthentication.swift

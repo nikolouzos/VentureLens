@@ -1,39 +1,46 @@
 import Foundation
 import Supabase
 
-public protocol SupabaseAuthClientProtocol: AnyObject {
+public protocol SupabaseAuthClientProtocol: Actor {
+    associatedtype AuthStateSubscription: AuthStateChangeListenerRegistration
+
     /// Gets the current session.
     var session: Supabase.Session { get async throws }
 
-    /// Returns the current session, if any.
-    var currentSession: Supabase.Session? { get }
+    /// Get the current user (remotely)
+    var user: Supabase.User { get async throws }
 
-    /// Returns the current user, if any.
-    var currentUser: Supabase.User? { get }
+    /// Signs in a user anonymously
+    func signInAnonymously() async throws
 
-    /// Sign in a user using an email and a magic link.
+    /// Signs in a user using an email and a magic link.
     /// - Parameter email: The user's email address.
     func signInWithOTP(email: String) async throws
 
-    /// Sign in a user using an ID token issued by certain supported providers.
+    /// Signs in a user using an ID token issued by certain supported providers.
     /// - Parameter credentials: The credentials containing the ID token and other necessary information.
     /// - Returns: A session containing the user's information and access token.
+    @discardableResult
     func signInWithIdToken(credentials: Supabase.OpenIDConnectCredentials) async throws -> Supabase.Session
 
-    /// Verify an OTP sent to an email.
+    /// Verifies an OTP sent to an email.
     /// - Parameters:
     ///   - email: The user's email address.
     ///   - token: The OTP token.
     ///   - type: The type of OTP.
     func verifyOTP(email: String, token: String, type: Supabase.EmailOTPType) async throws
 
-    /// Sign out the current user.
+    /// Signs out the current user.
     func signOut() async throws
 
-    /// Refresh the current session.
+    /// Refreshes the current session.
     func refreshSession() async throws
 
-    /// Update the current user's information.
+    /// Updates the current user's information.
     /// - Parameter user: The user attributes to update.
     func update(user: Supabase.UserAttributes) async throws
+
+    /// Listens for auth state changes
+    @discardableResult
+    func onAuthStateChange(_ listener: @escaping AuthStateChangeListener) async -> AuthStateSubscription
 }

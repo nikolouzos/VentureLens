@@ -13,6 +13,7 @@ public final class OAuthSignupData: Sendable {
 }
 
 public enum AuthenticationProvider: Equatable, Sendable {
+    case anonymous
     case otp(email: String)
     case apple(
         identityToken: String,
