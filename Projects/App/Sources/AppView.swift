@@ -15,10 +15,12 @@ struct AppView<
 
     init(
         dependencies: Dependencies = Dependencies(),
-        authCoordinator: AuthCoordinator = NavigationCoordinator()
+        authCoordinator: AuthCoordinator
     ) {
         self.dependencies = dependencies
-        _authCoordinator = StateObject(wrappedValue: authCoordinator)
+        _authCoordinator = StateObject(
+            wrappedValue: authCoordinator
+        )
     }
 
     var body: some View {
@@ -77,25 +79,28 @@ struct AppView<
     }
 
     private func scaffold() async {
-        Task { [self] in
-            let user = await dependencies.authentication.currentUser
+        let user = await dependencies.authentication.currentUser
 
-            let commands: [Command] = [
-                AppearanceCommand(),
-                LaunchAnimationCommand(
-                    hasFinishedLaunching: $hasFinishedLaunching,
-                    animationDuration: launchAnimationDuration
-                ),
-                NavigationCommand(
-                    user: user,
-                    coordinator: authCoordinator
-                ),
-                AnalyticsCommand(user: user, analytics: dependencies.analytics),
-            ]
+        let commands: [Command] = [
+            AppearanceCommand(),
+            LaunchAnimationCommand(
+                hasFinishedLaunching: $hasFinishedLaunching,
+                animationDuration: launchAnimationDuration
+            ),
+            NavigationCommand(
+                user: user,
+                coordinator: authCoordinator
+            ),
+            AnalyticsCommand(user: user, analytics: dependencies.analytics),
+            InAppPurchasesCommand(user: user, inAppPurchasesManager: dependencies.inAppPurchasesManager),
+        ]
 
+        let commandsTask = Task { [commands] in
             for command in commands {
                 try? await command.execute()
             }
         }
+
+        await commandsTask.value
     }
 }
