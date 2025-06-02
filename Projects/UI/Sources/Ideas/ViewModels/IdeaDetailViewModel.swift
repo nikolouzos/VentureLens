@@ -7,40 +7,41 @@ import SwiftUICore
 
 @MainActor
 class IdeaDetailViewModel: ObservableObject {
-    let idea: Idea
-    let apiClient: APIClientProtocol
-    let authentication: Authentication
-    private let analytics: Analytics?
+    let dependencies: Dependencies
     private let bookmarkDataSource: DataSource<Bookmark>?
+    private let onIdeaRefreshed: (@Sendable (UUID) async -> Idea?)?
 
+    @Published private(set) var idea: Idea
     @Published private(set) var currentUser: User?
     @Published private(set) var isLoading: Bool = false
     @Published private(set) var selectedTab: DetailTab = .overview
     @Published private(set) var isBookmarked: Bool = false
     @Published private(set) var isPremiumUser: Bool = false
     @Published private(set) var hasUnlockedIdea: Bool = false
+    @Published private(set) var error: String?
+    @Published var showPaywallView: Bool = false
 
     init(
         idea: Idea,
-        apiClient: APIClientProtocol,
-        authentication: Authentication,
-        analytics: Analytics? = nil,
+        dependencies: Dependencies,
         bookmarkDataSource: DataSource<Bookmark>? = .init(
             configurations: ModelConfiguration(
                 isStoredInMemoryOnly: false,
                 cloudKitDatabase: .automatic
             )
-        )
+        ),
+        onIdeaRefreshed: (@Sendable (UUID) async -> Idea?)? = nil
     ) {
         self.idea = idea
-        self.apiClient = apiClient
-        self.authentication = authentication
-        self.analytics = analytics
+        self.dependencies = dependencies
         self.bookmarkDataSource = bookmarkDataSource
+        self.onIdeaRefreshed = onIdeaRefreshed
     }
 
-    func onAppear() {
-        updateData()
+    func onAppear(hasUnlockedIdea: Bool = false) {
+        updateData(
+            shouldUpdateIdea: hasUnlockedIdea
+        )
         trackIdeaViewed()
     }
 
@@ -48,11 +49,23 @@ class IdeaDetailViewModel: ObservableObject {
         trackIdeaViewEnded()
     }
 
-    func updateData() {
+    private func updateData(
+        shouldUpdateIdea: Bool
+    ) {
         Task {
             await withTaskGroup(of: Void.self) { group in
                 group.addTask { await self.updateBookmark() }
                 group.addTask { await self.fetchUser() }
+
+                if shouldUpdateIdea, let onIdeaRefreshed {
+                    group.addTask {
+                        if let newIdea = await onIdeaRefreshed(self.idea.id) {
+                            await MainActor.run {
+                                self.idea = newIdea
+                            }
+                        }
+                    }
+                }
 
                 await group.waitForAll()
             }
@@ -97,7 +110,7 @@ class IdeaDetailViewModel: ObservableObject {
     }
 
     private func fetchUser() async {
-        currentUser = await authentication.currentUser
+        currentUser = await dependencies.authentication.currentUser
         checkSubscriptionStatus()
     }
 
@@ -111,44 +124,44 @@ class IdeaDetailViewModel: ObservableObject {
     // MARK: - Analytics Tracking
 
     private func trackIdeaViewed() {
-        analytics?.track(event: .ideaViewed(
+        dependencies.analytics.track(event: .ideaViewed(
             id: idea.id.uuidString,
             title: idea.title,
             category: idea.category
         ))
 
-        analytics?.startTimingEvent(event: .ideaViewed)
+        dependencies.analytics.startTimingEvent(event: .ideaViewed)
     }
 
     private func trackIdeaViewEnded() {
-        analytics?.trackTimedEvent(event: .ideaViewed, additionalProperties: nil)
+        dependencies.analytics.trackTimedEvent(event: .ideaViewed, additionalProperties: nil)
     }
 
     private func trackTabChanged(from oldTab: DetailTab, to newTab: DetailTab) {
         // End timing for the old tab
-        analytics?.trackTimedEvent(
+        dependencies.analytics.trackTimedEvent(
             event: .ideaTabViewed,
             additionalProperties: ["from_tab": oldTab.title]
         )
 
         // Track and start timing for the new tab
-        analytics?.track(event: .ideaTabViewed(
+        dependencies.analytics.track(event: .ideaTabViewed(
             ideaId: idea.id.uuidString,
             tabName: newTab.title
         ))
 
-        analytics?.startTimingEvent(event: .ideaTabViewed)
+        dependencies.analytics.startTimingEvent(event: .ideaTabViewed)
     }
 
     private func trackIdeaBookmarked() {
-        analytics?.track(event: .ideaBookmarked(
+        dependencies.analytics.track(event: .ideaBookmarked(
             id: idea.id.uuidString,
             title: idea.title
         ))
     }
 
     private func trackIdeaUnbookmarked() {
-        analytics?.track(event: .ideaUnbookmarked(
+        dependencies.analytics.track(event: .ideaUnbookmarked(
             id: idea.id.uuidString,
             title: idea.title
         ))
@@ -168,13 +181,13 @@ enum DetailTab: String, CaseIterable {
 
     var title: String {
         switch self {
-        case .overview: return "Overview"
-        case .financial: return "Financial"
-        case .market: return "Market"
-        case .roadmap: return "Roadmap"
-        case .techStack: return "Tech Stack"
-        case .ethics: return "Ethics & Risks"
-        case .validation: return "MVP Validation"
+        case .overview: "Overview"
+        case .financial: "Financial"
+        case .market: "Market"
+        case .roadmap: "Roadmap"
+        case .techStack: "Tech Stack"
+        case .ethics: "Ethics & Risks"
+        case .validation: "MVP Validation"
         }
     }
 }

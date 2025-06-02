@@ -28,23 +28,46 @@ struct IdeasBookmarksView: View {
     }
 
     var body: some View {
-        IdeasGridView(
-            ideas: viewModel.bookmarkedIdeas,
-            isLoading: viewModel.isLoading,
-            isRefreshing: viewModel.isRefreshing,
-            canLoadMore: viewModel.canLoadMore,
-            namespace: namespace,
-            gridLayout: gridLayout,
-            onIdeaTap: onIdeaTap,
-            onLoadMore: {
-                Task {
-                    await viewModel.loadMoreBookmarkedIdeas()
-                }
-            },
-            emptyStateTitle: "No bookmarked ideas",
-            emptyStateMessage: "Ideas you bookmark will appear here",
-            currentUser: viewModel.currentUser
-        )
+        if viewModel.currentUser?.isAnonymous != true {
+            IdeasGridView(
+                ideas: viewModel.bookmarkedIdeas,
+                isLoading: viewModel.isLoading,
+                isRefreshing: viewModel.isRefreshing,
+                canLoadMore: viewModel.canLoadMore,
+                namespace: namespace,
+                gridLayout: gridLayout,
+                onIdeaTap: onIdeaTap,
+                onLoadMore: {
+                    Task {
+                        await viewModel.loadMoreBookmarkedIdeas()
+                    }
+                },
+                emptyStateTitle: "No bookmarked ideas",
+                emptyStateMessage: "Ideas you bookmark will appear here",
+                currentUser: viewModel.currentUser
+            )
+        } else {
+            disabledFeatureView
+        }
+    }
+
+    private var disabledFeatureView: some View {
+        VStack(spacingSize: .xl) {
+            Image(systemName: "bookmark.slash")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(widthSize: .composite(.xl, .md))
+                .foregroundColor(.secondary)
+
+            Text("Bookmarks are not available for guest users")
+                .font(.plusJakartaSans(.title3, weight: .semibold))
+
+            Text("Please create a free account to get access to bookmarks")
+                .font(.plusJakartaSans(.subheadline))
+                .foregroundColor(.secondary)
+        }
+        .multilineTextAlignment(.center)
+        .padding(.horizontal, .xl)
     }
 }
 

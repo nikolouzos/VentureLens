@@ -54,12 +54,10 @@ struct UnlockIdeaCardView: View {
                     Text(nextDate, style: .date)
                         .font(.plusJakartaSans(.subheadline, weight: .bold))
 
-//                    Button("Upgrade to Premium") {
-//                        // TODO: Navigate to subscription screen
-//                    }
-//                    .buttonStyle(.borderedProminent)
-//                    .tint(.themePrimary)
-//                    .padding(.top, .sm)
+                    Button("View Premium Plans") {
+                        viewModel.showPaywallView.wrappedValue = true
+                    }
+                    .buttonStyle(ProminentButtonStyle())
                 }
             } else {
                 Button("Unlock Content") {

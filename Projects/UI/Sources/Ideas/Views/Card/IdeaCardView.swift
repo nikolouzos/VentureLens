@@ -74,6 +74,7 @@ struct IdeaCardView: View {
             idea: idea,
             currentUser: User(
                 id: UUID(),
+                isAnonymous: false,
                 email: "test@example.com",
                 name: "Test User",
                 subscription: .free,

@@ -33,18 +33,18 @@ struct IdeaDetailView: View {
                     }
 
                     if let user = viewModel.currentUser,
-                       !viewModel.isPremiumUser &&
+                       !viewModel.isPremiumUser,
                        !viewModel.hasUnlockedIdea
                     {
                         UnlockIdeaCardView(
                             viewModel: UnlockIdeaViewModel(
                                 user: user,
                                 ideaId: viewModel.idea.id.uuidString,
-                                apiClient: viewModel.apiClient,
-                                authentication: viewModel.authentication
+                                dependencies: viewModel.dependencies,
+                                showPaywallView: $viewModel.showPaywallView
                             ),
                             onUnlocked: {
-                                viewModel.onAppear()
+                                viewModel.onAppear(hasUnlockedIdea: true)
                             }
                         )
                     }
@@ -62,11 +62,19 @@ struct IdeaDetailView: View {
                 .padding(.all, .lg)
             }
         }
+        .ignoresSafeArea(edges: .top)
         .task {
             viewModel.onAppear()
         }
         .onDisappear(perform: viewModel.onDisappear)
         .disabled(viewModel.isLoading)
+        .sheet(isPresented: $viewModel.showPaywallView) {
+            PaywallView(
+                viewModel: PaywallViewModel(
+                    dependencies: viewModel.dependencies
+                )
+            )
+        }
     }
 
     // MARK: - Subviews
@@ -98,7 +106,9 @@ struct IdeaDetailView: View {
                     .frame(widthSize: .lg)
             }
         }
-        .padding(.all, .lg)
+        .padding(.horizontal, .lg)
+        .padding(.top, .xl)
+        .safeAreaPadding(.top)
     }
 
     private var financialOverviewView: some View {
@@ -228,7 +238,7 @@ struct IdeaDetailView: View {
 
     private func noDataView(for section: String) -> some View {
         VStack(spacingSize: .md) {
-            if !viewModel.isPremiumUser && !viewModel.hasUnlockedIdea {
+            if !viewModel.isPremiumUser, !viewModel.hasUnlockedIdea {
                 Image(systemName: "lock.fill")
                     .font(.plusJakartaSans(.largeTitle))
                     .foregroundStyle(Color.themePrimary)
@@ -242,7 +252,7 @@ struct IdeaDetailView: View {
                 .font(.plusJakartaSans(.headline))
                 .multilineTextAlignment(.center)
 
-            if !viewModel.isPremiumUser && !viewModel.hasUnlockedIdea {
+            if !viewModel.isPremiumUser, !viewModel.hasUnlockedIdea {
                 Text("This content is locked. Unlock the idea to view the full analysis.")
                     .font(.plusJakartaSans(.subheadline))
                     .foregroundStyle(Color.secondary)
@@ -276,8 +286,7 @@ struct IdeaDetailView: View {
             IdeaDetailView(
                 viewModel: IdeaDetailViewModel(
                     idea: IdeaPreviews.standard,
-                    apiClient: Dependencies().apiClient,
-                    authentication: Dependencies().authentication
+                    dependencies: Dependencies()
                 )
             )
         }

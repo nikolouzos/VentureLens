@@ -2,6 +2,7 @@ import Combine
 import Dependencies
 import Foundation
 import Networking
+import SwiftUI
 
 @MainActor
 class UnlockIdeaViewModel: ObservableObject {
@@ -15,19 +16,22 @@ class UnlockIdeaViewModel: ObservableObject {
 
     private let user: User
     private let ideaId: String
-    private let apiClient: APIClientProtocol
+    let dependencies: Dependencies
 
     @Published private(set) var state: State = .idle
+    @Published var showSubscriptionView = false
+    var showPaywallView: Binding<Bool>
 
     init(
         user: User,
         ideaId: String,
-        apiClient: APIClientProtocol,
-        authentication _: Authentication
+        dependencies: Dependencies,
+        showPaywallView: Binding<Bool>
     ) {
         self.user = user
         self.ideaId = ideaId
-        self.apiClient = apiClient
+        self.dependencies = dependencies
+        self.showPaywallView = showPaywallView
 
         setDefaultState()
     }
@@ -37,7 +41,7 @@ class UnlockIdeaViewModel: ObservableObject {
         state = .loading
 
         do {
-            let response: UnlockIdeaResponse = try await apiClient.fetch(
+            let response: UnlockIdeaResponse = try await dependencies.apiClient.fetch(
                 .unlockIdea(UnlockIdeaRequest(ideaId: ideaId))
             )
 
@@ -49,7 +53,14 @@ class UnlockIdeaViewModel: ObservableObject {
                 state = .error(response.message ?? "Failed to unlock idea")
             }
         } catch {
-            state = .error(error.localizedDescription)
+            let defaultMessage = "Unknown error occurred, please try again later."
+            switch error {
+            case let .common(status, commonError):
+                state = .error("\(commonError.message ?? defaultMessage) (\(status))")
+
+            case .unknown:
+                state = .error(defaultMessage)
+            }
         }
     }
 
@@ -57,7 +68,7 @@ class UnlockIdeaViewModel: ObservableObject {
         let oneWeekAgo = Date().addingTimeInterval(-7 * 24 * 60 * 60)
         let unlockTimeHasElapsed = user.lastUnlockTime == nil || user.lastUnlockTime! < oneWeekAgo
 
-        if user.weeklyUnlocksUsed >= 1 && !unlockTimeHasElapsed {
+        if user.weeklyUnlocksUsed >= 1, !unlockTimeHasElapsed {
             let lastUnlockTime = user.lastUnlockTime ?? Date()
             let nextUnlockTime = lastUnlockTime.addingTimeInterval(7 * 24 * 60 * 60)
             state = .limitReached(nextUnlockTime)
