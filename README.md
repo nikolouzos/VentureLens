@@ -92,7 +92,8 @@ VentureLens/
 │   └── ProjectDescriptionHelpers/
 ├── Scripts/
 │   ├── load_env_and_generate.sh
-│   └── swiftformat.sh
+│   ├── swiftformat.sh
+│   └── update_versions.sh
 ├── xcconfigs/
 ├── .env.example
 ├── Tuist.swift
@@ -146,7 +147,11 @@ This script will:
 
 - `./scripts/load_env_and_generate.sh` - Generates Xcode project with environment variables
 - `./scripts/swiftformat.sh` - Formats code according to project standards
-- `make test` - Runs all tests
+- `./scripts/update_versions.sh` - Updates `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION` in `xcconfigs/App.xcconfig` and `xcconfigs/Framework.xcconfig`. 
+    - Usage: `./Scripts/update_versions.sh [-m YY.MM.N] [-v]`
+    - `-m`: Optionally provide a specific marketing version (e.g., 24.07.1).
+    - If `-m` is not provided, CalVer (YY.MM.release) is used for `MARKETING_VERSION`, incrementing the release based on the current date and existing version.
+    - `CURRENT_PROJECT_VERSION` (build number) is always incremented from the value in `App.xcconfig`.
 
 ## Contributing
 
