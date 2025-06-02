@@ -60,17 +60,19 @@ struct IdeasLiveFeedView: View {
                     }
                 }
             )
-            .presentationDetents([.medium, .large])
         }
         .toolbar {
-            if viewModel.ideasFilters != nil {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        showingFilters = true
-                    } label: {
-                        Image(systemName: "line.3.horizontal.decrease.circle")
-                    }
-                }
+            filterButton
+        }
+    }
+
+    @ViewBuilder
+    private var filterButton: some View {
+        if viewModel.ideasFilters != nil {
+            Button {
+                showingFilters = true
+            } label: {
+                Image(systemName: "line.3.horizontal.decrease.circle")
             }
         }
     }

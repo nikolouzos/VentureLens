@@ -4,25 +4,13 @@ import Networking
 import SwiftData
 import SwiftUI
 
-// MARK: - Coordinator View
-
-public struct IdeaListView: View {
-    public enum FeedState: String, CaseIterable {
-        case live = "Feed"
-        case bookmarks = "Bookmarks"
-    }
-
+public struct IdeaFeedView: View {
     @Namespace var ideaNamespace
-    @StateObject private var viewModel: IdeaListViewModel
+    @StateObject private var viewModel: IdeaFeedViewModel
     @State private var presentingIdea: Idea?
-    @State private var feedState: FeedState = .live
 
-    public init(
-        viewModel: IdeaListViewModel,
-        feedState: FeedState = .live
-    ) {
+    public init(viewModel: IdeaFeedViewModel) {
         _viewModel = .init(wrappedValue: viewModel)
-        _feedState = .init(initialValue: feedState)
     }
 
     public var body: some View {
@@ -30,7 +18,7 @@ public struct IdeaListView: View {
             ScrollView {
                 feedPicker
 
-                switch feedState {
+                switch viewModel.feedState {
                 case .live:
                     IdeasLiveFeedView(
                         viewModel: viewModel.liveFeedViewModel,
@@ -51,12 +39,7 @@ public struct IdeaListView: View {
                 }
             }
             .refreshable {
-                switch feedState {
-                case .live:
-                    await viewModel.liveFeedViewModel.fetchIdeas()
-                case .bookmarks:
-                    await viewModel.bookmarksViewModel.fetchBookmarkedIdeas()
-                }
+                viewModel.refreshFeed()
             }
             .toolbar {
                 toolbarItems
@@ -67,24 +50,12 @@ public struct IdeaListView: View {
             )
         }
         .task {
-            await viewModel.liveFeedViewModel.fetchIdeas()
+            viewModel.refreshFeed(fromViewTask: true)
         }
-        .onChange(of: feedState) { _, newValue in
-            if newValue == .bookmarks {
-                Task {
-                    await viewModel.bookmarksViewModel.fetchBookmarkedIdeas()
-                }
-            }
+        .onChange(of: viewModel.feedState) { _, _ in
+            viewModel.refreshFeed()
         }
-        .sheet(item: $presentingIdea, onDismiss: {
-            presentingIdea = nil
-            // Refresh bookmarks when returning from detail view if needed
-            if feedState == .bookmarks {
-                Task {
-                    await viewModel.bookmarksViewModel.fetchBookmarkedIdeas()
-                }
-            }
-        }) { idea in
+        .sheet(item: $presentingIdea) { idea in
             ideaDetails(for: idea)
         }
         .alert(isPresented: .init(
@@ -101,15 +72,15 @@ public struct IdeaListView: View {
 
     private var feedPicker: some View {
         Menu {
-            Picker(selection: $feedState) {
-                ForEach(FeedState.allCases, id: \.rawValue) { value in
+            Picker(selection: $viewModel.feedState) {
+                ForEach(IdeaFeedViewModel.FeedState.allCases, id: \.rawValue) { value in
                     Text(value.rawValue)
                         .tag(value)
                 }
             } label: {}
         } label: {
             HStack {
-                Text(feedState.rawValue)
+                Text(viewModel.feedState.rawValue)
                     .font(.plusJakartaSans(.largeTitle, weight: .bold))
 
                 Image(systemName: "chevron.down")
@@ -136,9 +107,8 @@ public struct IdeaListView: View {
             IdeaDetailView(
                 viewModel: IdeaDetailViewModel(
                     idea: idea,
-                    apiClient: viewModel.apiClient,
-                    authentication: viewModel.authentication,
-                    analytics: viewModel.analytics
+                    dependencies: viewModel.dependencies,
+                    onIdeaRefreshed: viewModel.refreshIdea(for:)
                 )
             )
         }
@@ -154,8 +124,8 @@ public struct IdeaListView: View {
     import SwiftData
 
     #Preview {
-        IdeaListView(
-            viewModel: IdeaListViewModel(
+        IdeaFeedView(
+            viewModel: IdeaFeedViewModel(
                 dependencies: Dependencies()
             )
         )

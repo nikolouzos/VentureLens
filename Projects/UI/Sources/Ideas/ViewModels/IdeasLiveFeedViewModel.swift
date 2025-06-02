@@ -88,6 +88,11 @@ public class IdeasLiveFeedViewModel: ObservableObject {
         isLoading = true
         self.isRefreshing = isRefreshing
 
+        defer {
+            isLoading = false
+            self.isRefreshing = false
+        }
+
         if resetResults {
             ideas = []
         }
@@ -95,11 +100,9 @@ public class IdeasLiveFeedViewModel: ObservableObject {
         do {
             let nextPage = resetResults ? 1 : (currentRequest.page + 1)
 
-            let request: IdeasListRequest
-
-            switch currentRequest.requestType {
+            let request = switch currentRequest.requestType {
             case let .filters(query, category, createdBefore, createdAfter):
-                request = IdeasListRequest(
+                IdeasListRequest(
                     page: nextPage,
                     pageSize: currentRequest.pageSize,
                     requestType: .filters(
@@ -111,7 +114,7 @@ public class IdeasLiveFeedViewModel: ObservableObject {
                 )
 
             case let .ids(ids):
-                request = IdeasListRequest(
+                IdeasListRequest(
                     page: nextPage,
                     pageSize: currentRequest.pageSize,
                     requestType: .ids(ids: ids)
@@ -134,8 +137,31 @@ public class IdeasLiveFeedViewModel: ObservableObject {
         } catch {
             errorHandler(error)
         }
+    }
 
-        isLoading = false
-        self.isRefreshing = false
+    func refreshIdea(id: UUID) async -> Idea? {
+        do {
+            let request = IdeasListRequest(
+                page: 1,
+                pageSize: 1,
+                requestType: .ids(ids: [id.uuidString])
+            )
+
+            let response: IdeasListResponse = try await apiClient.fetch(
+                .ideasList(request)
+            )
+
+            if let updatedIdea = response.ideas.first {
+                if let index = ideas.firstIndex(where: { $0.id == id }) {
+                    ideas[index] = updatedIdea
+                }
+
+                return updatedIdea
+            }
+        } catch {
+            errorHandler(error)
+        }
+
+        return nil
     }
 }

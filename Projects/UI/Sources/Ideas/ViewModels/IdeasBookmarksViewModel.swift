@@ -53,7 +53,7 @@ public final class IdeasBookmarksViewModel: ObservableObject {
     }
 
     private func loadBookmarkedIdeas(resetResults: Bool, isRefreshing: Bool = false) async {
-        guard !isLoading, let bookmarkDataSource = bookmarkDataSource else {
+        guard !isLoading, let bookmarkDataSource else {
             return
         }
 
@@ -106,5 +106,32 @@ public final class IdeasBookmarksViewModel: ObservableObject {
 
         isLoading = false
         self.isRefreshing = false
+    }
+
+    func refreshIdea(id: UUID) async -> Idea? {
+        do {
+            let request = IdeasListRequest(
+                page: 1,
+                pageSize: 1,
+                requestType: .ids(ids: [id.uuidString])
+            )
+
+            let response: IdeasListResponse = try await apiClient.fetch(
+                .ideasList(request)
+            )
+
+            if let updatedIdea = response.ideas.first {
+                // Update in the bookmarkedIdeas array if present
+                if let index = bookmarkedIdeas.firstIndex(where: { $0.id == id }) {
+                    bookmarkedIdeas[index] = updatedIdea
+                }
+
+                return updatedIdea
+            }
+        } catch {
+            errorHandler(error)
+        }
+
+        return nil
     }
 }

@@ -16,8 +16,8 @@ public struct MainTabView: View {
 
     public var body: some View {
         TabView {
-            IdeaListView(
-                viewModel: IdeaListViewModel(dependencies: dependencies)
+            IdeaFeedView(
+                viewModel: IdeaFeedViewModel(dependencies: dependencies)
             )
             .tabItem {
                 Label("Feed", systemImage: "lightbulb")
@@ -25,10 +25,9 @@ public struct MainTabView: View {
 
             SettingsView(
                 viewModel: SettingsViewModel(
-                    authentication: dependencies.authentication,
+                    dependencies: dependencies,
                     pushNotifications: PushNotifications(),
-                    coordinator: authCoordinator,
-                    analytics: dependencies.analytics
+                    coordinator: authCoordinator
                 )
             )
             .tabItem {
