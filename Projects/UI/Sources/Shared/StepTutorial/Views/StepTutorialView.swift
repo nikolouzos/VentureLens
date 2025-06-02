@@ -103,7 +103,7 @@ struct Stepper: View {
                     )
                     .padding(
                         .trailing,
-                        index == (totalSteps - 1) ? 0 : Size.xs.rawValue
+                        index == (totalSteps - 1) ? .zero : .xs
                     )
                     .animation(animationType, value: currentStep)
             }

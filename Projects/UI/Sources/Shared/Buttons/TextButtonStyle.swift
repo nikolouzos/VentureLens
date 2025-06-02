@@ -1,6 +1,6 @@
-import SwiftUI
 import AppResources
 import Core
+import SwiftUI
 
 // MARK: - Text Button Style
 
@@ -17,12 +17,12 @@ public struct TextButtonStyle: ButtonStyle {
             .font(font)
             .foregroundColor(
                 isEnabled ?
-                (
-                    configuration.isPressed
-                    ? tintColor.opacity(0.7)
-                    : tintColor
-                )
-                : disabledColor
+                    (
+                        configuration.isPressed
+                            ? tintColor.opacity(0.7)
+                            : tintColor
+                    )
+                    : disabledColor
             )
             .scaleEffect(configuration.isPressed ? pressedScale : 1.0)
             .animation(
@@ -34,24 +34,24 @@ public struct TextButtonStyle: ButtonStyle {
 }
 
 #if DEBUG
-#Preview {
-    VStack(spacing: 20) {
-        Button("Text Button") {
-            print("Text tapped")
+    #Preview {
+        VStack(spacingSize: .lg) {
+            Button("Text Button") {
+                print("Text tapped")
+            }
+            .buttonStyle(TextButtonStyle())
+
+            Button("Text Button Red") {
+                print("Text Red tapped")
+            }
+            .buttonStyle(TextButtonStyle(tintColor: .red))
+
+            Button("Text Button Disabled") {
+                print("Text disabled tapped")
+            }
+            .buttonStyle(TextButtonStyle())
+            .disabled(true)
         }
-        .buttonStyle(TextButtonStyle())
-        
-        Button("Text Button Red") {
-            print("Text Red tapped")
-        }
-        .buttonStyle(TextButtonStyle(tintColor: .red))
-        
-        Button("Text Button Disabled") {
-            print("Text disabled tapped")
-        }
-        .buttonStyle(TextButtonStyle())
-        .disabled(true)
+        .padding()
     }
-    .padding()
-}
-#endif 
+#endif

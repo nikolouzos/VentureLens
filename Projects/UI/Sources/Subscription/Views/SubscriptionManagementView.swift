@@ -28,7 +28,10 @@ public struct SubscriptionManagementView: View {
                                 .padding(.all, .lg)
                                 .background(.ultraThinMaterial, in: RoundedHexagon(cornerSize: .lg))
                                 .foregroundColor(.yellow)
-                                .shadow(color: .white.opacity(0.2), radius: Size.lg.rawValue)
+                                .shadow(
+                                    color: .white.opacity(0.2),
+                                    radius: Size.lg.rawValue
+                                )
                         }
 
                         Text("Premium Subscription Active")

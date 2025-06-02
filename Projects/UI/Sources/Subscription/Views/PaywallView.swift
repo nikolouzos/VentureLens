@@ -213,7 +213,7 @@ struct PlanComparisonCard: View {
     var isPremium: Bool = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(alignment: .leading, spacingSize: .zero) {
             VStack(alignment: .center, spacingSize: .xs) {
                 Text(planName)
                     .font(.plusJakartaSans(.headline, weight: .bold))

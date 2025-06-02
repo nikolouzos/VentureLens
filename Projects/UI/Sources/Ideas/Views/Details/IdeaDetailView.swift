@@ -271,7 +271,7 @@ struct IdeaDetailView: View {
         .frame(maxWidth: .infinity)
         .padding(.all, .lg)
         .background(
-            RoundedRectangle(cornerRadius: Size.md.rawValue)
+            RoundedRectangle(cornerSize: .md)
                 .fill(Color.secondary.opacity(0.1))
         )
     }

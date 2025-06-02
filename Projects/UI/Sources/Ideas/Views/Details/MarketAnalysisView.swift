@@ -64,7 +64,7 @@ struct MarketAnalysisView: View {
         }
         .padding(.all, .md)
         .background(
-            RoundedRectangle(cornerRadius: Size.md.rawValue)
+            RoundedRectangle(cornerSize: .md)
                 .fill(Color.secondary.opacity(0.1))
         )
     }
@@ -141,7 +141,7 @@ struct MarketAnalysisView: View {
         }
         .padding(.all, .md)
         .background(
-            RoundedRectangle(cornerRadius: Size.md.rawValue)
+            RoundedRectangle(cornerSize: .md)
                 .fill(Color.secondary.opacity(0.1))
         )
     }
@@ -158,7 +158,7 @@ struct MarketAnalysisView: View {
         }
         .padding(.all, .md)
         .background(
-            RoundedRectangle(cornerRadius: Size.md.rawValue)
+            RoundedRectangle(cornerSize: .md)
                 .fill(Color.secondary.opacity(0.1))
         )
     }
@@ -185,7 +185,7 @@ struct MarketAnalysisView: View {
         .padding(.all, .sm)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
-            RoundedRectangle(cornerRadius: Size.sm.rawValue)
+            RoundedRectangle(cornerSize: .sm)
                 .fill(Color.secondary.opacity(0.1))
         )
     }

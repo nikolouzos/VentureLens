@@ -1,6 +1,6 @@
-import SwiftUI
 import AppResources
 import Core
+import SwiftUI
 
 // MARK: - Prominent Button Style
 
@@ -45,37 +45,37 @@ public struct ProminentButtonStyle: ButtonStyle {
 }
 
 #if DEBUG
-#Preview {
-    VStack(spacing: 20) {
-        Button("Prominent Button") {
-            print("Prominent tapped")
+    #Preview {
+        VStack(spacingSize: .lg) {
+            Button("Prominent Button") {
+                print("Prominent tapped")
+            }
+            .buttonStyle(
+                ProminentButtonStyle()
+            )
+
+            Button("Prominent Loading") {
+                print("Prominent tapped")
+            }
+            .buttonStyle(
+                ProminentButtonStyle(isLoading: true)
+            )
+
+            Button("Prominent Full Width") {
+                print("Prominent tapped")
+            }
+            .buttonStyle(
+                ProminentButtonStyle(fullWidth: true)
+            )
+
+            Button("Prominent Disabled") {
+                print("Prominent tapped")
+            }
+            .buttonStyle(
+                ProminentButtonStyle()
+            )
+            .disabled(true)
         }
-        .buttonStyle(
-            ProminentButtonStyle()
-        )
-        
-        Button("Prominent Loading") {
-            print("Prominent tapped")
-        }
-        .buttonStyle(
-            ProminentButtonStyle(isLoading: true)
-        )
-        
-        Button("Prominent Full Width") {
-            print("Prominent tapped")
-        }
-        .buttonStyle(
-            ProminentButtonStyle(fullWidth: true)
-        )
-        
-        Button("Prominent Disabled") {
-            print("Prominent tapped")
-        }
-        .buttonStyle(
-            ProminentButtonStyle()
-        )
-        .disabled(true)
+        .padding()
     }
-    .padding()
-}
-#endif 
+#endif

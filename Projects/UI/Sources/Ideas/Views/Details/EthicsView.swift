@@ -70,8 +70,8 @@ struct EthicsView: View {
         }
         .padding(.all, .md)
         .background(
-            RoundedRectangle(cornerRadius: Size.md.rawValue)
-                .fill(Color.secondary.opacity(0.1))
+            RoundedRectangle(cornerSize: .md)
+                .fill(Color.secondary.opacity(0.2))
         )
         .padding(.bottom, .sm)
     }
@@ -95,8 +95,8 @@ struct EthicsView: View {
         .padding(.all, .md)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
-            RoundedRectangle(cornerRadius: Size.md.rawValue)
-                .fill(Color.secondary.opacity(0.1))
+            RoundedRectangle(cornerSize: .md)
+                .fill(Color.secondary.opacity(0.2))
         )
     }
 

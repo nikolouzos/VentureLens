@@ -16,7 +16,7 @@ struct TechStackView: View {
                         GridItem(.flexible()),
                         GridItem(.flexible()),
                     ],
-                    spacing: Size.md.rawValue
+                    spacingSize: .md
                 ) {
                     ForEach(techStack.indices, id: \.self) { index in
                         let component = techStack[index]
@@ -64,7 +64,7 @@ struct TechStackView: View {
         .padding(.all, .md)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
-            RoundedRectangle(cornerRadius: Size.md.rawValue)
+            RoundedRectangle(cornerSize: .md)
                 .fill(Color.secondary.opacity(0.1))
         )
     }

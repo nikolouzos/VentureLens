@@ -38,7 +38,7 @@ struct FreeUnlockBannerView: View {
         }
         .padding(.all, .md)
         .background(
-            RoundedRectangle(cornerRadius: Size.md.rawValue)
+            RoundedRectangle(cornerSize: .md)
                 .fill(isAvailable ? Color.themeSecondary : Color.secondary)
                 .opacity(0.2)
         )

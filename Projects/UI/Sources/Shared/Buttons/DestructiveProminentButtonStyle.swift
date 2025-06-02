@@ -1,6 +1,6 @@
-import SwiftUI
 import AppResources
 import Core
+import SwiftUI
 
 // MARK: - Destructive Prominent Button Style
 
@@ -45,24 +45,24 @@ public struct DestructiveProminentButtonStyle: ButtonStyle {
 }
 
 #if DEBUG
-#Preview {
-    VStack(spacing: 20) {
-        Button("Destructive Prominent") {
-            print("Destructive Prominent tapped")
+    #Preview {
+        VStack(spacingSize: .lg) {
+            Button("Destructive Prominent") {
+                print("Destructive Prominent tapped")
+            }
+            .buttonStyle(DestructiveProminentButtonStyle())
+
+            Button("Destructive Prominent Loading") {
+                print("Destructive Prominent tapped")
+            }
+            .buttonStyle(DestructiveProminentButtonStyle(isLoading: true))
+
+            Button("Destructive Prominent Disabled") {
+                print("Destructive Prominent tapped")
+            }
+            .buttonStyle(DestructiveProminentButtonStyle())
+            .disabled(true)
         }
-        .buttonStyle(DestructiveProminentButtonStyle())
-        
-        Button("Destructive Prominent Loading") {
-            print("Destructive Prominent tapped")
-        }
-        .buttonStyle(DestructiveProminentButtonStyle(isLoading: true))
-        
-        Button("Destructive Prominent Disabled") {
-            print("Destructive Prominent tapped")
-        }
-        .buttonStyle(DestructiveProminentButtonStyle())
-        .disabled(true)
+        .padding()
     }
-    .padding()
-}
-#endif 
+#endif

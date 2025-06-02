@@ -89,7 +89,7 @@ struct RoadmapView: View {
         }
         .padding(.all, .md)
         .background(
-            RoundedRectangle(cornerRadius: Size.md.rawValue)
+            RoundedRectangle(cornerSize: .md)
                 .fill(Color.secondary.opacity(0.1))
         )
         .padding(.bottom, .sm)

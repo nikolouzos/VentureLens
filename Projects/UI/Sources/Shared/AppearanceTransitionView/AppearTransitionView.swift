@@ -96,7 +96,7 @@ extension AppearTransitionView {
 #Preview {
     @Previewable @State var showSlide = false
 
-    VStack(spacing: 20) {
+    VStack(spacingSize: .lg) {
         // Appearance-based transition
         AppearTransitionView(
             transition: .offset(y: 20).combined(with: .opacity),

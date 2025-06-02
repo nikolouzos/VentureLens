@@ -1,6 +1,6 @@
-import SwiftUI
 import AppResources
 import Core
+import SwiftUI
 
 // MARK: - Outline Button Style
 
@@ -29,8 +29,8 @@ public struct OutlineButtonStyle: ButtonStyle {
             RoundedRectangle(cornerSize: cornerSize)
                 .stroke(
                     isEnabled
-                    ? tintColor
-                    : Color.gray,
+                        ? tintColor
+                        : Color.gray,
                     lineWidth: lineWidth
                 )
         )
@@ -44,24 +44,24 @@ public struct OutlineButtonStyle: ButtonStyle {
 }
 
 #if DEBUG
-#Preview {
-    VStack(spacing: 20) {
-        Button("Outline Button") {
-            print("Outline tapped")
+    #Preview {
+        VStack(spacingSize: .lg) {
+            Button("Outline Button") {
+                print("Outline tapped")
+            }
+            .buttonStyle(OutlineButtonStyle())
+
+            Button("Outline Full Width") {
+                print("Outline tapped")
+            }
+            .buttonStyle(OutlineButtonStyle(fullWidth: true))
+
+            Button("Outline Disabled") {
+                print("Outline tapped")
+            }
+            .buttonStyle(OutlineButtonStyle())
+            .disabled(true)
         }
-        .buttonStyle(OutlineButtonStyle())
-        
-        Button("Outline Full Width") {
-            print("Outline tapped")
-        }
-        .buttonStyle(OutlineButtonStyle(fullWidth: true))
-        
-        Button("Outline Disabled") {
-            print("Outline tapped")
-        }
-        .buttonStyle(OutlineButtonStyle())
-        .disabled(true)
+        .padding()
     }
-    .padding()
-}
-#endif 
+#endif

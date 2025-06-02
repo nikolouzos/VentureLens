@@ -43,7 +43,7 @@ struct IdeasGridView: View {
     }
 
     var body: some View {
-        LazyVGrid(columns: gridLayout, alignment: .center, spacing: Size.lg.rawValue) {
+        LazyVGrid(columns: gridLayout, alignment: .center, spacingSize: .lg) {
             if ideas.isEmpty, !isLoading {
                 emptyStateView
             } else {

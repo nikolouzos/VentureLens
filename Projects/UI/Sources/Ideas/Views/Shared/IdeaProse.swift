@@ -86,7 +86,7 @@ private struct CategoryBadge: View {
             .padding(.horizontal, .sm)
             .padding(.vertical, .xs)
             .background(Color.themeSecondary)
-            .cornerRadius(Size.xs.rawValue)
+            .clipShape(RoundedRectangle(cornerSize: .xs))
     }
 }
 

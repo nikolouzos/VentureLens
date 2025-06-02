@@ -50,10 +50,10 @@ struct MVPSectionView: View {
         }
         .padding(.all, .lg)
         .background(
-            RoundedRectangle(cornerRadius: Size.md.rawValue)
+            RoundedRectangle(cornerSize: .md)
                 .fill(Color.themeSecondary.opacity(0.2))
                 .overlay(
-                    RoundedRectangle(cornerRadius: Size.md.rawValue)
+                    RoundedRectangle(cornerSize: .md)
                         .stroke(Color.themeSecondary, lineWidth: 2)
                 )
         )
