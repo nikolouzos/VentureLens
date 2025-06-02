@@ -36,10 +36,10 @@ struct MVPSectionView: View {
                         .foregroundStyle(Color.secondary)
 
                     ForEach(milestones, id: \.self) { milestone in
-                        HStack(alignment: .top, spacingSize: .sm) {
+                        HStack(alignment: .center, spacingSize: .sm) {
                             Image(systemName: "checkmark.circle.fill")
                                 .foregroundStyle(Color.themeSecondary)
-                                .font(.system(size: 18))
+                                .font(.plusJakartaSans(.title3))
 
                             Text(milestone)
                                 .font(.plusJakartaSans(.subheadline))
@@ -51,7 +51,7 @@ struct MVPSectionView: View {
         .padding(.all, .lg)
         .background(
             RoundedRectangle(cornerRadius: Size.md.rawValue)
-                .fill(Color.themeSecondary.opacity(0.1))
+                .fill(Color.themeSecondary.opacity(0.2))
                 .overlay(
                     RoundedRectangle(cornerRadius: Size.md.rawValue)
                         .stroke(Color.themeSecondary, lineWidth: 2)

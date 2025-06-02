@@ -44,7 +44,7 @@ struct IdeasGridView: View {
 
     var body: some View {
         LazyVGrid(columns: gridLayout, alignment: .center, spacing: Size.lg.rawValue) {
-            if ideas.isEmpty && !isLoading {
+            if ideas.isEmpty, !isLoading {
                 emptyStateView
             } else {
                 ForEach(ideas) { idea in
@@ -55,40 +55,45 @@ struct IdeasGridView: View {
                         .matchedTransitionSource(id: idea.id, in: namespace)
                 }
 
-                if isLoading && !isRefreshing {
-                    ProgressView()
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                } else if canLoadMore {
-                    loadMoreButton
-                }
+                Section(content: {}, footer: {
+                    if isLoading, !isRefreshing {
+                        ProgressView()
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                    } else if canLoadMore {
+                        loadMoreButton
+                    }
+                })
             }
         }
     }
 
     private var emptyStateView: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "bookmark.slash")
-                .font(.system(size: 48))
-                .foregroundColor(.secondary)
+        Section(content: {}, header: {
+            VStack(spacingSize: .xl) {
+                Image(systemName: "bookmark.slash")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(widthSize: .composite(.xl, .md))
+                    .foregroundColor(.secondary)
 
-            Text(emptyStateTitle)
-                .font(.plusJakartaSans(.headline))
+                Text(emptyStateTitle)
+                    .font(.plusJakartaSans(.title3, weight: .semibold))
 
-            Text(emptyStateMessage)
-                .font(.plusJakartaSans(.subheadline))
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 60)
+                Text(emptyStateMessage)
+                    .font(.plusJakartaSans(.subheadline))
+                    .foregroundColor(.secondary)
+            }
+            .multilineTextAlignment(.center)
+            .padding(.horizontal, .xl)
+        })
     }
 
     private var loadMoreButton: some View {
         Button("Load More") {
             onLoadMore()
         }
-        .padding()
+        .buttonStyle(TextButtonStyle())
     }
 }
 

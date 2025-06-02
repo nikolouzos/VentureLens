@@ -8,7 +8,7 @@ struct FreeUnlockBannerView: View {
     @State private var isExpanded = false
 
     var body: some View {
-        VStack(spacing: Size.sm.rawValue) {
+        VStack(spacingSize: .sm) {
             if isAvailable {
                 DisclosureGroup(
                     isExpanded: $isExpanded,
@@ -25,7 +25,7 @@ struct FreeUnlockBannerView: View {
                 )
                 .foregroundStyle(Color.systemLabel)
                 .tint(.green)
-            } else if let nextUnlockDate = nextUnlockDate {
+            } else if let nextUnlockDate {
                 HStack {
                     Image(systemName: "clock.fill")
                     Text("Next Free Unlock: ")
@@ -36,19 +36,17 @@ struct FreeUnlockBannerView: View {
                 .foregroundStyle(Color.secondary)
             }
         }
-        .padding()
+        .padding(.all, .md)
         .background(
             RoundedRectangle(cornerRadius: Size.md.rawValue)
-                .fill(isAvailable ? Color.green : Color.secondary)
-                .opacity(0.1)
+                .fill(isAvailable ? Color.themeSecondary : Color.secondary)
+                .opacity(0.2)
         )
-        .transaction { transaction in
-            transaction.animation = .snappy
-        }
+        .animation(.snappy, value: isExpanded)
     }
 
     private func bulletPoint(_ text: String) -> some View {
-        HStack(alignment: .top, spacing: Size.xs.rawValue) {
+        HStack(alignment: .top, spacingSize: .xs) {
             Text("•")
                 .foregroundStyle(Color.secondary)
             Text(text)
@@ -56,27 +54,28 @@ struct FreeUnlockBannerView: View {
     }
 
     private func unlockDetailsView() -> some View {
-        VStack(alignment: .leading, spacing: Size.sm.rawValue) {
+        VStack(alignment: .leading, spacingSize: .sm) {
             Text("Free Unlock Details")
                 .font(.plusJakartaSans(.subheadline, weight: .medium))
+                .padding(.top, .sm)
 
             Text("You can unlock any idea for free once per week. This gives you access to the full analysis, including financial projections, market research, and technical details.")
                 .font(.plusJakartaSans(.subheadline))
 
             Text("To use your free unlock:")
                 .font(.plusJakartaSans(.subheadline, weight: .medium))
-                .padding(.top, Size.xs.rawValue)
+                .padding(.top, .xs)
 
-            VStack(alignment: .leading, spacing: Size.xs.rawValue) {
+            VStack(alignment: .leading, spacingSize: .xs) {
                 bulletPoint("Browse ideas in the feed")
                 bulletPoint("Tap on an idea you're interested in")
                 bulletPoint("Click 'Unlock Idea'")
                 bulletPoint("Congratulations! You now have full access to that idea.")
             }
+            .transition(.identity)
             .font(.plusJakartaSans(.subheadline))
         }
-        .fixedSize(horizontal: false, vertical: true)
-        .padding(.top, Size.sm.rawValue)
+        .fixedSize(horizontal: false, vertical: isExpanded)
     }
 }
 

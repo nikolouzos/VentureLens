@@ -43,9 +43,13 @@ public struct IdeaFiltersView: View {
                 }
 
                 Section {
-                    Button("Reset Filters", role: .destructive) {
-                        viewModel.resetFilters()
-                    }
+                    Button(
+                        "Reset Filters",
+                        action: viewModel.resetFilters
+                    )
+                    .buttonStyle(
+                        TextButtonStyle(tintColor: .themePrimary)
+                    )
                 }
             }
             .navigationTitle("Filters")
@@ -55,6 +59,7 @@ public struct IdeaFiltersView: View {
                     Button("Cancel") {
                         dismiss()
                     }
+                    .buttonStyle(TextButtonStyle())
                 }
 
                 ToolbarItem(placement: .confirmationAction) {
@@ -62,9 +67,35 @@ public struct IdeaFiltersView: View {
                         viewModel.applyFilters()
                         dismiss()
                     }
+                    .buttonStyle(TextButtonStyle())
                 }
             }
-            .presentationDetents([.medium])
+            .presentationDetents(
+                UIDevice.current.userInterfaceIdiom == .phone
+                    ? [.medium]
+                    : [.large]
+            )
         }
     }
+}
+
+#Preview {
+    IdeaFiltersView(
+        viewModel: IdeaFiltersViewModel(
+            currentRequest: .init(
+                requestType: .filters(
+                    query: nil,
+                    category: nil,
+                    createdBefore: nil,
+                    createdAfter: nil
+                )
+            ),
+            filters: .init(
+                minDate: .distantPast,
+                maxDate: .distantFuture,
+                categories: ["Test"]
+            ),
+            onApplyFilters: { _, _, _, _ in }
+        )
+    )
 }

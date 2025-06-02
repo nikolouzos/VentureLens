@@ -13,8 +13,8 @@
 .env.development.local
 .env.test.local
 
-# Cursor rules
-.cursorrules
+# Cursor files
+.cursor/
 
 # Xcode project files
 *.xcworkspace

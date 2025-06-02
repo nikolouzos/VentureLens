@@ -42,8 +42,8 @@ public final class IdeaFiltersViewModel: ObservableObject {
         guard case let .filters(
             currentQuery,
             currentCategory,
-            currentCreatedAfter,
-            currentCreatedBefore
+            currentCreatedBefore,
+            currentCreatedAfter
         ) = currentRequest.requestType else {
             preconditionFailure("\(Self.self) cannot be initialized with incorrect IdeasListRequest.RequestType")
         }

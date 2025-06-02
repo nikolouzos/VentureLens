@@ -33,15 +33,15 @@ struct UnlockIdeaCardView: View {
                 }
             } else if case let .error(message) = viewModel.state {
                 Text(message)
+                    .multilineTextAlignment(.center)
                     .font(.plusJakartaSans(.subheadline))
-                    .foregroundColor(.red)
-                    .padding()
+                    .foregroundColor(.themePrimary)
 
                 Button("Try Again") {
                     unlockContent()
                 }
-                .buttonStyle(.borderedProminent)
-                .tint(.themePrimary)
+                .buttonStyle(ProminentButtonStyle())
+
             } else if case let .limitReached(nextDate) = viewModel.state {
                 VStack(spacingSize: .sm) {
                     Text("Weekly Limit Reached")
@@ -63,8 +63,7 @@ struct UnlockIdeaCardView: View {
                 Button("Unlock Content") {
                     unlockContent()
                 }
-                .buttonStyle(.borderedProminent)
-                .tint(.themePrimary)
+                .buttonStyle(ProminentButtonStyle())
             }
         }
         .frame(maxWidth: .infinity)

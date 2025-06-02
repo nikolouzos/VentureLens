@@ -1,11 +1,11 @@
-import SwiftUI
 import Networking
+import SwiftUI
 
 /// Provides mock Idea objects for SwiftUI previews
 public enum IdeaPreviews {
     /// A standard idea with all fields populated
     public static var standard: Idea {
-        return Idea(
+        Idea(
             id: UUID(uuidString: "48b3ebc4-039b-42b1-b676-51f5616fe1fb")!,
             title: "AI-powered Pet Grooming Service",
             imageUrl: URL(string: "https://plus.unsplash.com/premium_vector-1723293057897-2c3aa2aa49c4?q=80&w=1800&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D")!,
@@ -19,10 +19,10 @@ public enum IdeaPreviews {
             validationMetrics: createStandardValidationMetrics()
         )
     }
-    
+
     /// A minimal idea with only required fields
     public static var minimal: Idea {
-        return Idea(
+        Idea(
             id: UUID(uuidString: "a63b5f8c-1d2e-3f4a-5b6c-7d8e9f0a1b2c")!,
             title: "Minimal Idea",
             category: "Technology",
@@ -30,10 +30,10 @@ public enum IdeaPreviews {
             createdAt: Date()
         )
     }
-    
+
     /// An idea with specific report data
     public static var withReport: Idea {
-        var idea = minimal
+        let idea = minimal
         return Idea(
             id: idea.id,
             title: idea.title,
@@ -48,7 +48,7 @@ public enum IdeaPreviews {
             validationMetrics: idea.validationMetrics
         )
     }
-    
+
     /// An idea with ethics information
     public static var withEthics: Idea {
         let idea = minimal
@@ -66,10 +66,10 @@ public enum IdeaPreviews {
             validationMetrics: idea.validationMetrics
         )
     }
-    
+
     /// An array of sample ideas for list previews
     public static var samples: [Idea] {
-        return [
+        [
             standard,
             minimal,
             Idea(
@@ -80,25 +80,23 @@ public enum IdeaPreviews {
                 createdAt: Date()
             ),
             withReport,
-            withEthics
+            withEthics,
         ]
     }
-    
+
     // MARK: - Private Helpers
-    
+
     private static func createStandardReport() -> Report {
-        return Report(
+        Report(
             competitors: [
                 Competitor(
                     name: "PetSmart",
                     weakness: "Traditional brick-and-mortar model with limited tech integration",
                     differentiator: "Fully automated AI-driven grooming with no human intervention needed"
                 ),
-                Competitor(
-                    name: "Petco",
-                    weakness: "High prices and inconsistent quality across locations",
-                    differentiator: "Standardized quality and algorithmic pricing based on pet needs"
-                ),
+                Competitor(name: "Petco",
+                           weakness: "High prices and inconsistent quality across locations",
+                           differentiator: "Standardized quality and algorithmic pricing based on pet needs"),
             ],
             financials: Financials(
                 totalYear1Costs: 500_000,
@@ -167,9 +165,9 @@ public enum IdeaPreviews {
             ]
         )
     }
-    
+
     private static func createStandardEthics() -> Ethics {
-        return Ethics(
+        Ethics(
             risks: [
                 Risk(
                     type: "Pet Safety",
@@ -188,9 +186,9 @@ public enum IdeaPreviews {
             ]
         )
     }
-    
+
     private static func createStandardTechStack() -> [TechStackComponent] {
-        return [
+        [
             TechStackComponent(
                 component: "Mobile App",
                 tools: ["Swift", "SwiftUI", "Firebase", "Stripe API"]
@@ -201,9 +199,9 @@ public enum IdeaPreviews {
             ),
         ]
     }
-    
+
     private static func createStandardValidationMetrics() -> ValidationMetrics {
-        return ValidationMetrics(
+        ValidationMetrics(
             prelaunchSignups: 2500,
             pilotConversionRate: "32%",
             earlyAdopterSegments: [
@@ -212,4 +210,4 @@ public enum IdeaPreviews {
             ]
         )
     }
-} 
+}

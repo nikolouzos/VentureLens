@@ -19,14 +19,14 @@ VentureLens is a sophisticated iOS application that empowers entrepreneurs and b
 - SwiftUI
 - SwiftData
 - Combine
-- Swift Testing
+- XCTest
 - MVVM-C Architecture
 - Tuist for project generation
 - SwiftFormat for code quality
 
 ## Dependencies
 
-- **Supabase** - Backend as a Service for authentication and data storage
+- **Supabase** - Backend as a Service for authentication, functions, and data storage
 - **SwiftFormat** - Code formatting
 - **Tuist** - Project generation and dependency management
 
