@@ -20,17 +20,21 @@ public struct SettingsView: View {
     public var body: some View {
         NavigationView {
             Form {
-                if !viewModel.isLoading && viewModel.user?.subscription == .free {
-                    Section {
-                        FreeUnlockBannerView(
-                            isAvailable: viewModel.freeUnlockAvailable,
-                            nextUnlockDate: viewModel.nextUnlockDate
-                        )
+                freeUnlockBannerView
+                guestAccountBannerView
+
+                Section {
+                    Group {
+                        if viewModel.isPremiumActive {
+                            subscriptionManagementView
+                        } else {
+                            SubscriptionUpsellView(
+                                viewModel: viewModel.paywallViewModel
+                            )
+                        }
                     }
-                    .frame(maxWidth: .infinity)
-                    .listRowInsets(EdgeInsets())
-                    .listRowBackground(Color.clear)
-                    .padding(.top, .lg)
+                } header: {
+                    Text("Subscription")
                 }
 
                 NavigationLink(
@@ -41,11 +45,12 @@ public struct SettingsView: View {
                 ) {
                     Label("Profile", systemImage: "person")
                 }
-                Section(header: Text("Notifications")) {
-                    Toggle(isOn: viewModel.pushNotificationsToggle) {
-                        Label("Notifications", systemImage: "app.badge")
-                    }
-                }
+
+//                Section(header: Text("Notifications")) {
+//                    Toggle(isOn: viewModel.pushNotificationsToggle) {
+//                        Label("Notifications", systemImage: "app.badge")
+//                    }
+//                }
 
                 Section {
                     Toggle(isOn: $viewModel.dataSharingToggle) {
@@ -136,20 +141,75 @@ public struct SettingsView: View {
             )
         }
     }
+
+    @ViewBuilder
+    private var freeUnlockBannerView: some View {
+        if !viewModel.isLoading,
+           viewModel.user?.isAnonymous != true,
+           viewModel.user?.subscription == .free
+        {
+            Section {
+                FreeUnlockBannerView(
+                    isAvailable: viewModel.freeUnlockAvailable,
+                    nextUnlockDate: viewModel.nextUnlockDate
+                )
+                .listRowInsets(EdgeInsets())
+                .listRowBackground(Color.clear)
+                .padding(.top, .lg)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var guestAccountBannerView: some View {
+        if !viewModel.isLoading,
+           viewModel.user?.isAnonymous == true
+        {
+            Section {
+                GuestAccountBannerView()
+                    .listRowInsets(EdgeInsets())
+                    .listRowBackground(Color.clear)
+                    .padding(.top, .lg)
+            }
+        }
+    }
+
+    private var subscriptionManagementView: some View {
+        HStack {
+            VStack(alignment: .leading, spacingSize: .sm) {
+                Text("Manage Subscription")
+
+                Text("Premium Subscription Active")
+                    .font(.plusJakartaSans(.footnote, weight: .medium))
+                    .foregroundColor(.green)
+            }
+
+            Spacer()
+
+            Image(systemName: "chevron.right")
+                .font(.footnote)
+                .fontWeight(.semibold)
+                .foregroundColor(.separator)
+        }
+        .onTapGesture {
+            viewModel.showSubscriptionManagement()
+        }
+        .sheet(isPresented: $viewModel.showManagementView) {
+            SubscriptionManagementView(viewModel: viewModel.paywallViewModel)
+        }
+    }
 }
 
 #if DEBUG
-    import Core
     import Dependencies
     import Networking
 
     #Preview {
         SettingsView(
             viewModel: SettingsViewModel(
-                authentication: Dependencies().authentication,
+                dependencies: Dependencies(),
                 pushNotifications: PushNotifications(),
-                coordinator: NavigationCoordinator(),
-                analytics: Dependencies().analytics
+                coordinator: NavigationCoordinator()
             )
         )
         .navigationViewStyle(.stack)

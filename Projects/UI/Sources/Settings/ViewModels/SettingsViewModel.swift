@@ -2,22 +2,30 @@ import Core
 import Dependencies
 import Foundation
 import Networking
+import SwiftUI
 import SwiftUICore
 
 @MainActor
 public final class SettingsViewModel: ObservableObject {
-    let authentication: Authentication
+    // MARK: - Dependencies
+
+    public lazy var paywallViewModel: PaywallViewModel = .init(dependencies: dependencies)
+    public let dependencies: Dependencies
     private let pushNotifications: PushNotificationsProtocol
-    private let analytics: Analytics
     let appMetadata: AppMetadata
+
+    // MARK: - Published Properties
 
     @Published private var pushNotificationStatus: PushNotificationStatus? = .none
     @Published private var coordinator: any NavigationCoordinatorProtocol<AuthenticationViewState>
     @Published var user: User?
     @Published var dataSharingToggle = false
     @Published private(set) var isLoading = false
-    @Published public var error: Error?
+    @Published var error: Error?
+    @Published var showManagementView = false
 
+    var isPremiumActive: Bool {
+        user?.subscription == .premium
     }
 
     var freeUnlockAvailable: Bool {
@@ -62,27 +70,29 @@ public final class SettingsViewModel: ObservableObject {
         )
     }
 
+    // MARK: - Initialization
+
     public init(
         isDataSharingEnabled: Bool = UserDefaults.standard.isAnalyticsTrackingEnabled,
-        authentication: Authentication,
+        dependencies: Dependencies,
         pushNotifications: PushNotificationsProtocol,
         coordinator: any NavigationCoordinatorProtocol<AuthenticationViewState>,
-        analytics: Analytics,
         appMetadata: AppMetadata = AppMetadata()
     ) {
         dataSharingToggle = isDataSharingEnabled
-        self.authentication = authentication
+        self.dependencies = dependencies
         self.pushNotifications = pushNotifications
         self.coordinator = coordinator
-        self.analytics = analytics
         self.appMetadata = appMetadata
     }
 
+    // MARK: - Public Methods
+
     func handleDataSharingChange(_ isEnabled: Bool) {
         if isEnabled {
-            analytics.enableTracking(userId: user?.id.uuidString)
+            dependencies.analytics.enableTracking(userId: user?.id.uuidString)
         } else {
-            analytics.disableTracking()
+            dependencies.analytics.disableTracking()
         }
     }
 
@@ -131,19 +141,20 @@ public final class SettingsViewModel: ObservableObject {
     }
 
     func fetchUser() async {
-        user = await authentication.currentUser
+        let user = await dependencies.authentication.currentUser
+        self.user = user
     }
 
     func updateUserProfile(_ userAttributes: UserAttributes) async throws {
-        try await authentication.update(userAttributes)
+        try await dependencies.authentication.update(userAttributes)
     }
 
     func logout() {
         isLoading = true
         Task { @MainActor in
             do {
-                try await authentication.logout()
-                analytics.reset()
+                try await dependencies.authentication.logout()
+                dependencies.analytics.reset()
 
                 isLoading = false
                 coordinator.reset()
@@ -158,8 +169,8 @@ public final class SettingsViewModel: ObservableObject {
         isLoading = true
         Task { @MainActor in
             do {
-                try await authentication.deleteAccount()
-                analytics.reset()
+                try await dependencies.authentication.deleteAccount()
+                dependencies.analytics.reset()
 
                 isLoading = false
                 coordinator.reset()
@@ -168,5 +179,9 @@ public final class SettingsViewModel: ObservableObject {
                 isLoading = false
             }
         }
+    }
+
+    func showSubscriptionManagement() {
+        showManagementView = true
     }
 }
