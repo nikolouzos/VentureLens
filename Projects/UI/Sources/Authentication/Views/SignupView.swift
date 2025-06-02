@@ -13,11 +13,12 @@ public struct SignupView: View {
 
     public var body: some View {
         NavigationView {
-            VStack(spacingSize: .lg) {
+            VStack(spacingSize: .md) {
                 AppearTransitionView(
-                    transition: .opacity.combined(
-                        with: .move(edge: .bottom)
-                    ),
+                    transition: .opacity
+                        .combined(
+                            with: .move(edge: .bottom)
+                        ),
                     duration: 0.5,
                     delay: 0.5
                 ) {
@@ -29,7 +30,7 @@ public struct SignupView: View {
                 nameInputSection
 
                 continueButton
-                    .padding(.vertical, .md)
+                    .padding(.bottom, .xl)
             }
             .padding(.horizontal, .lg)
             .padding(.top, .xl)
@@ -56,19 +57,11 @@ public struct SignupView: View {
     }
 
     private var headerView: some View {
-        VStack(spacingSize: .md) {
-            Text("Welcome to")
-                .font(.title)
-
-            Text("VentureLens")
-                .font(.plusJakartaSans(.largeTitle, weight: .bold))
-                .foregroundStyle(Color.tint)
-
-            Text("Let's get started by setting up your profile")
-                .multilineTextAlignment(.center)
-                .foregroundStyle(Color.secondary)
-                .padding(.top, .sm)
-        }
+        Text("Let's get started setting up your profile")
+            .font(
+                .plusJakartaSans(.title3, weight: .bold)
+            )
+            .multilineTextAlignment(.center)
     }
 
     private var nameInputSection: some View {
@@ -76,6 +69,7 @@ public struct SignupView: View {
             Text("What's your name?")
                 .font(.plusJakartaSans(.headline))
                 .foregroundStyle(Color.primary)
+                .padding(.leading, .md)
 
             GroupBox {
                 TextField("Enter your name", text: $viewModel.name)
@@ -97,24 +91,15 @@ public struct SignupView: View {
                 await viewModel.continueSignup()
             }
         } label: {
-            HStack {
-                if viewModel.isLoading {
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle())
-                        .tint(.white)
-                } else {
-                    Text("Continue")
-                        .font(.plusJakartaSans(.body, weight: .semibold))
-                }
-            }
-            .frame(maxWidth: .infinity)
-            .frame(height: 44)
-            .background(
-                RoundedRectangle(cornerSize: .sm)
-                    .foregroundStyle(viewModel.name.isEmpty ? Color.gray.opacity(0.3) : Color.themeSecondary)
-            )
-            .foregroundColor(.white)
+            Text("Continue")
         }
+        .buttonStyle(
+            ProminentButtonStyle(
+                isLoading: viewModel.isLoading,
+                fullWidth: true,
+                backgroundColor: .themeSecondary
+            )
+        )
         .disabled(viewModel.name.isEmpty)
     }
 }

@@ -38,14 +38,14 @@ public struct AnalyticsPermissionView: View {
     }
 
     private var descriptionView: some View {
-        VStack(spacing: 16) {
-            Text("VentureLens would like to collect anonymous usage data to help us understand how you use the app and improve our features.")
+        VStack(spacingSize: .lg) {
+            Text("To enhance your app experience and improve our features, VentureLens collects data about your app usage, linked to your User ID and Email address (for account purposes).")
                 .multilineTextAlignment(.center)
 
-            Text("This information is only used to improve the app and is never shared with third parties.")
+            Text("This information is used internally to analyze performance and optimize functionality. It is NOT used for advertising, cross-app tracking, or shared with data brokers.")
                 .multilineTextAlignment(.center)
 
-            Text("You can change this setting anytime in the Privacy section of the Settings tab.")
+            Text("You can review or change your privacy settings anytime in the app's 'Privacy Settings'.")
                 .multilineTextAlignment(.center)
                 .font(.plusJakartaSans(.callout))
                 .foregroundStyle(Color.secondary)
@@ -60,15 +60,10 @@ public struct AnalyticsPermissionView: View {
                 }
             } label: {
                 Text("Allow Analytics")
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 44)
-                    .font(.plusJakartaSans(.body, weight: .semibold))
-                    .background(
-                        RoundedRectangle(cornerSize: .sm)
-                            .foregroundStyle(Color.themeSecondary)
-                    )
-                    .foregroundColor(.white)
             }
+            .buttonStyle(
+                ProminentButtonStyle(fullWidth: true)
+            )
 
             Button {
                 Task {
@@ -76,15 +71,10 @@ public struct AnalyticsPermissionView: View {
                 }
             } label: {
                 Text("Don't Allow")
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 44)
-                    .font(.plusJakartaSans(.body, weight: .semibold))
-                    .foregroundColor(Color.themeSecondary)
-                    .background(
-                        RoundedRectangle(cornerSize: .sm)
-                            .stroke(Color.themeSecondary, lineWidth: 1)
-                    )
             }
+            .buttonStyle(
+                OutlineButtonStyle(fullWidth: true)
+            )
         }
     }
 }

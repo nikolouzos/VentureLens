@@ -7,6 +7,9 @@ import SwiftData
 import SwiftUI
 
 public class AuthViewModel: ObservableObject {
+    // MARK: - Properties
+
+    private let signupDataSource: DataSource<OAuthSignupData>?
     private let authentication: Authentication
     let appMetadata: AppMetadata
 
@@ -14,7 +17,13 @@ public class AuthViewModel: ObservableObject {
     @Published var isLoading = false
     @Published public var error: Error?
     @Published public var coordinator: any NavigationCoordinatorProtocol<AuthenticationViewState>
-    private let signupDataSource: DataSource<OAuthSignupData>?
+    @Published var shouldShowGuestBenefitModal: Bool = false
+
+    var emailIsValid: Bool {
+        let emailRegex = /^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/
+        return email.wholeMatch(of: emailRegex) != nil
+    }
+
     // MARK: - Initializer
 
     public init(
@@ -33,6 +42,8 @@ public class AuthViewModel: ObservableObject {
         self.coordinator = coordinator
         self.signupDataSource = signupDataSource
     }
+
+    // MARK: - Apple Sign In
 
     func signInWithAppleOnRequest(request: AppleIDRequestProtocol) {
         request.requestedScopes = [.email, .fullName]
@@ -61,23 +72,50 @@ public class AuthViewModel: ObservableObject {
         isLoading = false
     }
 
+    // MARK: - OTP Login
+
     @MainActor
-    func login() async {
+    func continueWithOTP() async {
+        isLoading = true
         do {
             try await authentication.authenticate(
                 with: .otp(email: email)
             )
 
-            isLoading = false
-            coordinator.navigate(
-                to: await authentication.currentUser == nil
+            await coordinator.navigate(
+                to: authentication.currentUser == nil
                     ? .otp(signupEmail: email)
                     : .loggedIn
             )
         } catch {
             self.error = error
         }
+
+        isLoading = false
     }
+
+    // MARK: - Guest Mode Handling
+
+    @MainActor
+    func guestButtonTapped() {
+        shouldShowGuestBenefitModal = true
+    }
+
+    @MainActor
+    func continueAsGuest() {
+        isLoading = true
+        Task {
+            do {
+                try await authentication.authenticate(with: .anonymous)
+                coordinator.navigate(to: .loggedIn)
+            } catch {
+                self.error = error
+            }
+        }
+        isLoading = false
+    }
+
+    // MARK: - Private Helpers
 
     private func constructSignupData(
         from credential: AppleIDCredentialProtocol

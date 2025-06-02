@@ -46,28 +46,18 @@ public struct OTPView: View {
         let isDisabled = viewModel.resendCooldown > 0 || viewModel.isLoading
 
         return Button(action: viewModel.resendCode) {
-            HStack {
-                if viewModel.isLoading {
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle())
-                        .tint(.white)
-                } else {
-                    Text(viewModel.resendCooldown > 0 ? "Resend code in \(viewModel.resendCooldown)s" : "Resend code")
-                        .font(.plusJakartaSans(.body, weight: .semibold))
-                }
-            }
-            .padding(.horizontal, .lg)
-            .padding(.vertical, .md)
-            .background(
-                RoundedRectangle(cornerSize: .sm)
-                    .foregroundStyle(
-                        Color.tint.opacity(isDisabled ? 0.5 : 1)
-                    )
+            Text(
+                viewModel.resendCooldown > 0
+                    ? "Resend code in \(viewModel.resendCooldown)s"
+                    : "Resend code"
             )
-            .foregroundStyle(
-                Color.white.opacity(isDisabled ? 0.5 : 1)
-            )
+            .font(.plusJakartaSans(.body, weight: .semibold))
         }
+        .buttonStyle(
+            ProminentButtonStyle(
+                isLoading: viewModel.isLoading,
+            )
+        )
         .disabled(isDisabled)
     }
 }

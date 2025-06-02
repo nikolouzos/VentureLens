@@ -1,5 +1,6 @@
 import AppResources
 import AuthenticationServices
+import Core
 import SwiftUI
 
 public struct AuthView: View {
@@ -12,61 +13,12 @@ public struct AuthView: View {
 
     public var body: some View {
         NavigationView {
-            VStack(spacingSize: .lg) {
-                AppearTransitionView(
-                    transition: .opacity.combined(
-                        with: .move(edge: .bottom)
-                    ),
-                    duration: 0.5,
-                    delay: 0.5
-                ) {
-                    (
-                        Text("Welcome to ") +
-                            (Text("VentureLens")
-
-                                .foregroundStyle(Color.tint))
-                    )
-                    .font(.plusJakartaSans(.title, weight: .bold))
-                    .multilineTextAlignment(.center)
-                }
-
-                onboardingTutorialView
+            VStack(spacingSize: .xl) {
                 Spacer()
-
-                GroupBox {
-                    TextField("Email", text: $viewModel.email)
-                        .autocapitalization(.none)
-                        .keyboardType(.emailAddress)
-                }
-
-                VStack(alignment: .center, spacingSize: .lg) {
-                    Text("Sign in with OTP")
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 44)
-                        .background(
-                            RoundedRectangle(cornerSize: .sm)
-                                .foregroundStyle(Color.themeSecondary)
-                        )
-                        .onTapGesture {
-                            Task {
-                                await viewModel.login()
-                            }
-                        }
-
-                    Text("or")
-                        .font(.plusJakartaSans(.caption, weight: .medium))
-                        .foregroundStyle(Color.gray)
-
-                    SignInWithAppleButton(
-                        onRequest: viewModel.signInWithAppleOnRequest,
-                        onCompletion: { result in
-                            viewModel.signInWithAppleOnCompletion(
-                                result: result.map { $0 as AppleAuthorizationProtocol }
-                            )
-                        }
-                    )
-                    .frame(height: 44)
-                }
+                titleView
+                Spacer()
+                authenticationButtonViews
+                legalLinksView
             }
             .disabled(viewModel.isLoading)
             .padding(.all, .lg)
@@ -88,39 +40,100 @@ public struct AuthView: View {
             .onKeyboardEvent(.willHide) {
                 keyboardIsHidden = true
             }
+            .sheet(isPresented: $viewModel.shouldShowGuestBenefitModal) {
+                GuestModeBenefitModalView(
+                    onContinueAsGuest: {
+                        viewModel.shouldShowGuestBenefitModal = false
+                        viewModel.continueAsGuest()
+                    },
+                    onCreateAccount: {
+                        viewModel.shouldShowGuestBenefitModal = false
+                    }
+                )
+            }
         }
     }
 
-    private var onboardingTutorialView: some View {
+    private var titleView: some View {
         AppearTransitionView(
-            if: $keyboardIsHidden,
-            transition: .opacity.combined(with: .scale),
+            transition: .opacity.combined(with: .move(edge: .bottom)),
             duration: 0.5,
             delay: 0.5
         ) {
-            StepTutorialView(steps: [
-                .init(
-                    image: AppResourcesAsset.Assets.onboardingList.swiftUIImage,
-                    description: "Every morning, we serve you with fresh, curated business opportunities. Our smart algorithms do the heavy lifting for you."
-                ),
-                .init(
-                    image: AppResourcesAsset.Assets.onboardingOverview.swiftUIImage,
-                    description: "Tap into any idea to explore a comprehensive report. Each report is packed with insights to help you make informed decisions."
-                ),
-                .init(
-                    image: AppResourcesAsset.Assets.onboardingFinancial.swiftUIImage,
-                    description: "Not sure if an idea is worth pursuing? VentureLens all the data & analysis to help you validate opportunities quickly and confidently."
-                ),
-                .init(
-                    image: AppResourcesAsset.Assets.onboardingFilters.swiftUIImage,
-                    description: "Make VentureLens truly yours! Use the filtering options to customize your feed and find opportunities that align with your goals."
-                ),
-                .init(
-                    image: AppResourcesAsset.Assets.onboardingRoadmap.swiftUIImage,
-                    description: "Use our roadmap feature to break it down into actionable steps - get MVP ready in an instant!"
-                ),
-            ])
+            (Text("Welcome to ")
+                .font(.plusJakartaSans(.title, weight: .regular)) +
+                Text("VentureLens")
+                .foregroundStyle(Color.tint)
+                .font(.plusJakartaSans(.title, weight: .bold)))
+                .multilineTextAlignment(.center)
         }
+    }
+
+    private var authenticationButtonViews: some View {
+        VStack(spacingSize: .lg) {
+            GroupBox {
+                TextField("Email", text: $viewModel.email)
+                    .font(.plusJakartaSans(.body, weight: .regular))
+                    .autocapitalization(.none)
+                    .keyboardType(.emailAddress)
+            }
+
+            Button {
+                Task { await viewModel.continueWithOTP() }
+            } label: {
+                Text("Sign in with OTP")
+            }
+            .buttonStyle(
+                ProminentButtonStyle(
+                    isLoading: viewModel.isLoading,
+                    fullWidth: true
+                )
+            )
+            .disabled(!viewModel.emailIsValid)
+
+            SignInWithAppleButton(
+                onRequest: viewModel.signInWithAppleOnRequest,
+                onCompletion: { result in
+                    viewModel.signInWithAppleOnCompletion(
+                        result: result.map { $0 as AppleAuthorizationProtocol }
+                    )
+                }
+            )
+            .frame(heightSize: .composite(.xl, .md))
+            .clipShape(RoundedRectangle(cornerSize: .md))
+
+            Text("or")
+                .font(.plusJakartaSans(.caption, weight: .medium))
+                .foregroundStyle(Color.gray)
+
+            Button {
+                viewModel.guestButtonTapped()
+            } label: {
+                Text("Continue as Guest")
+            }
+            .buttonStyle(TextButtonStyle())
+        }
+        .disabled(viewModel.isLoading)
+    }
+
+    private var legalLinksView: some View {
+        HStack(spacingSize: .md) {
+            Link(
+                "Terms of Service",
+                destination: viewModel.appMetadata.legalURLs.termsOfService
+            )
+            Link(
+                "Privacy Policy",
+                destination: viewModel.appMetadata.legalURLs.privacyPolicy
+            )
+        }
+        .buttonStyle(
+            TextButtonStyle(
+                tintColor: .secondary,
+                font: .plusJakartaSans(.subheadline, weight: .medium)
+            )
+        )
+        .padding(.top, .xs)
     }
 }
 
@@ -132,6 +145,7 @@ public struct AuthView: View {
         AuthView(
             viewModel: AuthViewModel(
                 authentication: Dependencies().authentication,
+                appMetadata: AppMetadata(),
                 coordinator: NavigationCoordinator()
             )
         )
