@@ -12,6 +12,7 @@ public struct ProfileView: View {
             Form {
                 userInfo
                 buttons
+                emailChangeInfo
             }
             .navigationTitle("Profile")
             .alert(
@@ -79,19 +80,41 @@ public struct ProfileView: View {
         }
     }
 
+    @ViewBuilder
+    private var emailChangeInfo: some View {
+        if !viewModel.isEditing, viewModel.didChangeEmailAddress {
+            HStack(alignment: .center, spacingSize: .md) {
+                Image(systemName: "envelope.badge.fill")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(widthSize: .xl)
+
+                Text("Your email address has been changed. Please check your emails to confirm the change.")
+                    .font(.plusJakartaSans(.subheadline, weight: .medium))
+            }
+            .listRowBackground(
+                Color.themeSecondary.opacity(0.2)
+            )
+        }
+    }
+
     private var buttons: some View {
         Section {
             if viewModel.isEditing {
-                Button("Cancel", action: viewModel.stopEditing)
-                    .foregroundStyle(Color.red)
+                Button("Cancel") {
+                    viewModel.stopEditing(isCancelled: true)
+                }
+                .buttonStyle(TextButtonStyle(tintColor: .themePrimary))
+
                 Button("Save") {
                     Task {
                         await viewModel.updateProfile()
                     }
-                    viewModel.stopEditing()
                 }
+                .buttonStyle(TextButtonStyle())
             } else {
                 Button("Edit Profile", action: viewModel.startEditing)
+                    .buttonStyle(TextButtonStyle())
             }
         }
     }
@@ -105,10 +128,9 @@ public struct ProfileView: View {
         ProfileView(
             viewModel: ProfileViewModel(
                 settingsViewModel: SettingsViewModel(
-                    authentication: Dependencies().authentication,
+                    dependencies: Dependencies(),
                     pushNotifications: PushNotifications(),
-                    coordinator: NavigationCoordinator(),
-                    analytics: Dependencies().analytics
+                    coordinator: NavigationCoordinator()
                 )
             )
         )

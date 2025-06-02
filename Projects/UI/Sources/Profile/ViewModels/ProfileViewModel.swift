@@ -6,7 +6,6 @@ import SwiftUICore
 @MainActor
 public class ProfileViewModel: ObservableObject {
     private let updateUserProfile: (_ userAttributes: UserAttributes) async throws -> Void
-    private let updateUser: () async -> Void
 
     @Published private(set) var name: String
     @Published private(set) var email: String
@@ -16,6 +15,7 @@ public class ProfileViewModel: ObservableObject {
     @Published var nameField: String
     @Published private(set) var isLoading = false
     @Published private(set) var isEditing = false
+    @Published private(set) var didChangeEmailAddress = false
     @Published public var error: Error? = nil
 
     var isEmailEditable: Bool {
@@ -37,15 +37,17 @@ public class ProfileViewModel: ObservableObject {
         nameField = settingsViewModel.user?.name ?? ""
         emailField = settingsViewModel.user?.email ?? ""
         updateUserProfile = settingsViewModel.updateUserProfile
-        updateUser = settingsViewModel.fetchUser
     }
 
     func startEditing() {
         isEditing = true
     }
 
-    func stopEditing() {
+    func stopEditing(isCancelled: Bool) {
         isEditing = false
+        if isCancelled {
+            resetFields()
+        }
     }
 
     func updateProfile() async {
@@ -57,12 +59,24 @@ public class ProfileViewModel: ObservableObject {
                     name: nameField
                 )
             )
-            await updateUser()
+
+            if email != emailField {
+                didChangeEmailAddress = true
+            }
 
             email = emailField
+            name = nameField
         } catch {
             self.error = error
+            resetFields()
         }
+
+        stopEditing(isCancelled: false)
         isLoading = false
+    }
+
+    private func resetFields() {
+        emailField = email
+        nameField = name
     }
 }
