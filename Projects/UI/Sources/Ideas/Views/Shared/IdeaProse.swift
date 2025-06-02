@@ -47,7 +47,6 @@ struct IdeaProse: View {
                 )
             )
         }
-        .ignoresSafeArea(edges: .top)
     }
 
     @ViewBuilder
@@ -63,14 +62,17 @@ struct IdeaProse: View {
                     }
                     .tint(.white)
             } failure: { _ in
-                Rectangle()
-                    .fill(Color.gray)
-                    .overlay {
-                        Text("The image could not be loaded")
-                    }
-                    .tint(.white)
+
+                LinearGradient(
+                    gradient: Gradient(
+                        colors: [.themeSecondary, .accentColor]
+                    ),
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
             }
             .aspectRatio(5 / 3, contentMode: .fit)
+            .ignoresSafeArea(edges: .top)
         }
     }
 }
